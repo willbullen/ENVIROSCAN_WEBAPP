@@ -1,0 +1,20 @@
+from django.contrib import admin
+from .models import Defib_Data, Picarro_Data, Picarro_Logs, Aethalometer_Data, Aethalometer_Logs, Weather_Data, Weather_Logs, Kraken_Data, Tucson_Data, Tucson_Logs, Baloon_Data, Baloon_Logs, Picarro_PM, Picarro_Jobs, Picarro_Properties, Picarro_Alarms, Picarro_Property_Types
+
+admin.site.register(Aethalometer_Data)
+admin.site.register(Aethalometer_Logs)
+admin.site.register(Picarro_Data)
+admin.site.register(Picarro_Logs)
+admin.site.register(Picarro_Alarms)
+admin.site.register(Picarro_PM)
+admin.site.register(Picarro_Jobs)
+admin.site.register(Picarro_Properties)
+admin.site.register(Picarro_Property_Types)
+admin.site.register(Weather_Data)
+admin.site.register(Weather_Logs)
+admin.site.register(Tucson_Data)
+admin.site.register(Tucson_Logs)
+admin.site.register(Baloon_Data)
+admin.site.register(Baloon_Logs)
+admin.site.register(Kraken_Data)
+admin.site.register(Defib_Data)

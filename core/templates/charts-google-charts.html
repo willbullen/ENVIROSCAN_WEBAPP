@@ -1,0 +1,61 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Charts Google Charts {% endblock title %}
+
+<!-- Specific Page CSS goes HERE  -->  
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-6 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Region chart</h4>
+          <div class="google-chart-container">
+            <div id="line-chart" class="google-charts"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Bar chart</h4>
+          <div class="google-chart-container d-flex align-items-center justify-content-center h-100">
+            <div id="Bar-chart" class="google-charts mt-n5"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Bar chart</h4>
+          <div class="google-chart-container d-flex align-items-center justify-content-center h-100">
+            <div id="donutchart" class="google-charts"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Pie chart</h4>
+          <div class="google-chart-container d-flex align-items-center justify-content-center h-100">
+            <div id="piechart" class="google-charts"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="/static/assets/js/shared/google-charts.js"></script>
+
+{% endblock javascripts %}

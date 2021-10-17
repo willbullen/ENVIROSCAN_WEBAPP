@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" href="/static/assets/images/favicon.png" />
+    <link rel="canonical" href="https://appseed.us/admin-dashboards/django-dashboard-staradmin-black-pro">
+
+    <title>
+      Django Star Admin Black - {% block title %} {% endblock title %} | AppSeed
+    </title>
+    
+    <link rel="stylesheet" href="/static/assets/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="/static/assets/vendors/flag-icon-css/css/flag-icon.min.css">
+    <link rel="stylesheet" href="/static/assets/vendors/ti-icons/css/themify-icons.css">
+    <link rel="stylesheet" href="/static/assets/vendors/typicons/typicons.css">
+    <link rel="stylesheet" href="/static/assets/vendors/css/vendor.bundle.base.css">
+
+    <link rel="stylesheet" href="/static/assets/vendors/jvectormap/jquery-jvectormap.css">
+
+    <link rel="stylesheet" href="/static/assets/css/shared/style.css">
+    <link rel="stylesheet" href="/static/assets/css/demo_3/style.css">
+
+	{% block stylesheets %}{% endblock stylesheets %}
+
+  </head>
+  <body class="rtl dark-theme">
+    <div class="container-scroller">
+
+      {% include 'includes/navigation.html' %}
+
+      <div class="container-fluid page-body-wrapper">
+
+        {% include 'includes/right-sidebar-toggler.html' %}
+
+        {% include 'includes/right-sidebar-themes.html' %}
+
+        {% include 'includes/sidebar.html' %}
+
+        <div class="main-panel">
+
+          <div class="content-wrapper">
+
+            {% block content %}{% endblock content %}
+
+          </div>
+
+          {% include 'includes/footer.html' %}
+
+        </div>
+
+      </div>
+
+    </div>
+
+    {% include 'includes/scripts.html' %}
+
+    <!-- Specific Page JS goes HERE  -->
+    {% block javascripts %}{% endblock javascripts %}
+
+  </body>
+</html>

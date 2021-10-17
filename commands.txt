@@ -1,0 +1,68 @@
+python -m venv .env
+
+.env\scripts\activate
+
+Run Terminal: Create New Integrated Terminal (Ctrl+Shift+`)
+
+python -m pip install --upgrade pip
+
+python -m pip install django==2.1.15
+
+django-admin startproject core .
+
+# Modify Database in Settings:
+DATABASES = {
+    'default': {
+        'ENGINE': 'sql_server.pyodbc',
+        'NAME': 'meteireann',
+        'USER': 'PythonWebApp',
+        'PASSWORD': 'a987REALLY#$%TRONGpa44w0rd',
+        'HOST': 'enviroscan.database.windows.net',
+        'PORT': '',
+        'OPTIONS': {
+            'driver': 'ODBC Driver 17 for SQL Server',
+        },
+    }
+} 
+
+Python manage.py collectstatic
+
+pip3 install -r requirements.txt
+
+python manage.py makemigrations
+
+python manage.py migrate
+
+python manage.py runserver
+
+python manage.py beatserver
+
+celery -A core control shutdown
+celery -A core purge
+celery -A core worker -l info -P gevent
+
+celery -A core beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+
+celery -A core worker --beat --scheduler django --loglevel=info
+
+python manage.py runworker background-tasks
+
+python manage.py startapp data
+
+az login
+az webapp up --sku B1 --name <app-name>
+az webapp up
+az webapp log tail
+
+
+
+
+# WORKER
+celery -A core purge #### CLEAN
+celery -A core worker -l info -P gevent
+
+# SCHEDULER
+celery -A core beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+
+# SERVER RUN
+python manage.py runserver
