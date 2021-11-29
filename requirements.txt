@@ -22,7 +22,8 @@ balena-sdk
 
 django-celery-beat
 #django-timezone-field
-#gevent
+gevent
 #celery
+redis
 
 django-mqtt-bridge

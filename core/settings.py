@@ -91,7 +91,7 @@ CHANNEL_LAYERS = {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         #"BACKEND": "channels.layers.InMemoryChannelLayer",
         'CONFIG': {
-            "hosts": [('redis://h:8BYZuK750vDxyXtMAJOt0UPQRBMTmp21jQip5ZEEHyM=@enviroscan.redis.cache.windows.net:6379/0')],
+            "hosts": [('redis://h:Po0AuJljh9cvvuiUWFeqZFOpJde3SsCVHAzCaCbvplw=@enviroscan.redis.cache.windows.net:6379/0')],
         },        
     },
 }
@@ -174,8 +174,8 @@ STATICFILES_DIRS = (
 )
 #############################################################
 ## CELERY BEATS
-CELERY_BROKER_URL = 'redis://h:8BYZuK750vDxyXtMAJOt0UPQRBMTmp21jQip5ZEEHyM=@enviroscan.redis.cache.windows.net:6379/0'
-CELERY_RESULT_BACKEND = 'redis://h:8BYZuK750vDxyXtMAJOt0UPQRBMTmp21jQip5ZEEHyM=@enviroscan.redis.cache.windows.net:6379/0'
+CELERY_BROKER_URL = 'redis://:Po0AuJljh9cvvuiUWFeqZFOpJde3SsCVHAzCaCbvplw=@enviroscan.redis.cache.windows.net:6379/0'
+CELERY_RESULT_BACKEND = 'redis://:Po0AuJljh9cvvuiUWFeqZFOpJde3SsCVHAzCaCbvplw=@enviroscan.redis.cache.windows.net:6379/0'
 
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 

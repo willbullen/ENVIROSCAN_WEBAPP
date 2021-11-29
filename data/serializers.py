@@ -60,6 +60,16 @@ class Picarro_Data_Serializer(serializers.HyperlinkedModelSerializer):
             'Data_b_h2o_pct',
             'Data_peak_14',
             'Data_peak84_raw',
+
+            'Data_MaxGust',
+            'Data_MaxGustDir',
+            'Data_WindDir',
+            'Data_WindSpeed',	
+            'Data_Pressure',
+            'Data_DryA',
+            'Data_GrassA',
+            'Data_HumA',
+
             'Instrument_Supply_Voltage', 
             'Instrument_Supply_Current', 
             'Instrument_Temp', 

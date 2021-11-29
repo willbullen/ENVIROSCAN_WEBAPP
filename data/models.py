@@ -58,6 +58,16 @@ class Picarro_Data(models.Model):
 	Data_b_h2o_pct = models.FloatField()
 	Data_peak_14 = models.FloatField()
 	Data_peak84_raw = models.FloatField()
+
+	Data_MaxGust = models.FloatField()
+	Data_MaxGustDir = models.FloatField()
+	Data_WindDir = models.FloatField()
+	Data_WindSpeed = models.FloatField()	
+	Data_Pressure = models.FloatField()	
+	Data_DryA = models.FloatField()	
+	Data_GrassA = models.FloatField()	
+	Data_HumA = models.FloatField()	
+
 	Instrument_Supply_Voltage = models.FloatField()
 	Instrument_Supply_Current = models.FloatField()
 	Instrument_Temp = models.FloatField()

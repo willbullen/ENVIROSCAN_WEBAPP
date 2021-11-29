@@ -17,5 +17,5 @@
             "priority": 4
         }
     ],
-    "python.pythonPath": "c:\\Projects\\ENVIROSCAN_WEBAPP\\enviroscan\\.env\\Scripts\\python.exe"
+    "python.pythonPath": "c:\\Projects\\ENVIROSCAN_WEBAPP\\.env\\Scripts\\python.exe"
 }
