@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Defib_Data, Aethalometer_Data, Aethalometer_Logs, Picarro_Data, Picarro_Logs, Weather_Data, Weather_Logs, Kraken_Data, Tucson_Data, Tucson_Logs, Baloon_Data, Baloon_Logs, Picarro_PM, Picarro_Jobs, Picarro_Properties, Picarro_Alarms, Picarro_Property_Types
+from .models import NOX_Data, SOX_Data, Defib_Data, Aethalometer_Data, Aethalometer_Logs, Picarro_Data, Picarro_Logs, Weather_Data, Weather_Logs, Kraken_Data, Tucson_Data, Tucson_Logs, Baloon_Data, Baloon_Logs, Picarro_PM, Picarro_Jobs, Picarro_Properties, Picarro_Alarms, Picarro_Property_Types
 
 class Aethalometer_Data_Serializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -309,4 +309,93 @@ class Baloon_Logs_Serializer(serializers.HyperlinkedModelSerializer):
             'Log_DateTime',
             'Log_Type',
             'Log_Details',
+        ]
+
+class SOX_Data_Serializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = SOX_Data
+        fields = [
+            'id', 
+            'Data_DateTime',
+            'Data_Box_Temp',
+            'Data_HVPS',
+            'Data_Lamp_Dark',
+            'Data_Lamp_Ratio',
+            'Data_Norm_PMT',
+            'Data_Photo_Absolute',
+            'Data_PMT',
+            'Data_PMT_Dark',
+            'Data_PMT_Signal',
+            'Data_PMT_Temp',
+            'Data_Pressure',
+            'Data_RCell_Temp',
+            'Data_Ref_4096mV',
+            'Data_Ref_Ground',
+            'Data_REF_V_4096_Dark',
+            'Data_REF_V_4096_Light',
+            'Data_Sample_Flow',
+            'Data_SO2_Concentration',
+            'Data_Stability',
+            'Data_UV_Lamp',            
+
+            'Data_MaxGust',
+            'Data_MaxGustDir',
+            'Data_WindDir',
+            'Data_WindSpeed',	
+            'Data_Pressure',
+            'Data_DryA',
+            'Data_GrassA',
+            'Data_HumA',
+
+            'Instrument_Supply_Voltage', 
+            'Instrument_Supply_Current', 
+            'Instrument_Temp', 
+            'Instrument_Pressure', 
+            'Instrument_Humidity', 
+            'Instrument_Status',
+        ]
+
+class NOX_Data_Serializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = NOX_Data
+        fields = [
+            'id', 
+            'Data_DateTime',
+            'Data_Box_Temp',
+            'Data_HVPS',
+            'Data_NO_Conc',
+            'Data_NO_Norm_Offset',
+            'Data_NO_Slope',
+            'Data_NO_Stability',
+            'Data_NO2_Conc',
+            'Data_NO2_Stability',
+            'Data_Norm_PMT',
+            'Data_NOX_Conc',
+            'Data_NOx_Norm_Offset',
+            'Data_NOx_Slope',
+            'Data_NOX_Stability',
+            'Data_PMT_Signal',
+            'Data_PMT_Temp',
+            'Data_Ref_4096mV',
+            'Data_Ref_Ground',
+            'Data_Rx_Cell_Press',
+            'Data_Rx_Cell_Temp',
+            'Data_Sample_Flow',
+            'Data_Sample_Press',            
+
+            'Data_MaxGust',
+            'Data_MaxGustDir',
+            'Data_WindDir',
+            'Data_WindSpeed',	
+            'Data_Pressure',
+            'Data_DryA',
+            'Data_GrassA',
+            'Data_HumA',
+
+            'Instrument_Supply_Voltage', 
+            'Instrument_Supply_Current', 
+            'Instrument_Temp', 
+            'Instrument_Pressure', 
+            'Instrument_Humidity', 
+            'Instrument_Status',
         ]

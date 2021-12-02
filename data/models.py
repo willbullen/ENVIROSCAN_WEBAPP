@@ -181,31 +181,6 @@ class Defib_Data(models.Model):
 	class Meta:
 		ordering = ['Data_DateTime']
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class Weather_Data(models.Model):
 	Data_DateTime = models.DateTimeField('date published')
 	Data_MaxGust = models.FloatField()
@@ -325,3 +300,99 @@ class Baloon_Logs(models.Model):
 
 	class Meta:
 		ordering = ['Log_DateTime']
+
+
+
+
+
+
+class SOX_Data(models.Model):
+	Data_DateTime = models.DateTimeField('date published')	
+	Data_Box_Temp = models.FloatField()
+	Data_HVPS = models.FloatField()
+	Data_Lamp_Dark = models.FloatField()
+	Data_Lamp_Ratio = models.FloatField()
+	Data_Norm_PMT = models.FloatField()
+	Data_Photo_Absolute = models.FloatField()
+	Data_PMT = models.FloatField()
+	Data_PMT_Dark = models.FloatField()
+	Data_PMT_Signal = models.FloatField()
+	Data_PMT_Temp = models.FloatField()
+	Data_Pressure = models.FloatField()
+	Data_RCell_Temp = models.FloatField()
+	Data_Ref_4096mV = models.FloatField()
+	Data_Ref_Ground = models.FloatField()
+	Data_REF_V_4096_Dark = models.FloatField()
+	Data_REF_V_4096_Light = models.FloatField()
+	Data_Sample_Flow = models.FloatField()
+	Data_SO2_Concentration = models.FloatField()
+	Data_Stability = models.FloatField()
+	Data_UV_Lamp = models.FloatField()
+
+	Data_MaxGust = models.FloatField()
+	Data_MaxGustDir = models.FloatField()
+	Data_WindDir = models.FloatField()
+	Data_WindSpeed = models.FloatField()	
+	Data_Pressure = models.FloatField()	
+	Data_DryA = models.FloatField()	
+	Data_GrassA = models.FloatField()	
+	Data_HumA = models.FloatField()	
+
+	Instrument_Supply_Voltage = models.FloatField()
+	Instrument_Supply_Current = models.FloatField()
+	Instrument_Temp = models.FloatField()
+	Instrument_Pressure = models.FloatField()
+	Instrument_Humidity = models.FloatField()
+	Instrument_Status = models.IntegerField()
+
+	objects = DataFrameManager()
+
+	class Meta:
+		ordering = ['Data_DateTime']
+
+class NOX_Data(models.Model):
+	Data_DateTime = models.DateTimeField('date published')	
+	Data_Box_Temp = models.FloatField()
+	Data_HVPS = models.FloatField()
+	Data_NO_Conc = models.FloatField()
+	Data_NO_Norm_Offset = models.FloatField()
+	Data_NO_Slope = models.FloatField()
+	Data_NO_Stability = models.FloatField()
+	Data_NO2_Conc = models.FloatField()
+	Data_NO2_Stability = models.FloatField()
+	Data_Norm_PMT = models.FloatField()
+	Data_NOX_Conc = models.FloatField()
+	Data_NOx_Norm_Offset = models.FloatField()
+	Data_NOx_Slope = models.FloatField()
+	Data_NOX_Stability = models.FloatField()
+	Data_PMT_Signal = models.FloatField()
+	Data_PMT_Temp = models.FloatField()
+	Data_Ref_4096mV = models.FloatField()
+	Data_Ref_Ground = models.FloatField()
+	Data_Rx_Cell_Press = models.FloatField()
+	Data_Rx_Cell_Temp = models.FloatField()
+	Data_Sample_Flow = models.FloatField()
+	Data_Sample_Press = models.FloatField()
+
+	Data_MaxGust = models.FloatField()
+	Data_MaxGustDir = models.FloatField()
+	Data_WindDir = models.FloatField()
+	Data_WindSpeed = models.FloatField()	
+	Data_Pressure = models.FloatField()	
+	Data_DryA = models.FloatField()	
+	Data_GrassA = models.FloatField()	
+	Data_HumA = models.FloatField()	
+
+	Instrument_Supply_Voltage = models.FloatField()
+	Instrument_Supply_Current = models.FloatField()
+	Instrument_Temp = models.FloatField()
+	Instrument_Pressure = models.FloatField()
+	Instrument_Humidity = models.FloatField()
+	Instrument_Status = models.IntegerField()
+
+	objects = DataFrameManager()
+
+	class Meta:
+		ordering = ['Data_DateTime']
+
+

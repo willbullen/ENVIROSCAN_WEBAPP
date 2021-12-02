@@ -11,7 +11,7 @@ from datetime import datetime, timezone, timedelta
 from dateutil.relativedelta import relativedelta
 from django.core import serializers
 from django.http import JsonResponse
-from django.core.serializers.json import DjangoJSONEncoder
+from django.core.serializers.json import DjangoJSONEncoder 
 from django.db.models import Count, DateTimeField
 from django.db.models.functions import Trunc
 from django_pandas.io import read_frame
@@ -84,15 +84,7 @@ def update_Picarro():
 
     PicarroData = {}    
 
-    ##################### WEATHER #####################
-    weather_qs = Weather_Data.objects.values('Data_DateTime', 'Data_MaxGust', 'Data_MaxGustDir', 'Data_MaxGustTime', 'Data_WindDir', 'Data_WindSpeed', 'Data_WindSpeed_Min', 'Data_Pressure', 'Data_DryA', 'Data_GrassA', 'Data_HumA').order_by('-id')[:10080]
-    weather_df = weather_qs.to_dataframe(index='Data_DateTime').sort_index(ascending=True)
-    weather_df_1w = weather_df.resample('H').mean().fillna(method = 'backfill').tail(168)
-    weather_df_12h = weather_df.resample('10Min').mean().fillna(method = 'backfill').tail(70)
-    weather_df_1d = weather_df.resample('20Min').mean().fillna(method = 'backfill').tail(70)
-    weather_df_1h = weather_df.resample('Min').mean().fillna(method = 'backfill').tail(62)
-    #PicarroData['Data_Weather_1Hour'] = json.loads(weather_df_1h.to_json(orient="table"))
-    print("--- WEATHER EXECUTION TIME: %s SECONDS ---" % (time.time() - start_timer))
+    ##################### TIME #######################    
     new_time = time.time()
     ##################################################
 
@@ -100,26 +92,20 @@ def update_Picarro():
     PicarroAlarmData = {}
     qs_alarms = Picarro_Alarms.objects.all().order_by('-id')
     df_alarms = qs_alarms.to_dataframe(index='Alarms_DateTime').sort_index(ascending=True)
-    #PicarroData['Data_Alarms'] = json.loads(df_alarms.to_json(orient="table"))
     PicarroAlarmData['Data_Alarms'] = json.loads(df_alarms.to_json(orient="table"))
     PicarroAlarmData['Data_Type'] = "update_alarms"
-
-    #async_to_sync(channel_layer.group_send)("valentia_picarro", {"type": "stream.message", 'message': PicarroAlarmData})
     async_send("valentia_picarro", PicarroAlarmData)
 
     print("--- ALARMS EXECUTION TIME: %s SECONDS ---" % (time.time() - new_time))
     new_time = time.time()
     ##################################################
 
-    ##################### LOGS #####################
+    ##################### LOGS #######################
     PicarroLogData = {}
     qs_logs = Picarro_Logs.objects.all().order_by('-id')
     df_logs = qs_logs.to_dataframe(index='Log_DateTime').sort_index(ascending=True)
-    #PicarroData['Data_Logs'] = json.loads(df_logs.to_json(orient="table"))
     PicarroLogData['Data_Logs'] = json.loads(df_logs.to_json(orient="table"))
     PicarroLogData['Data_Type'] = "update_logs"
-
-    #async_to_sync(channel_layer.group_send)("valentia_picarro", {"type": "stream.message", 'message': PicarroLogData})
     async_send("valentia_picarro", PicarroLogData)
 
     print("--- LOGS EXECUTION TIME: %s SECONDS ---" % (time.time() - new_time))
@@ -130,11 +116,8 @@ def update_Picarro():
     PicarroPropertyData = {}
     qs_properties = Picarro_Properties.objects.all().order_by('-id')
     df_properties = qs_properties.to_dataframe(index='Properties_DateCreated').sort_index(ascending=True)
-    #PicarroData['Data_Properties'] = json.loads(df_properties.to_json(orient="table"))
     PicarroPropertyData['Data_Properties'] = json.loads(df_properties.to_json(orient="table"))
     PicarroPropertyData['Data_Type'] = "update_properties"
-
-    #async_to_sync(channel_layer.group_send)("valentia_picarro", {"type": "stream.message", 'message': PicarroPropertyData})
     async_send("valentia_picarro", PicarroPropertyData)
 
     print("--- PROPERTIES EXECUTION TIME: %s SECONDS ---" % (time.time() - new_time))
@@ -145,11 +128,8 @@ def update_Picarro():
     PicarroPMData = {}
     qs_pm = Picarro_PM.objects.all().order_by('-id')
     df_pm = qs_pm.to_dataframe(index='PM_DateCreated').sort_index(ascending=True)
-    #PicarroData['Data_PM'] = json.loads(df_pm.to_json(orient="table"))
     PicarroPMData['Data_PM'] = json.loads(df_pm.to_json(orient="table"))
     PicarroPMData['Data_Type'] = "update_pm"
-
-    #async_to_sync(channel_layer.group_send)("valentia_picarro", {"type": "stream.message", 'message': PicarroPMData})
     async_send("valentia_picarro", PicarroPMData)
 
     print("--- PM EXECUTION TIME: %s SECONDS ---" % (time.time() - new_time))
@@ -160,11 +140,8 @@ def update_Picarro():
     PicarroJobData = {}
     qs_jobs = Picarro_Jobs.objects.all().order_by('-id')
     df_jobs = qs_jobs.to_dataframe(index='Jobs_DateCreated').sort_index(ascending=True)
-    #PicarroData['Data_Jobs'] = json.loads(df_jobs.to_json(orient="table"))
     PicarroJobData['Data_Jobs'] = json.loads(df_jobs.to_json(orient="table"))
     PicarroJobData['Data_Type'] = "update_jobs"
-
-    #async_to_sync(channel_layer.group_send)("valentia_picarro", {"type": "stream.message", 'message': PicarroJobData})
     async_send("valentia_picarro", PicarroJobData)
 
     print("--- JOBS EXECUTION TIME: %s SECONDS ---" % (time.time() - new_time))
@@ -172,50 +149,62 @@ def update_Picarro():
     ##################################################
 
     ##################### CHART DATA #####################    
-    qs = Picarro_Data.objects.values('Data_DateTime', 'Data_CO2', 'Data_CO2_Dry', 'Data_CO', 'Data_CH4', 'Data_CH4_Dry', 'Data_H2O', 'Data_MPVPosition', 'Data_OutletValve', 'Data_Solenoid_Valves', 'Instrument_Supply_Voltage', 'Instrument_Supply_Current', 'Instrument_Temp', 'Instrument_Pressure', 'Instrument_Humidity', 'Instrument_Status').order_by('-id')[:10080]    
+    qs = Picarro_Data.objects.values(
+        'Data_DateTime', 
+        'Data_CO2', 
+        'Data_CO2_Dry', 
+        'Data_CO', 
+        'Data_CH4', 
+        'Data_CH4_Dry', 
+        'Data_H2O', 
+        'Data_MPVPosition', 
+        'Data_OutletValve', 
+        'Data_Solenoid_Valves',
+
+        'Data_MaxGust', 
+        'Data_MaxGustDir',
+        'Data_WindDir', 
+        'Data_WindSpeed',
+        'Data_Pressure', 
+        'Data_DryA', 
+        'Data_GrassA', 
+        'Data_HumA',
+
+        'Instrument_Supply_Voltage', 
+        'Instrument_Supply_Current', 
+        'Instrument_Temp', 
+        'Instrument_Pressure', 
+        'Instrument_Humidity', 
+        'Instrument_Status'
+        ).order_by('-id')[:1440]
+        
     df = qs.to_dataframe(index='Data_DateTime').sort_index(ascending=True)
     # ------ WEEK --------
     PicarroChartData_Week = {}
     df_1w = df.resample('H').mean().fillna(method = 'backfill').tail(168)
-    df_1w = pd.concat([df_1w, weather_df_1w], axis=1)
-    #PicarroData['Data_Charts_1Week'] = json.loads(df_1w.to_json(orient="table"))
-
     PicarroChartData_Week['Data_Charts_1Week'] = json.loads(df_1w.to_json(orient="table"))
     PicarroChartData_Week['Data_Type'] = "update_chart_1week"
-    #async_to_sync(channel_layer.group_send)("valentia_picarro", {"type": "stream.message", 'message': PicarroChartData_Week})
     async_send("valentia_picarro", PicarroChartData_Week)
 
     # ------ 12 HOURS --------
     PicarroChartData_12Hours = {}
     df_12h = df.resample('10Min').mean().fillna(method = 'backfill').tail(70)
-    df_12h = pd.concat([df_12h, weather_df_12h], axis=1)
-    #PicarroData['Data_Charts_12Hours'] = json.loads(df_12h.to_json(orient="table"))
-
     PicarroChartData_12Hours['Data_Charts_12Hours'] = json.loads(df_12h.to_json(orient="table"))
     PicarroChartData_12Hours['Data_Type'] = "update_chart_12hour"
-    #async_to_sync(channel_layer.group_send)("valentia_picarro", {"type": "stream.message", 'message': PicarroChartData_12Hours})
     async_send("valentia_picarro", PicarroChartData_12Hours)
 
     # ------ HOUR --------    
     PicarroChartData_Hour = {}
-    df_1h = df.resample('Min').mean().fillna(method = 'backfill').tail(62)    
-    df_1h = pd.concat([df_1h, weather_df_1h], axis=1)
-    #PicarroData['Data_Charts_1Hour'] = json.loads(df_1h.to_json(orient="table"))
-
+    df_1h = df.resample('Min').mean().fillna(method = 'backfill').tail(62)
     PicarroChartData_Hour['Data_Charts_1Hour'] = json.loads(df_1h.to_json(orient="table"))
     PicarroChartData_Hour['Data_Type'] = "update_chart_1hour"
-    #async_to_sync(channel_layer.group_send)("valentia_picarro", {"type": "stream.message", 'message': PicarroChartData_Hour})
     async_send("valentia_picarro", PicarroChartData_Hour)
 
     # ------ DAY --------
     PicarroChartData_Day = {}
-    df_1d = df.resample('20Min').mean().fillna(method = 'backfill').tail(70)
-    df_1d = pd.concat([df_1d, weather_df_1d], axis=1)
-    #PicarroData['Data_Charts_1Day'] = json.loads(df_1d.to_json(orient="table"))
-
+    df_1d = df.resample('10Min').mean().fillna(method = 'backfill').tail(140)
     PicarroChartData_Day['Data_Charts_1Day'] = json.loads(df_1d.to_json(orient="table"))
     PicarroChartData_Day['Data_Type'] = "update_chart_1day"
-    #async_to_sync(channel_layer.group_send)("valentia_picarro", {"type": "stream.message", 'message': PicarroChartData_Day})    
     async_send("valentia_picarro", PicarroChartData_Day)
 
     print("--- PICARRO DATA EXECUTION TIME: %s SECONDS ---" % (time.time() - new_time))
@@ -223,11 +212,10 @@ def update_Picarro():
     ##################################################
     
     ##################### LAST RECORD #####################
-    PicarroLastRecordData = {}
-    dataPicarro_last = json.loads(serializers.serialize("json", [Picarro_Data.objects.last()]))[0]['fields']
-    dataWeather_last = json.loads(serializers.serialize("json", [Weather_Data.objects.last()]))[0]['fields']
 
-    PicarroData['Data'] = {**dataPicarro_last, **dataWeather_last}
+    dataPicarro_last = json.loads(serializers.serialize("json", [Picarro_Data.objects.last()]))[0]['fields']
+
+    PicarroData['Data'] = {**dataPicarro_last}
 
     PicarroData['Data_Type'] = 'update'    
     
@@ -242,16 +230,16 @@ def update_Picarro():
     PicarroData['Data']['Data_DataStatus'] = Data_DataStatus
     
     # CHECK STATUS #
-    balena = Balena()
-    credentials = {'username':'gh_willbullen', 'password':'B@ff1ed!2020'}
+    #balena = Balena()
+    #credentials = {'username':'gh_willbullen', 'password':'B@ff1ed!2020'}
     Data_NodeStatus = 0
-    try:
-        balena.auth.login(**credentials)
-        nodeData = balena.models.device.get('1cbccd93410c800062b0f9e3160e33e4')
-        if nodeData['api_heartbeat_state'] == 'Offline':
-            Data_NodeStatus = 1
-    except Exception as e:
-        print(e)
+    #try:
+    #    balena.auth.login(**credentials)
+    #    nodeData = balena.models.device.get('1cbccd93410c800062b0f9e3160e33e4')
+    #    if nodeData['api_heartbeat_state'] == 'Offline':
+    #        Data_NodeStatus = 1
+    #except Exception as e:
+    #    print(e)
 
     PicarroData['Data']['Data_NodeStatus'] = Data_NodeStatus
 
@@ -269,4 +257,3 @@ def update_Picarro():
     print("--- TOTAL EXECUTION TIME: %s SECONDS ---" % (time.time() - start_timer))
     
     async_send("valentia_picarro", PicarroData)
-    #async_to_sync(channel_layer.group_send)("valentia_picarro", {"type": "stream.message", 'message': PicarroData})

@@ -20,6 +20,8 @@ router.register(r'baloon_data', views.Baloon_Data_ViewSet)
 router.register(r'baloon_logs', views.Baloon_Logs_ViewSet)
 router.register(r'kraken_data', views.Kraken_Data_ViewSet)
 router.register(r'defib_data', views.Defib_Data_ViewSet)
+router.register(r'sox_data', views.SOX_Data_ViewSet)
+router.register(r'nox_data', views.NOX_Data_ViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
@@ -31,5 +33,7 @@ urlpatterns = [
     path('baloon/', include(router.urls)),
     path('kraken/', include(router.urls)),
     path('defib/', include(router.urls)),
+    path('nox/', include(router.urls)),
+    path('sox/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]

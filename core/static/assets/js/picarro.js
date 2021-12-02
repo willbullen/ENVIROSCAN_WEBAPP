@@ -601,7 +601,7 @@ $(document).ready(function () {
         }],
         series: [{
             pane: "windPane",
-            type: "bar",
+            type: "line",
             valueField: "Data_MaxGust",
             name: "GUSTS (m/s)",
         },{
@@ -673,7 +673,9 @@ $(document).ready(function () {
     });
 
     $("#chartWeather").mouseleave(function () {
-        setValues(Picarro_Data);
+        if (Picarro_Data != {}) {
+            setValues(Picarro_Data);
+        }
     });
     //################################# WEATHER CHART  ###################################
     
@@ -716,7 +718,7 @@ $(document).ready(function () {
             name: "H2O (%)",
         }, {
             pane: "ch4Pane",
-            type: "bar",
+            type: "line",
             valueField: "Data_CH4",
             name: "CH4 (ppm)",
         }],
@@ -830,7 +832,9 @@ $(document).ready(function () {
     });
 
     $("#chartPicarro").mouseleave(function () {
-        setValues(Picarro_Data);
+        if (Picarro_Data != {}) {
+            setValues(Picarro_Data);
+        }
     });
     //################################# PICARRO INSTRUMENT  ###################################
 
@@ -900,7 +904,9 @@ $(document).ready(function () {
                     $("#chartWeather").dxChart("option", "dataSource", Picarro_Data.Data_Charts_1Day.data);
                 }                
             } else {
-                setValues(Picarro_Data);
+                if (Picarro_Data != {}) {
+                    setValues(Picarro_Data);
+                }
             }
 
             picarroLoadPanel.hide();
@@ -987,6 +993,7 @@ $(document).ready(function () {
     });
 
     function setValues(dataArray) {
+        console.log(dataArray);
         var thisDateTime = new Date(dataArray.Data.Data_DateTime);
         thisDateTime = thisDateTime.toLocaleString();
 
