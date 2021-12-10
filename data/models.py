@@ -318,7 +318,7 @@ class SOX_Data(models.Model):
 	Data_PMT_Dark = models.FloatField()
 	Data_PMT_Signal = models.FloatField()
 	Data_PMT_Temp = models.FloatField()
-	Data_Pressure = models.FloatField()
+	Data_Sox_Pressure = models.FloatField()
 	Data_RCell_Temp = models.FloatField()
 	Data_Ref_4096mV = models.FloatField()
 	Data_Ref_Ground = models.FloatField()

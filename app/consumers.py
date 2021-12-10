@@ -4,7 +4,7 @@ from asgiref.sync import async_to_sync
 from channels.generic.websocket import AsyncWebsocketConsumer, SyncConsumer, WebsocketConsumer, JsonWebsocketConsumer
 
 from channels.db import database_sync_to_async
-from data.models import Picarro_Data, Picarro_Alarms, Picarro_Logs, Picarro_Properties, Picarro_PM, Picarro_Jobs
+from data.models import Picarro_Data, Picarro_Alarms, Picarro_Logs, Picarro_Properties, Picarro_PM, Picarro_Jobs, SOX_Data
 
 import time
 import threading
@@ -190,8 +190,16 @@ class PicarroConsumer(WebsocketConsumer):
 
 
 class SOXConsumer(WebsocketConsumer):
+
+    datetime_check_sox = ''
+
     def connect(self):
         self.room_group_name = 'sox'
+        # Join room group
+        async_to_sync(self.channel_layer.group_add)(
+            self.room_group_name,
+            self.channel_name
+        )
         self.accept()
 
     def disconnect(self, close_code):
@@ -200,7 +208,58 @@ class SOXConsumer(WebsocketConsumer):
     def receive(self, text_data):
         print('Message Received.............')
         jsonData = json.loads(text_data)
-        print(jsonData)        
+        print(jsonData)
+
+        if jsonData['Node'] == 'SOX':
+            if jsonData['Module'] == 'Heartbeat':                
+                if jsonData['Action'] == 'Update':
+                    # STATUS
+                    Data_NodeStatus = jsonData['Data_NodeStatus']
+                    Data_DataStatus = jsonData['Data_DataStatus']
+                    Data_InstrumentStatus = jsonData['Data_InstrumentStatus']
+                    if jsonData['Data_DateTime'] != self.datetime_check_sox:
+                        SOX_Data.objects.create(
+                            # DATETIME STAMP
+                            Data_DateTime = jsonData['Data_DateTime'],
+                            # SOX DATA VARIABLES
+                            Data_Box_Temp  = jsonData['Data_Box_Temp'],
+                            Data_HVPS  = jsonData['Data_HVPS'],
+                            Data_Lamp_Dark  = jsonData['Data_Lamp_Dark'],
+                            Data_Lamp_Ratio  = jsonData['Data_Lamp_Ratio'],
+                            Data_Norm_PMT  = jsonData['Data_Norm_PMT'],
+                            Data_Photo_Absolute  = jsonData['Data_Photo_Absolute'],
+                            Data_PMT  = jsonData['Data_PMT'],
+                            Data_PMT_Dark  = jsonData['Data_PMT_Dark'],
+                            Data_PMT_Signal  = jsonData['Data_PMT_Signal'],
+                            Data_PMT_Temp  = jsonData['Data_PMT_Temp'],
+                            Data_Sox_Pressure  = jsonData['Data_Sox_Pressure'],
+                            Data_RCell_Temp  = jsonData['Data_RCell_Temp'],
+                            Data_Ref_4096mV  = jsonData['Data_Ref_4096mV'],
+                            Data_Ref_Ground  = jsonData['Data_Ref_Ground'],
+                            Data_REF_V_4096_Dark  = jsonData['Data_REF_V_4096_Dark'],
+                            Data_REF_V_4096_Light  = jsonData['Data_REF_V_4096_Light'],
+                            Data_Sample_Flow  = jsonData['Data_Sample_Flow'],
+                            Data_SO2_Concentration  = jsonData['Data_SO2_Concentration'],
+                            Data_Stability  = jsonData['Data_Stability'],
+                            Data_UV_Lamp  = jsonData['Data_UV_Lamp'],       
+                            # METEORLOGICAL DATA VARIABLES
+                            Data_MaxGust = jsonData['Data_MaxGust'],
+                            Data_MaxGustDir = jsonData['Data_MaxGustDir'],
+                            Data_WindDir = jsonData['Data_WindDir'],
+                            Data_WindSpeed = jsonData['Data_WindSpeed'],	
+                            Data_Pressure = jsonData['Data_Pressure'],	
+                            Data_DryA = jsonData['Data_DryA'],	
+                            Data_GrassA = jsonData['Data_GrassA'],	
+                            Data_HumA = jsonData['Data_HumA'],	
+                            # INSTRUMENT DATA VARIABLES
+                            Instrument_Supply_Voltage = jsonData['Instrument_Supply_Voltage'],
+                            Instrument_Supply_Current = jsonData['Instrument_Supply_Current'],
+                            Instrument_Temp = jsonData['Instrument_Temp'],
+                            Instrument_Pressure = jsonData['Instrument_Pressure'],
+                            Instrument_Humidity = jsonData['Instrument_Humidity'],
+                            Instrument_Status = jsonData['Instrument_Status']
+                        )
+                    self.datetime_check_sox = jsonData['Data_DateTime']
 
     # Receive message from room_group
     def stream_message(self, event):

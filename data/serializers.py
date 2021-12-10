@@ -327,7 +327,7 @@ class SOX_Data_Serializer(serializers.HyperlinkedModelSerializer):
             'Data_PMT_Dark',
             'Data_PMT_Signal',
             'Data_PMT_Temp',
-            'Data_Pressure',
+            'Data_Sox_Pressure',
             'Data_RCell_Temp',
             'Data_Ref_4096mV',
             'Data_Ref_Ground',
