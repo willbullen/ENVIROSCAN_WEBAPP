@@ -1,29 +1,37 @@
-cryptography
-asgiref
-autopep8
+# ---- CORE ---- #
+cryptography==35.0.0
+asgiref==3.4.1
+autopep8==1.6.0
 Django==3.0
-pycodestyle
-pytz
-sqlparse
-Unipath
-dj-database-url
-python-decouple
-gunicorn
-whitenoise
-pyodbc
-django-mssql-backend-azure
-djangorestframework
-markdown
-channels
-channels_redis
-beatserver
-django-pandas
-balena-sdk
+pycodestyle==2.8.0
+pytz==2021.3
+Unipath==1.1
+dj-database-url==0.5.0
+python-decouple==3.5
+gunicorn==20.1.0
+whitenoise==5.3.0
+djangorestframework==3.12.4
+markdown==3.3.6
+django-pandas==0.6.6
 
-django-celery-beat
-#django-timezone-field
-gevent
-#celery
-redis
+# ---- SQL ---- #
+sqlparse==0.4.2
+#pyodbc==4.0.32
+#django-mssql-backend-azure==2.9.2
 
-django-mqtt-bridge
+# ---- REDIS ---- #
+redis==4.0.1
+asgi-redis==1.1.0
+
+# ---- CHANNELS ---- #
+channels==3.0.4
+channels-redis==3.3.1
+
+# ---- CELERY ---- #
+beatserver==0.0.7
+django-celery-beat==2.2.1
+gevent==21.8.0
+
+# ---- ARCHIVE ---- #
+#django-mqtt-bridge==0.3.7
+#balena-sdk==11.0.0

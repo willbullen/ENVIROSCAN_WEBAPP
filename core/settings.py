@@ -26,7 +26,7 @@ CORE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'a$c49ry*otht1cc+4qx9#5fh$r2i(p^84u0wg8c7(tnnmi5$e8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['localhost', 'enviroscan.azurewebsites.net', 'www.enviroscan.io', 'www.enviroscan-iot.com', '127.0.0.1']
 
@@ -82,16 +82,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-#ASGI_APPLICATION = 'core.asgi.application'
+ASGI_APPLICATION = 'core.asgi.application'
 
 ##########################################################################
 
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        #"BACKEND": "channels.layers.InMemoryChannelLayer",
         'CONFIG': {
-            "hosts": [('redis://h:Po0AuJljh9cvvuiUWFeqZFOpJde3SsCVHAzCaCbvplw=@enviroscan.redis.cache.windows.net:6379/0')],
+            "hosts": [('redis://:Po0AuJljh9cvvuiUWFeqZFOpJde3SsCVHAzCaCbvplw=@enviroscan.redis.cache.windows.net:6379/0')],
         },        
     },
 }
@@ -113,17 +112,24 @@ REST_FRAMEWORK = {
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'sql_server.pyodbc',
+#        'NAME': 'meteireann',
+#        'USER': 'PythonWebApp',
+#        'PASSWORD': 'a987REALLY#$%TRONGpa44w0rd',
+#        'HOST': 'enviroscan.database.windows.net',
+#        'PORT': '',
+#        'OPTIONS': {
+#            'driver': 'ODBC Driver 17 for SQL Server',
+#        },
+#    }
+#
+
 DATABASES = {
     'default': {
-        'ENGINE': 'sql_server.pyodbc',
-        'NAME': 'meteireann',
-        'USER': 'PythonWebApp',
-        'PASSWORD': 'a987REALLY#$%TRONGpa44w0rd',
-        'HOST': 'enviroscan.database.windows.net',
-        'PORT': '',
-        'OPTIONS': {
-            'driver': 'ODBC Driver 17 for SQL Server',
-        },
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(CORE_DIR, 'db.sqlite3'),
     }
 }
 

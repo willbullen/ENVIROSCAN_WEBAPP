@@ -25,6 +25,8 @@ DATABASES = {
     }
 } 
 
+python manage.py createsuperuser
+
 Python manage.py collectstatic
 
 pip3 install -r requirements.txt 
