@@ -2,7 +2,7 @@
 cryptography==35.0.0
 asgiref==3.4.1
 autopep8==1.6.0
-Django==3.0
+Django
 pycodestyle==2.8.0
 pytz==2021.3
 Unipath==1.1

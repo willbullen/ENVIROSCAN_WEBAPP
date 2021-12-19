@@ -16,7 +16,7 @@ from django.db.models import Count, DateTimeField
 from django.db.models.functions import Trunc
 from django_pandas.io import read_frame
 import subprocess, platform
-from balena import Balena
+#from balena import Balena
 import pandas as pd
 
 

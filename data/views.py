@@ -21,7 +21,7 @@ class Picarro_Logs_ViewSet(viewsets.ModelViewSet):
     serializer_class = Picarro_Logs_Serializer
 
 class Picarro_Alarms_ViewSet(viewsets.ModelViewSet):
-    queryset = Picarro_Alarms.objects.all().order_by('Log_DateTime')
+    queryset = Picarro_Alarms.objects.all().order_by('Alarms_DateTime')
     serializer_class = Picarro_Alarms_Serializer
 
 class Picarro_PM_ViewSet(viewsets.ModelViewSet):
