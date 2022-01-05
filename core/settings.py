@@ -26,7 +26,7 @@ CORE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'a$c49ry*otht1cc+4qx9#5fh$r2i(p^84u0wg8c7(tnnmi5$e8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', 'enviroscan.azurewebsites.net', 'www.enviroscan.io', 'www.enviroscan-iot.com', '127.0.0.1']
 
@@ -95,7 +95,7 @@ CHANNEL_LAYERS = {
     },
 }
 
-ASGI_APPLICATION = "core.asgi.application"
+#ASGI_APPLICATION = "core.asgi.application"
 
 ###################################################################################
 
@@ -112,26 +112,28 @@ REST_FRAMEWORK = {
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'sql_server.pyodbc',
-#        'NAME': 'meteireann',
-#        'USER': 'PythonWebApp',
-#        'PASSWORD': 'a987REALLY#$%TRONGpa44w0rd',
-#        'HOST': 'enviroscan.database.windows.net',
-#        'PORT': '',
-#        'OPTIONS': {
-#            'driver': 'ODBC Driver 17 for SQL Server',
-#        },
-#    }
-#
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(CORE_DIR, 'db.sqlite3'),
+        'ENGINE': 'mssql',
+        'NAME': 'meteireann',
+        'USER': 'PythonWebApp',
+        'PASSWORD': 'a987REALLY#$%TRONGpa44w0rd',
+        'HOST': 'enviroscan.database.windows.net',
+        'PORT': '',
+        'OPTIONS': {
+            'driver': 'ODBC Driver 17 for SQL Server',
+        },
     }
 }
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': os.path.join(CORE_DIR, 'db.sqlite3'),
+#    }
+#}
 
 
 # Password validation

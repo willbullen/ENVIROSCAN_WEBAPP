@@ -6,4 +6,5 @@ websocket_urlpatterns = [
     #re_path(r'ws/chat/(?P<room_name>\w+)/$', consumers.ChatConsumer.as_asgi()),
     re_path(r'^valentia_picarro/$', consumers.PicarroConsumer.as_asgi()),
     re_path(r'^sox/$', consumers.SOXConsumer.as_asgi()),
+    re_path(r'^nox/$', consumers.NOXConsumer.as_asgi()),
 ]

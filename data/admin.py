@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import SOX_Data, NOX_Data, Defib_Data, Picarro_Data, Picarro_Logs, Aethalometer_Data, Aethalometer_Logs, Weather_Data, Weather_Logs, Kraken_Data, Tucson_Data, Tucson_Logs, Baloon_Data, Baloon_Logs, Picarro_PM, Picarro_Jobs, Picarro_Properties, Picarro_Alarms, Picarro_Property_Types
+from .models import Nodes, Node_Location, Node_Type, SOX_Data, NOX_Data, Defib_Data, Picarro_Data, Picarro_Logs, Aethalometer_Data, Aethalometer_Logs, Weather_Data, Weather_Logs, Kraken_Data, Tucson_Data, Tucson_Logs, Baloon_Data, Baloon_Logs, Picarro_PM, Picarro_Jobs, Picarro_Properties, Picarro_Alarms, Picarro_Property_Types
 
 admin.site.register(Aethalometer_Data)
 admin.site.register(Aethalometer_Logs)
@@ -20,3 +20,6 @@ admin.site.register(Kraken_Data)
 admin.site.register(Defib_Data)
 admin.site.register(SOX_Data)
 admin.site.register(NOX_Data)
+admin.site.register(Nodes)
+admin.site.register(Node_Type)
+admin.site.register(Node_Location)

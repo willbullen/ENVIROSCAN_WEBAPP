@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 
-from .serializers import SOX_Data_Serializer, NOX_Data_Serializer, Defib_Data_Serializer, Picarro_Data_Serializer, Picarro_Logs_Serializer, Aethalometer_Data_Serializer, Aethalometer_Logs_Serializer, Weather_Data_Serializer, Weather_Logs_Serializer, Tucson_Data_Serializer, Tucson_Logs_Serializer, Baloon_Data_Serializer, Baloon_Logs_Serializer, Kraken_Data_Serializer, Picarro_PM_Serializer, Picarro_Jobs_Serializer, Picarro_Properties_Serializer, Picarro_Alarms_Serializer, Picarro_Property_Types_Serializer
-from .models import SOX_Data, NOX_Data, Defib_Data, Picarro_Data, Picarro_Logs, Weather_Data, Weather_Logs, Aethalometer_Data, Aethalometer_Logs, Kraken_Data, Tucson_Data, Tucson_Logs, Baloon_Data, Baloon_Logs, Picarro_PM, Picarro_Jobs, Picarro_Properties, Picarro_Alarms, Picarro_Property_Types
+from .serializers import Nodes_Serializer, Node_Type_Serializer, Node_Location_Serializer, SOX_Data_Serializer, NOX_Data_Serializer, Defib_Data_Serializer, Picarro_Data_Serializer, Picarro_Logs_Serializer, Aethalometer_Data_Serializer, Aethalometer_Logs_Serializer, Weather_Data_Serializer, Weather_Logs_Serializer, Tucson_Data_Serializer, Tucson_Logs_Serializer, Baloon_Data_Serializer, Baloon_Logs_Serializer, Kraken_Data_Serializer, Picarro_PM_Serializer, Picarro_Jobs_Serializer, Picarro_Properties_Serializer, Picarro_Alarms_Serializer, Picarro_Property_Types_Serializer
+from .models import Nodes, Node_Type, Node_Location, SOX_Data, NOX_Data, Defib_Data, Picarro_Data, Picarro_Logs, Weather_Data, Weather_Logs, Aethalometer_Data, Aethalometer_Logs, Kraken_Data, Tucson_Data, Tucson_Logs, Baloon_Data, Baloon_Logs, Picarro_PM, Picarro_Jobs, Picarro_Properties, Picarro_Alarms, Picarro_Property_Types
 
 class Aethalometer_Data_ViewSet(viewsets.ModelViewSet):
     queryset = Aethalometer_Data.objects.all().order_by('Data_DateTime')
@@ -79,3 +79,15 @@ class NOX_Data_ViewSet(viewsets.ModelViewSet):
 class SOX_Data_ViewSet(viewsets.ModelViewSet):
     queryset = SOX_Data.objects.all().order_by('Data_DateTime')
     serializer_class = SOX_Data_Serializer
+
+class Nodes_ViewSet(viewsets.ModelViewSet):
+    queryset = Nodes.objects.all().order_by('Node_Name')
+    serializer_class = Nodes_Serializer
+
+class Node_Location_ViewSet(viewsets.ModelViewSet):
+    queryset = Node_Location.objects.all().order_by('Location_Name')
+    serializer_class = Node_Location_Serializer
+
+class Node_Type_ViewSet(viewsets.ModelViewSet):
+    queryset = Node_Type.objects.all().order_by('Type_Name')
+    serializer_class = Node_Type_Serializer

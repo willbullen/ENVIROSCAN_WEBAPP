@@ -22,6 +22,9 @@ router.register(r'kraken_data', views.Kraken_Data_ViewSet)
 router.register(r'defib_data', views.Defib_Data_ViewSet)
 router.register(r'sox_data', views.SOX_Data_ViewSet)
 router.register(r'nox_data', views.NOX_Data_ViewSet)
+router.register(r'nodes', views.Nodes_ViewSet)
+router.register(r'node_location', views.Node_Location_ViewSet)
+router.register(r'node_type', views.Node_Type_ViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.

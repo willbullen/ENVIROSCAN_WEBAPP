@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import NOX_Data, SOX_Data, Defib_Data, Aethalometer_Data, Aethalometer_Logs, Picarro_Data, Picarro_Logs, Weather_Data, Weather_Logs, Kraken_Data, Tucson_Data, Tucson_Logs, Baloon_Data, Baloon_Logs, Picarro_PM, Picarro_Jobs, Picarro_Properties, Picarro_Alarms, Picarro_Property_Types
+from .models import NOX_Data, Node_Location, Node_Type, Nodes, SOX_Data, Defib_Data, Aethalometer_Data, Aethalometer_Logs, Picarro_Data, Picarro_Logs, Weather_Data, Weather_Logs, Kraken_Data, Tucson_Data, Tucson_Logs, Baloon_Data, Baloon_Logs, Picarro_PM, Picarro_Jobs, Picarro_Properties, Picarro_Alarms, Picarro_Property_Types
 
 class Aethalometer_Data_Serializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -398,4 +398,36 @@ class NOX_Data_Serializer(serializers.HyperlinkedModelSerializer):
             'Instrument_Pressure', 
             'Instrument_Humidity', 
             'Instrument_Status',
+        ]
+
+class Nodes_Serializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Nodes
+        fields = [
+            'id',
+            'Node_Name',
+            'Node_Description',
+            'Node_Ip',
+            'Type',
+            'Location',
+        ]
+
+class Node_Type_Serializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Node_Type
+        fields = [
+            'id',
+            'Type_Name',
+            'Type_Description',
+        ]
+
+class Node_Location_Serializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Node_Location
+        fields = [
+            'id',
+            'Location_Name',
+            'Location_Description',
+            'Location_Lat',
+            'Location_Lng',
         ]

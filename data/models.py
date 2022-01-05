@@ -30,12 +30,6 @@ class Aethalometer_Logs(models.Model):
 	class Meta:
 		ordering = ['Log_DateTime']
 
-
-
-
-
-
-
 class Picarro_Data(models.Model):
 	Data_DateTime = models.DateTimeField('date published')	
 	Data_CO2 = models.FloatField()
@@ -395,4 +389,38 @@ class NOX_Data(models.Model):
 	class Meta:
 		ordering = ['Data_DateTime']
 
+class Node_Location(models.Model):
+	Location_Name = models.CharField(max_length=50)
+	Location_Description = models.CharField(max_length=200)
+	Location_Lat = models.CharField(max_length=20)
+	Location_Lng = models.CharField(max_length=20)
+
+	def __str__(self):
+		return self.Location_Name
+
+	class Meta:
+		ordering = ['Location_Name']
+
+class Node_Type(models.Model):
+	Type_Name = models.CharField(max_length=50)
+	Type_Description = models.CharField(max_length=200)
+
+	def __str__(self):
+		return self.Type_Name
+
+	class Meta:
+		ordering = ['Type_Name']
+
+class Nodes(models.Model):
+	Node_Name = models.CharField(max_length=50)
+	Node_Description = models.CharField(max_length=200)
+	Node_Ip = models.CharField(max_length=20)
+	Type = models.ForeignKey(Node_Type, on_delete=models.CASCADE)
+	Location = models.ForeignKey(Node_Location, on_delete=models.CASCADE)
+
+	def __str__(self):
+		return self.Node_Name
+
+	class Meta:
+		ordering = ['Node_Name']
 
