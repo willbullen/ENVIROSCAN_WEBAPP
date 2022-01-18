@@ -1,57 +1,635 @@
+var startWebSocket = function () {
+    var picarroSocket;
+    var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+    var ws_path = ws_scheme + '://' + window.location.host + '/valentia_picarro/';
+    picarroSocket = new WebSocket(ws_path);
+
+    picarroSocket.onmessage = function (e) {
+        ws_Data = JSON.parse(e.data).message;
+        console.log(ws_Data);
+        // SET CHART VALUES
+        if (ws_Data.Data_Type == 'update_chart_1day') {
+            $("#metRadarChart").dxPolarChart("option", "dataSource", ws_Data.Data_Charts_1Day.data);
+            $("#weatherChart").dxChart("option", "dataSource", ws_Data.Data_Charts_1Day.data);
+            $("#picarroChart").dxChart("option", "dataSource", ws_Data.Data_Charts_1Day.data);
+
+            $("#SSC_Voltage").dxChart("option", "dataSource", ws_Data.Data_Charts_1Day.data);
+            var maxMinAvg_Voltage = maxMinAvg(ws_Data.Data_Charts_1Day.data, "Instrument_Supply_Voltage");
+            $("#Voltage_Max").text(maxMinAvg_Voltage[0].toFixed(2));
+            $("#Voltage_Min").text(maxMinAvg_Voltage[1].toFixed(2));
+            $("#Voltage_Ave").text(maxMinAvg_Voltage[2].toFixed(2));
+
+            $("#SSC_CavityTemp").dxChart("option", "dataSource", ws_Data.Data_Charts_1Day.data);
+            var maxMinAvg_CavityTemp = maxMinAvg(ws_Data.Data_Charts_1Day.data, "Data_Cavity_Temp");
+            $("#CavityTemp_Max").text(maxMinAvg_CavityTemp[0].toFixed(2));
+            $("#CavityTemp_Min").text(maxMinAvg_CavityTemp[1].toFixed(2));
+            $("#CavityTemp_Ave").text(maxMinAvg_CavityTemp[2].toFixed(2));
+
+            $("#SSC_WarmBoxTemp").dxChart("option", "dataSource", ws_Data.Data_Charts_1Day.data);
+            var maxMinAvg_WarmBoxTemp = maxMinAvg(ws_Data.Data_Charts_1Day.data, "Data_WarmBoxTemp");
+            $("#WarmBoxTemp_Max").text(maxMinAvg_WarmBoxTemp[0].toFixed(2));
+            $("#WarmBoxTemp_Min").text(maxMinAvg_WarmBoxTemp[1].toFixed(2));
+            $("#WarmBoxTemp_Ave").text(maxMinAvg_WarmBoxTemp[2].toFixed(2));
+
+            $("#SSC_CavityPres").dxChart("option", "dataSource", ws_Data.Data_Charts_1Day.data);
+            var maxMinAvg_CavityPres = maxMinAvg(ws_Data.Data_Charts_1Day.data, "Data_CavityPressure");
+            $("#CavityPres_Max").text(maxMinAvg_CavityPres[0].toFixed(2));
+            $("#CavityPres_Min").text(maxMinAvg_CavityPres[1].toFixed(2));
+            $("#CavityPres_Ave").text(maxMinAvg_CavityPres[2].toFixed(2));
+        }
+        // SET STATIC VALUES
+        if (ws_Data.Data_Type == 'update') {
+            var thisDateTime = new Date(ws_Data.Data.Data_DateTime);
+            var thisTime = new Date(ws_Data.Data.Data_DateTime).toLocaleTimeString();
+            var thisDate = new Date(ws_Data.Data.Data_DateTime).toLocaleDateString();
+            thisDateTime = thisDateTime.toLocaleString();
+
+            var endDate = new Date();
+            var startDate = new Date(ws_Data.HeartBeat);
+            var timeDiff = (endDate.getTime() - startDate.getTime()) / 1000;
+            if (timeDiff > 70) {
+
+            }
+
+            if (ws_Data.Data.Data_NodeStatus == 0) {
+                $('#Node_Status').addClass('bg-theme');
+            } else {
+                $('#Node_Status').addClass('bg-danger');
+            }
+
+            if (ws_Data.Data.Data_DataStatus == 0) {
+                $('#Data_Status').addClass('bg-theme');
+            } else {
+                $('#Data_Status').addClass('bg-danger');
+            }
+
+            if (ws_Data.Data.Data_InstrumentStatus == 0) {
+                $('#Asset_Status').addClass('bg-theme');
+            } else {
+                $('#Asset_Status').addClass('bg-danger');
+            }
+
+            $("#Time").text(thisTime);
+            $("#Date").text(thisDate);
+
+            $("#CO2_Value").text(ws_Data.Data.Data_CO2.toFixed(1));
+            $("#CO2_Time").text(thisTime);
+            $("#CO2_Date").text(thisDate);
+            $("#CO2_Bar").attr('style', 'width: ' + getPercentage(ws_Data.Data.Data_CO2, 420) + '%');
+
+            $("#CO_Value").text(ws_Data.Data.Data_CO.toFixed(1));
+            $("#CO_Time").text(thisTime);
+            $("#CO_Date").text(thisDate);
+            $("#CO_Bar").attr('style', 'width: ' + getPercentage(ws_Data.Data.Data_CO, 2) + '%');
+
+            $("#H2O_Value").text(ws_Data.Data.Data_H2O.toFixed(1));
+            $("#H2O_Time").text(thisTime);
+            $("#H2O_Date").text(thisDate);
+            $("#H2O_Bar").attr('style', 'width: ' + getPercentage(ws_Data.Data.Data_H2O, 4) + '%');
+
+            $("#CH4_Value").text(ws_Data.Data.Data_CH4.toFixed(1));
+            $("#CH4_Time").text(thisTime);
+            $("#CH4_Date").text(thisDate);
+            $("#CH4_Bar").attr('style', 'width: ' + getPercentage(ws_Data.Data.Data_CH4, 3) + '%');
+
+            $("#Voltage_Value").text(ws_Data.Data.Instrument_Supply_Voltage.toFixed(1));
+            $("#Voltage_Time").text(thisTime);
+            $("#Voltage_Date").text(thisDate);
+            $("#Voltage_Bar").attr('style', 'width: ' + getPercentage(ws_Data.Data.Instrument_Supply_Voltage, 26) + '%');
+
+            $("#CavityTemp_Value").text(ws_Data.Data.Data_Cavity_Temp.toFixed(1));
+            $("#CavityTemp_Time").text(thisTime);
+            $("#CavityTemp_Date").text(thisDate);
+            $("#CavityTemp_Bar").attr('style', 'width: ' + getPercentage(ws_Data.Data.Data_Cavity_Temp, 45) + '%');
+
+            $("#CavityPres_Value").text(ws_Data.Data.Data_CavityPressure.toFixed(1));
+            $("#CavityPres_Time").text(thisTime);
+            $("#CavityPres_Date").text(thisDate);
+            $("#CavityPres_Bar").attr('style', 'width: ' + getPercentage(ws_Data.Data.Data_CavityPressure, 1) + '%');
+
+            $("#WarmBoxTemp_Value").text(ws_Data.Data.Data_WarmBoxTemp.toFixed(1));
+            $("#WarmBoxTemp_Time").text(thisTime);
+            $("#WarmBoxTemp_Date").text(thisDate);
+            $("#WarmBoxTemp_Bar").attr('style', 'width: ' + getPercentage(ws_Data.Data.Data_WarmBoxTemp, 45) + '%');
+
+            $("#Misc_1_Heading").text("CO2 DRY");
+            $("#Misc_1_Value").text(ws_Data.Data.Data_CO2_Dry.toFixed(1));
+            $("#Misc_1_Time").text(thisTime);
+            $("#Misc_1_Date").text(thisDate);
+
+            $("#Wind_Value").text(ws_Data.Data.Data_WindSpeed.toFixed(1));
+            $("#Gust_Value").text(ws_Data.Data.Data_MaxGust.toFixed(1));
+            $("#Dir_Value").text(ws_Data.Data.Data_WindDir.toFixed(1));
+            $("#Temp_Value").text(ws_Data.Data.Data_GrassA.toFixed(1));
+            $("#Hum_Value").text(ws_Data.Data.Data_HumA.toFixed(1));
+            $("#Pres_Value").text(ws_Data.Data.Data_Pressure.toFixed(1));
+
+            // MISC VALUES
+            var jsonDataVis = [{
+                data: ws_Data.Data.Data_CO2_Dry.toFixed(1),
+                heading: "CO2 DRY",
+                data_type: "PPM",
+                time: thisTime,
+                date: thisDate,
+                type: "MISC",
+            }, {
+                data: ws_Data.Data.Data_CH4_Dry.toFixed(1),
+                heading: "CH4 DRY",
+                data_type: "PPM",
+                time: thisTime,
+                date: thisDate,
+                type: "MISC",
+            }, {
+                data: ws_Data.Data.Data_Amb_P.toFixed(1),
+                heading: "AMBIENT PRESSURE",
+                data_type: "Pa",
+                time: thisTime,
+                date: thisDate,
+                type: "MISC",
+            }, {
+                data: ws_Data.Data.Data_DasTemp.toFixed(1),
+                heading: "DAS TEMPERATURE",
+                data_type: "C",
+                time: thisTime,
+                date: thisDate,
+                type: "MISC",
+            }, {
+                data: ws_Data.Data.Data_EtalonTemp.toFixed(1),
+                heading: "ETALON TEMPERATURE",
+                data_type: "C",
+                time: thisTime,
+                date: thisDate,
+                type: "MISC",
+            }, {
+                data: ws_Data.Data.Data_Solenoid_Valves.toFixed(1),
+                heading: "SOLENOID VALVE",
+                data_type: "",
+                time: thisTime,
+                date: thisDate,
+                type: "MISC",
+            }, {
+                data: ws_Data.Data.Data_MPVPosition.toFixed(1),
+                heading: "MPV POSITION",
+                data_type: "",
+                time: thisTime,
+                date: thisDate,
+                type: "MISC",
+            }, {
+                data: ws_Data.Data.Data_OutletValve.toFixed(1),
+                heading: "OUTLET VALVE",
+                data_type: "",
+                time: thisTime,
+                date: thisDate,
+                type: "MISC",
+            }, {
+                data: ws_Data.Data.Data_Species.toFixed(1),
+                heading: "SPECIES",
+                data_type: "",
+                time: thisTime,
+                date: thisDate,
+                type: "MISC",
+            }, {
+                data: ws_Data.Data.Data_h2o_reported.toFixed(1),
+                heading: "H2O REPORTED",
+                data_type: "",
+                time: thisTime,
+                date: thisDate,
+                type: "MISC",
+            }, ];
+            generateDataVis(jsonDataVis);
+
+            // GENERATE TABLE
+            var jsonNetworkStatusTable = [{
+                header: [{
+                    title: "ASSETS",
+                    class: "w-50",
+                }, {
+                    title: "LOCATION",
+                    class: "w-25 text-end",
+                }, {
+                    title: "STATUS",
+                    class: "w-25 text-end",
+                }],
+                tr: [{
+                    class: "text-theme",
+                    td: [{
+                        id: "sox",
+                        title: "SOX",
+                        class: "text-end",
+                    }, {
+                        id: "sox",
+                        title: "COS",
+                        class: "text-end",
+                    }, {
+                        id: "sox",
+                        title: "OK",
+                        class: "text-end",
+                    }]
+                }, {
+                    class: "text-theme",
+                    td: [{
+                        id: "nox",
+                        title: "NOX",
+                        class: "text-end",
+                    }, {
+                        id: "nox",
+                        title: "COS",
+                        class: "text-end",
+                    }, {
+                        id: "nox",
+                        title: "OK",
+                        class: "text-end",
+                    }]
+                }, {
+                    class: "text-danger fw-bold",
+                    td: [{
+                        id: "nox",
+                        title: "PICARRO G2401",
+                        class: "text-end",
+                    }, {
+                        id: "nox",
+                        title: "VIOS",
+                        class: "text-end",
+                    }, {
+                        id: "nox",
+                        title: "ERR",
+                        class: "text-end",
+                    }]
+                }],
+            }, ];
+        }
+    };
+
+    picarroSocket.onclose = function (e) {
+        console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+    };
+
+    picarroSocket.onerror = function (err) {
+        console.error(err);
+    };
+};
+
+function generateDataVis(jsonData) {
+    for (var i = 0, len = jsonData.length; i < len; ++i) {
+        if (jsonData[i]["type"] == "MISC") {
+            $("#Misc_" + i + "_Heading").text(jsonData[i]["heading"]);
+            $("#Misc_" + i + "_Value").text(jsonData[i]["data"]);
+            $("#Misc_" + i + "_Time").text(jsonData[i]["time"]);
+            $("#Misc_" + i + "_Date").text(jsonData[i]["date"]);
+            $("#Misc_" + i + "_Date_Type").text(jsonData[i]["date_type"]);
+        }
+    }
+}
+// GENERATE TABLE
+function generateTable(jsonData) {
+    html = "<table class='w-100 small mb-0 text-truncate text-white text-opacity-60'>";
+    // GENERATE HEADER
+    html += "<thead><tr class='text-white text-opacity-75'>";
+    headers = jsonData['header'];
+    for (var i = 0, ilen = headers.length; i < ilen; ++i) {
+        html += "<th class='" + headers[i]["class"] + "'>" + headers[i]["title"] + "</th>";
+    }
+    html += "</tr></thead>";
+    // GENERATE CONTENT
+    html += "<tbody>";
+    tr = jsonData['tr'];
+    for (var j = 0, jlen = tr.length; j < jlen; ++j) {
+        html += "<tr class='text-theme'>";
+        td = tr['td'];
+        for (var k = 0, klen = td.length; k < klen; ++k) {
+            html += "<td class='" + td[i]["class"] + "'><a href='#' id='" + td[i]["id"] + "' class='text-decoration-none'>" + td[i]["title"] + "</a></td>";
+        }
+        html += "</tr>";
+    }
+    html += "</tbody></table>";
+    return html;
+}
+
 $(document).ready(function () {
-
-    var Picarro_Chart_1Hour_Data = {};
-    var Picarro_Chart_12Hours_Data = {};
-    var Picarro_Chart_1Day_Data = {};
-    var Picarro_Chart_1Week_Data = {};
-    var Picarro_Data = {};
-    var Picarro_Chart_Timespan = '1h';
-
-    $('#side_dropdown a').click(function (e) {
-        console.log("TAB SELECTED: " + $(this).attr('href'));
-        e.preventDefault();
-        $("#sidebar_text").text($(this).attr('href'));
-        $(this).removeClass('active');
-        $(this).tab('show');
+    $("#testo").click(function () {
+        $('#heading').text("The Heading Changed");
+        console.log("testo");
     });
+});
+
+function getPercentage(act, max) {
+    return (act / max) * 100;
+}
+
+function maxMinAvg(arr, column) {
+    var max = arr[0][column];
+    var min = arr[0][column];
+    var sum = arr[0][column];
+    for (var i = 1; i < arr.length; i++) {
+        if (arr[i][column] > max) {
+            max = arr[i][column];
+        }
+        if (arr[i][column] < min) {
+            min = arr[i][column];
+        }
+        sum = sum + arr[i][column];
+    }
+    var avg = sum / arr.length;
+    return [max, min, avg];
+}
 
 
-    //############################################################################### 
-    // 
-    //                                 CONTROLS START
-    // 
-    //############################################################################### 
 
-    //################################# INSTRUMENT CHART  ###################################
+// ARRAY SMALL SINGLE CHART
+var charts_SSC = [];
+var json_SSC = [{
+        id: "Voltage",
+        pane_name: "voltagePane",
+        series_pane: "voltagePane",
+        series_type: "line",
+        series_valueField: "Instrument_Supply_Voltage",
+        series_name: "Voltage (V)",
+        series_color: app.color.theme,
+        valueAxis_pane: "voltagePane",
+        size_height: 120,
+    },
+    {
+        id: "CavityTemp",
+        pane_name: "cavitytempPane",
+        series_pane: "cavitytempPane",
+        series_type: "line",
+        series_valueField: "Data_Cavity_Temp",
+        series_name: "Cavity Temp (C)",
+        series_color: app.color.theme,
+        valueAxis_pane: "cavitytempPane",
+        size_height: 120,
+    },
+    {
+        id: "WarmBoxTemp",
+        pane_name: "warmboxtempPane",
+        series_pane: "warmboxtempPane",
+        series_type: "line",
+        series_valueField: "Data_WarmBoxTemp",
+        series_name: "Warm Box Temp (C)",
+        series_color: app.color.theme,
+        valueAxis_pane: "warmboxtempPane",
+        size_height: 120,
+    },
+    {
+        id: "CavityPres",
+        pane_name: "cavitypressurePane",
+        series_pane: "cavitypressurePane",
+        series_type: "line",
+        series_valueField: "Data_Cavity_Temp",
+        series_name: "Cavity Pressure (Pa)",
+        series_color: app.color.theme,
+        valueAxis_pane: "cavitypressurePane",
+        size_height: 120,
+    }
+];
 
-    //################################# INSTRUMENT CHART  ###################################
+// BUILD SMALL SINGLE CHART
+function createSSC(params) {
+    var element_SSC = document.getElementById('SSC_' + params.id);
+    charts_SSC[params.id] = new DevExpress.viz.dxChart(element_SSC, {
+        commonSeriesSettings: {
+            argumentField: "Data_DateTime",
+            argumentType: "datetime",
+            label: {
+                format: "shortTime"
+            },
+            point: {
+                visible: false,
+            }
+        },
+        loadingIndicator: {
+            enabled: true,
+        },
+        size: {
+            height: params.size_height,
+        },
+        panes: [{
+            name: params.pane_name,
+        }],
+        series: [{
+            pane: params.series_pane,
+            type: params.series_type,
+            valueField: params.series_valueField,
+            name: params.series_name,
+            color: params.series_color,
+        }],
+        valueAxis: [{
+            pane: params.valueAxis_pane,
+            grid: {
+                visible: true
+            },
+            constantLines: [{
+                value: 220,
+                color: "#fc3535",
+                dashStyle: "dash",
+                width: 1,
+                label: {
+                    visible: false
+                }
+            }],
+        }],
+        argumentAxis: {
+            argumentType: "datetime",
+        },
+        tooltip: {
+            enabled: true,
+            shared: true,
+            argumentFormat: "shortDateShortTime",
+            contentTemplate: function (pointInfo, element) {
+                var print = function (label, value) {
+                    var span = $("<span>", {
+                        "class": "tooltip-label",
+                        text: label
+                    });
+                    element.append($("<div>", {
+                        text: value
+                    }).prepend(span));
+                };
+
+                var picarroData = {};
+                picarroData.Data = pointInfo.points[0].point.data;
+                //setTextValues(picarroData);
+                print("", pointInfo.argumentText);
+                print("Voltave: ", picarroData.Data.Data_CO2.toFixed(3));
+            }
+        },
+        crosshair: {
+            enabled: true,
+            horizontalLine: {
+                visible: false
+            }
+        },
+        "export": {
+            enabled: false
+        },
+        legend: {
+            visible: false,
+            horizontalAlignment: "center",
+            verticalAlignment: "top"
+        }
+    });
+}
+
+var renderTableData = function () {
+    //-- SET DATA SOURCE
+    var dataSet = [
+        {asset: "SOX", location: "COS", status: "OK", asset_status: "OK", data_status: "OK", node_status: "ERR", server_status: "OK", coords: [51.80, -10.17]},
+        {asset: "NOX", location: "COS", status: "OK", asset_status: "OK", data_status: "OK", node_status: "OK", server_status: "OK", coords: [51.89, -10.42]},
+        {asset: "PICARRO G2401", location: "VIOS", status: "ERR", asset_status: "ERR", data_status: "OK", node_status: "OK", server_status: "OK", coords: [51.83, -10.20]},
+        {asset: "BLACK CARBON", location: "VIOS", status: "OK", asset_status: "OK", data_status: "ERR", node_status: "OK", server_status: "OK", coords: [51.91, -10.21]},
+        {asset: "UPS", location: "VIOS", status: "OK", asset_status: "OK", data_status: "ERR", node_status: "OK", server_status: "ERR", coords: [51.84, -10.30]},
+    ];
+    console.log(app.color.danger);
+    //-- GENERATE MAP
+    $('#ireland-map').vectorMap({
+        map: '26counties',
+        normalizeFunction: 'polynomial',
+        hoverOpacity: 0.5,
+        hoverColor: false,
+        zoomOnScroll: false,
+        series: {
+            regions: [{
+                normalizeFunction: 'polynomial'
+            }],
+            markers: [{
+                attribute: 'fill',
+                scale: {
+                    'ERR': '#FF0000',
+                    'OK': app.color.theme,
+                },
+                values: dataSet.reduce(function(p, c, i){ p[i] = c.status; return p;},{}),
+            }]
+        },
+        focusOn: {
+            x: 0.5,
+            y: 0.5,
+            scale: 1
+        },
+        regionStyle: {
+            initial: {
+                fill: app.color.white,
+                "fill-opacity": 0.35,
+                stroke: 'none',
+                "stroke-width": 0.4,
+                "stroke-opacity": 1
+            },
+            hover: {
+                "fill-opacity": 0.5
+            }
+        },
+        backgroundColor: 'transparent',
+        markers: dataSet.map(function(h){ return {name: h.asset, latLng: h.coords};}),
+        onRegionClick: function (event, code, isSelected,  selectedRegions) {
+            console.log(code);
+            $('#ireland-map').vectorMap('get','mapObject').setFocus({region: code});
+        },
+        onMarkerClick: function (event, index) {
+            console.log(dataSet[index]["status"]);
+            //$('#ireland-map').vectorMap('get','mapObject').setFocus({marker: index});
+        },
+    });
+    //-- GENERATE TABLES
+    var networkStatusTable = $('#networkStatusTable').DataTable({
+        searching: false,
+        ordering: true,
+        info: false,
+        lengthChange: false,
+        paging: false,
+        //responsive: true,
+        data: dataSet.map(function(h){ return [h.asset, h.location, h.status, h.asset_status, h.data_status, h.node_status, h.server_status];}),
+        columns: [{
+                title: "ASSETS"
+            },
+            {
+                title: "LOCATION"
+            },
+            {
+                title: "STATUS"
+            },
+        ],
+        createdRow: function (row, data, dataIndex) {
+            if (data[2] == 'ERR') {
+                $(row).addClass('text-danger');
+            }
+        }
+    });
+    $('#networkStatusTable tbody').on('click', 'tr', function () {
+        var data = networkStatusTable.row(this).data();
+        $("#headingNetworkStatus").text(data[0] + ' - ' + data[1]);
+        //-- SET ASSET STATUS
+        if (data[3] == 'ERR') {
+            $("#assetNetworkStatus").addClass('text-danger');
+        } else {
+            $("#assetNetworkStatus").removeClass('text-danger');
+        }
+        $("#assetNetworkStatus").text(data[3]);
+        //-- SET DATA STATUS
+        if (data[4] == 'ERR') {
+            $("#dataNetworkStatus").addClass('text-danger');
+        } else {
+            $("#dataNetworkStatus").removeClass('text-danger');
+        }
+        $("#dataNetworkStatus").text(data[4]);
+        //-- SET NODE STATUS
+        if (data[5] == 'ERR') {
+            $("#nodeNetworkStatus").addClass('text-danger');
+        } else {
+            $("#nodeNetworkStatus").removeClass('text-danger');
+        }
+        $("#nodeNetworkStatus").text(data[5]);
+        //-- SET SERVER STATUS
+        if (data[6] == 'ERR') {
+            $("#serverNetworkStatus").addClass('text-danger');
+        } else {
+            $("#serverNetworkStatus").removeClass('text-danger');
+        }
+        $("#serverNetworkStatus").text(data[6]);
+    });
+    $('#networkStatusTable tbody').on('mouseenter', 'td', function () {
+        var rowIdx = networkStatusTable.cell(this).index().row;
+        //$(networkStatusTable.row().nodes()).removeClass('fw-bold');
+        //$(networkStatusTable.row(rowIdx).nodes()).addClass('fw-bold');
+    });
+};
+
+var renderMaps = function () {
 
 
+};
+
+var renderCharts = function () {
 
     //################################# RADAR  ################################### 
-    var radar = $("#radarChart").dxPolarChart({
+    var radar = $("#metRadarChart").dxPolarChart({
         commonSeriesSettings: {
             type: "scatter"
         },
-        series: [
-            {
-                valueField: "Data_MaxGust", 
-                name: "Gusts (m/s)", 
-                color: "#FF0000",
-                argumentField: 'Data_MaxGustDir'
+        loadingIndicator: {
+            enabled: true
+        },
+        size: {
+            height: 200,
+        },
+        series: [{
+                valueField: "Data_MaxGust",
+                name: "Gusts (m/s)",
+                color: app.color.white,
+                argumentField: 'Data_MaxGustDir',
+                size: 0.5
             },
             {
-                valueField: "Data_WindSpeed", 
-                name: "Wind Speed (m/s)", 
-                color: "#5f8b95",
-                argumentField: 'Data_WindDir'
+                valueField: "Data_WindSpeed",
+                name: "Wind Speed (m/s)",
+                color: app.color.theme,
+                argumentField: 'Data_WindDir',
+                size: 0.5
             }
         ],
         argumentAxis: {
             inverted: false,
             startAngle: 0,
             tickInterval: 30,
-            period: 360,            
+            period: 360,
         },
         tooltip: {
             enabled: true,
@@ -72,7 +650,7 @@ $(document).ready(function () {
                 picarroData.Data = pointInfo.points[0].point.data;
                 //console.log(picarroData);
 
-                setTextValues(picarroData);
+                //setTextValues(picarroData);
 
                 print("", picarroData.Data.Data_DateTime);
                 print("WIND SPEED: ", picarroData.Data.Data_WindSpeed.toFixed(3));
@@ -83,509 +661,9 @@ $(document).ready(function () {
             visible: false,
         }
     }).dxPolarChart("instance");
-    //################################# RADAR  ################################### 
-
-    //################################# LOCATION  ###################################    
-    
-    var map = $("#mapPicarro").dxMap({
-        provider: "bing",
-        zoom: 14,
-        height: 500,
-        width: "100%",
-        controls: true,
-        markers: [{
-                location: "40.7825, -73.966111"
-            }, {
-                location: [40.755833, -73.986389]
-            }, {
-                location: { lat: 40.753889, lng: -73.981389}
-            }, {
-                location: "Brooklyn Bridge,New York,NY"
-            }
-        ],
-        routes: [
-            {
-                weight: 6,
-                color: "blue",
-                opacity: 0.5,
-                mode: "",
-                locations: [
-                    [40.782500, -73.966111],
-                    [40.755833, -73.986389],
-                    [40.753889, -73.981389],
-                    "Brooklyn Bridge,New York,NY"
-                ]
-    
-            }
-        ]
-    }).dxMap("instance");
-    //################################# LOCATION  ################################### 
-
-    //################################# LOADING PANEL  ###################################
-    var picarroLoadPanel = $(".picarroLoadPanel").dxLoadPanel({
-        shadingColor: "black",
-        position: {
-            of: "#collapsePicarro"
-        },
-        visible: true,
-        showIndicator: true,
-        showPane: true,
-        shading: true,
-        closeOnOutsideClick: false,
-    }).dxLoadPanel("instance");
-    //################################# LOADING PANEL  ###################################
-
-    //################################# PROPERTIES  ###################################
-    var propertyType = [{
-        "ID": 1,
-        "Type": "Switch"
-    }, {
-        "ID": 2,
-        "Type": "Location"
-    }, {
-        "ID": 3,
-        "Type": "Button"
-    }, {
-        "ID": 4,
-        "Type": "Slider"
-    }, {
-        "ID": 5,
-        "Type": "Value"
-    }, {
-        "ID": 6,
-        "Type": "DropDown"
-    }, {
-        "ID": 7,
-        "Type": "Text Area"
-    }, {
-        "ID": 8,
-        "Type": "Date"
-    }, {
-        "ID": 9,
-        "Type": "Select Box"
-    }, {
-        "ID": 10,
-        "Type": "Calendar"
-    }, {
-        "ID": 11,
-        "Type": "Number Box"
-    }];
-    $("#gridPicarroProperties").dxDataGrid({
-        //Properties_DateCreated
-        //Properties_Type
-        //Properties_Title
-        //Properties_Value
-
-        showColumnLines: false,
-        showRowLines: true,
-        rowAlternationEnabled: true,
-        showBorders: false,
-        keyExpr: "id",
-        editing: {
-            mode: "cell",
-            allowUpdating: true
-        },
-        columns: [{
-                dataField: "Properties_DateCreated",
-                caption: "Date Created",
-                dataType: "date",
-                visible: false
-            },
-            {
-                dataField: "Properties_Title",
-                caption: "Title"
-            },
-            {
-                dataField: "Properties_Type",
-                caption: "Type",
-                lookup: {
-                    dataSource: propertyType,
-                    displayExpr: "Type",
-                    valueExpr: "ID"
-                },
-                visible: false
-            },
-            {
-                dataField: "Properties_Value",
-                caption: "Value"
-            },
-            {
-                dataField: "id",
-                visible: false
-            }
-        ],
-        onRowUpdated: function (e) {
-            console.log("Properties Row Updated");
-            var data = e.data;
-            data.Node = 'Picarro';
-            data.Module = 'Properties';
-            data.Action = 'Update';
-            console.log(data);
-            picarroSocket.send(JSON.stringify(data));
-        },
-        onRowInserted: function (e) {
-            console.log("Properties Row Inserted");
-            var data = e.data;
-            data.Node = 'Picarro';
-            data.Module = 'Properties';
-            data.Action = 'Add';
-            console.log(data);
-            picarroSocket.send(JSON.stringify(data));
-        },
-        scrolling: {
-            rowRenderingMode: 'virtual'
-        },
-        paging: {
-            pageSize: 5
-        }
-    });
-    //################################# PROPERTIES  ###################################    
-
-    //################################# LOGS  ###################################
-    $("#gridPicarroLogs").dxDataGrid({
-        showColumnLines: false,
-        showRowLines: true,
-        rowAlternationEnabled: true,
-        showBorders: false,
-        keyExpr: "id",
-        scrolling: {
-            rowRenderingMode: 'virtual'
-        },
-        paging: {
-            pageSize: 5
-        }
-    });
-    //################################# LOGS  ###################################
-
-    //################################# ALARMS  ###################################
-    $("#gridPicarroAlarms").dxDataGrid({
-        showColumnLines: false,
-        showRowLines: true,
-        rowAlternationEnabled: true,
-        showBorders: false,
-        keyExpr: "id",
-        scrolling: {
-            rowRenderingMode: 'virtual'
-        },
-        paging: {
-            pageSize: 5
-        }
-    });
-    //################################# ALARMS  ###################################
-
-    //################################# PLANNED MAINTENANCE  ###################################
-    var pmType = [{
-        "ID": 1,
-        "Type": "Hours"
-    }, {
-        "ID": 2,
-        "Type": "Days"
-    }, {
-        "ID": 3,
-        "Type": "Months"
-    }, {
-        "ID": 4,
-        "Type": "Years"
-    }, {
-        "ID": 5,
-        "Type": "One-Time"
-    }];
-    var pmEnabled = [{
-        "ID": 0,
-        "State": "No"
-    }, {
-        "ID": 1,
-        "State": "Yes"
-    }];
-    $("#gridPicarroPM").dxDataGrid({
-        showColumnLines: false,
-        showRowLines: true,
-        rowAlternationEnabled: true,
-        showBorders: false,
-        keyExpr: "id",
-        editing: {
-            mode: "popup",
-            allowUpdating: true,
-            allowAdding: true,
-            allowViewing: true,
-            popup: {
-                title: "Planned Maintenance",
-                showTitle: true,
-                width: 700,
-                height: 525
-            },
-            form: {
-                items: [{
-                    itemType: "group",
-                    colCount: 1,
-                    colSpan: 2,
-                    items: [
-                        "PM_Title", 
-                        "PM_Type", 
-                        "PM_Time_Interval",
-                        "PM_Task",
-                        {
-                            dataField: "PM_Enabled",
-                            caption: "Enabled",
-                            editorType: "dxSwitch",
-                            colSpan: 2,
-                        },
-                        {
-                            dataField: "PM_Details",
-                            caption: "Details",
-                            editorType: "dxTextArea",
-                            colSpan: 2,
-                            editorOptions: {
-                                height: 100
-                            },
-                        },
-                        {
-                            dataField: "PM_Kwargs",
-                            caption: "Kwargs",
-                            editorType: "dxTextArea",
-                            colSpan: 2,
-                            editorOptions: {
-                                height: 30
-                            },
-                        },
-                        {
-                            dataField: "PM_Args",
-                            caption: "Args",
-                            editorType: "dxTextArea",
-                            colSpan: 2,
-                            editorOptions: {
-                                height: 30
-                            },
-                        }
-                    ]
-                }]
-            }
-        },
-        columns: [{
-                dataField: "PM_DateCreated",
-                caption: "Date Created",
-                dataType: "date",
-                visible: false
-            },
-            {
-                dataField: "PM_Title",
-                caption: "Title"
-            },
-            {
-                dataField: "PM_Type",
-                caption: "Type",
-                lookup: {
-                    dataSource: pmType,
-                    displayExpr: "Type",
-                    valueExpr: "ID"
-                }
-            },
-            {
-                dataField: "PM_Time_Interval",
-                caption: "Interval"
-            },
-            {
-                dataField: "PM_Enabled",
-                caption: "Enabled",
-                lookup: {
-                    dataSource: pmEnabled,
-                    displayExpr: "State",
-                    valueExpr: "ID"
-                }
-            },
-            {
-                dataField: "PM_Details",
-                visible: false
-            },
-            {
-                dataField: "id",
-                visible: false
-            }
-        ],
-        onRowUpdated: function (e) {
-            console.log("PM Row Updated");
-            var data = e.data;
-            data.Node = 'Picarro';
-            data.Module = 'PM';
-            data.Action = 'Update';
-            console.log(data);
-            picarroSocket.send(JSON.stringify(data));
-        },
-        onRowInserted: function (e) {
-            console.log("PM Row Inserted");
-            var data = e.data;
-            data.Node = 'Picarro';
-            data.Module = 'PM';
-            data.Action = 'Add';
-            console.log(data);
-            picarroSocket.send(JSON.stringify(data));
-        },
-        scrolling: {
-            rowRenderingMode: 'virtual'
-        },
-        paging: {
-            pageSize: 5
-        }
-    });
-
-    //################################# JOBS  ###################################
-    var jobsType = [{
-        "ID": 0,
-        "Type": "PM"
-    }, {
-        "ID": 1,
-        "Type": "Once Off"
-    }];
-    var jobsStatus = [{
-        "ID": 0,
-        "Status": "Incomplete"
-    }, {
-        "ID": 1,
-        "Status": "Completed"
-    }, {
-        "ID": 2,
-        "Status": "Archived"
-    }];
-    $("#gridPicarroJobs").dxDataGrid({
-        showColumnLines: false,
-        showRowLines: true,
-        rowAlternationEnabled: true,
-        showBorders: false,
-        keyExpr: "id",
-        editing: {
-            mode: "popup",
-            allowUpdating: true,
-            allowAdding: false,
-            popup: {
-                title: "Jobs",
-                showTitle: true,
-                width: 700,
-                height: 525
-            },
-            form: {
-                items: [{
-                    itemType: "group",
-                    colCount: 1,
-                    colSpan: 2,
-                    items: [
-                        "Jobs_Title", 
-                        "Jobs_Type",
-                        "Jobs_Status", 
-                        {
-                            dataField: "Jobs_Description",
-                            editorType: "dxTextArea",
-                            colSpan: 2,
-                            editorOptions: {
-                                height: 100
-                            }
-                        }, 
-                        {
-                            dataField: "Jobs_Notes",
-                            editorType: "dxTextArea",
-                            colSpan: 2,
-                            editorOptions: {
-                                height: 100
-                            }
-                        }
-                    ]
-                }]
-            }
-        },
-        columns: [{
-                dataField: "Jobs_DateCreated",
-                caption: "Date Created",
-                dataType: "date",
-                visible: false
-            },
-            {
-                dataField: "Jobs_Title",
-                caption: "Title"
-            },
-            {
-                dataField: "Jobs_DateToBeCompleted",
-                caption: "Date Due"
-            },            
-            {
-                dataField: "Jobs_Type",
-                caption: "Type",
-                lookup: {
-                    dataSource: jobsType,
-                    displayExpr: "Type",
-                    valueExpr: "ID"
-                }
-            },
-            {
-                dataField: "Jobs_Status",
-                caption: "Status",
-                lookup: {
-                    dataSource: jobsStatus,
-                    displayExpr: "Status",
-                    valueExpr: "ID"
-                }
-            },
-            {
-                type: "buttons",
-                buttons: [{
-                    name: "save",
-                    cssClass: "my-class"
-                }, "edit", "delete"]
-            },
-            {
-                dataField: "Jobs_Details",
-                visible: false
-            },
-            {
-                dataField: "Jobs_Notes",
-                visible: false
-            },
-            {
-                dataField: "id",
-                visible: false
-            }
-        ],
-        onEditorPrepared: function (e) {
-            if (e.dataField == 'Jobs_Type') {
-                console.log(e);
-                console.log(e.row.isNewRow);
-                e.editorOptions.disabled = e.row.isNewRow;
-            }
-        },
-        onInitNewRow: function(e) {  
-            e.component.__itemVisible = true;  
-        },  
-        onEditingStart: function(e) {  
-            e.component.__itemVisible = false;  
-        },
-        onRowUpdated: function (e) {
-            console.log("Jobs Row Updated");
-            var data = e.data;
-            data.Node = 'Picarro';
-            data.Module = 'Jobs';
-            data.Action = 'Update';
-            console.log(data);
-            picarroSocket.send(JSON.stringify(data));
-        },
-        onRowInserted: function (e) {
-            console.log("Jobs Row Inserted");
-            var data = e.data;
-            data.Node = 'Picarro';
-            data.Module = 'Jobs';
-            data.Action = 'Add';
-            console.log(data);
-            picarroSocket.send(JSON.stringify(data));
-        },
-        scrolling: {
-            rowRenderingMode: 'virtual'
-        },
-        paging: {
-            pageSize: 5
-        }
-    });
-    //################################# JOBS  ###################################
-
+    //################################# RADAR  ###################################
     //################################# WEATHER CHART  ###################################
-    var weatherChart = $("#chartWeather").dxChart({
-        dataSource: Picarro_Chart_1Hour_Data,
+    var weatherChart = $("#weatherChart").dxChart({
         commonSeriesSettings: {
             argumentField: "Data_DateTime",
             argumentType: "datetime",
@@ -594,7 +672,13 @@ $(document).ready(function () {
             },
             point: {
                 visible: false
-            }
+            },
+        },
+        loadingIndicator: {
+            enabled: true
+        },
+        size: {
+            height: 150,
         },
         panes: [{
             name: "windPane"
@@ -604,11 +688,13 @@ $(document).ready(function () {
             type: "line",
             valueField: "Data_MaxGust",
             name: "GUSTS (m/s)",
-        },{
+            color: app.color.theme
+        }, {
             pane: "windPane",
             type: "line",
             valueField: "Data_WindSpeed",
             name: "WIND (m/s)",
+            color: app.color.white
         }],
         valueAxis: [{
             pane: "windPane",
@@ -649,7 +735,7 @@ $(document).ready(function () {
                 picarroData.Data = pointInfo.points[0].point.data;
                 //console.log(picarroData);
 
-                setTextValues(picarroData);
+                //setTextValues(picarroData);
 
                 print("", pointInfo.argumentText);
                 print("WIND SPEED: ", picarroData.Data.Data_WindSpeed.toFixed(3));
@@ -672,16 +758,14 @@ $(document).ready(function () {
         }
     });
 
-    $("#chartWeather").mouseleave(function () {
-        if (Picarro_Data != {}) {
-            setValues(Picarro_Data);
+    $("#weatherChart").mouseleave(function () {
+        if (ws_Data != {}) {
+            //setValues(ws_Data);
         }
     });
     //################################# WEATHER CHART  ###################################
-    
     //################################# PICARRO INSTRUMENT  ###################################
-    var picarroChart = $("#chartPicarro").dxChart({        
-        dataSource: Picarro_Chart_1Hour_Data,
+    var picarroChart = $("#picarroChart").dxChart({
         commonSeriesSettings: {
             argumentField: "Data_DateTime",
             argumentType: "datetime",
@@ -691,6 +775,12 @@ $(document).ready(function () {
             point: {
                 visible: false
             }
+        },
+        loadingIndicator: {
+            enabled: true
+        },
+        size: {
+            height: 370,
         },
         panes: [{
             name: "co2Pane"
@@ -706,21 +796,25 @@ $(document).ready(function () {
             type: "line",
             valueField: "Data_CO2",
             name: "CO2 (ppm)",
+            color: app.color.theme
         }, {
             pane: "coPane",
             type: "line",
             valueField: "Data_CO",
             name: "CO (ppm)",
-        }, {
-            pane: "h2oPane",
-            type: "line",
-            valueField: "Data_H2O",
-            name: "H2O (%)",
+            color: app.color.theme
         }, {
             pane: "ch4Pane",
             type: "line",
             valueField: "Data_CH4",
             name: "CH4 (ppm)",
+            color: app.color.theme
+        }, {
+            pane: "h2oPane",
+            type: "line",
+            valueField: "Data_H2O",
+            name: "H2O (%)",
+            color: app.color.theme
         }],
         valueAxis: [{
             pane: "co2Pane",
@@ -751,12 +845,12 @@ $(document).ready(function () {
                 }
             }],
         }, {
-            pane: "h2oPane",
+            pane: "ch4Pane",
             grid: {
                 visible: true
             },
             constantLines: [{
-                value: 1.4,
+                value: 1.94,
                 color: "#fc3535",
                 dashStyle: "dash",
                 width: 1,
@@ -765,12 +859,12 @@ $(document).ready(function () {
                 }
             }],
         }, {
-            pane: "ch4Pane",
+            pane: "h2oPane",
             grid: {
                 visible: true
             },
             constantLines: [{
-                value: 1.94,
+                value: 1.4,
                 color: "#fc3535",
                 dashStyle: "dash",
                 width: 1,
@@ -803,7 +897,7 @@ $(document).ready(function () {
                 picarroData.Data = pointInfo.points[0].point.data;
                 //console.log(picarroData);
 
-                setTextValues(picarroData);
+                //setTextValues(picarroData);
 
                 print("", pointInfo.argumentText);
                 print("CO2: ", picarroData.Data.Data_CO2.toFixed(3));
@@ -811,7 +905,7 @@ $(document).ready(function () {
                 print("H2O: ", picarroData.Data.Data_H2O.toFixed(3));
                 print("CH4: ", picarroData.Data.Data_CH4.toFixed(3));
 
-                //var weatherChart = $("#chartWeather").dxChart("instance");
+                //var weatherChart = $("#weatherChart").dxChart("instance");
                 //weatherChart.crosshair.show();
             }
         },
@@ -831,253 +925,36 @@ $(document).ready(function () {
         }
     });
 
-    $("#chartPicarro").mouseleave(function () {
-        if (Picarro_Data != {}) {
-            setValues(Picarro_Data);
+    $("#picarroChart").mouseleave(function () {
+        if (ws_Data != {}) {
+            //setValues(ws_Data);
         }
     });
     //################################# PICARRO INSTRUMENT  ###################################
+    //################################# SSC CHART  ###################################
+    // SETUP SMALL SINGLE CHART
+    for (var i = 0, len = json_SSC.length; i < len; ++i) {
+        var jdata = json_SSC[i];
 
+        if (document.getElementById('SSC_' + jdata.id) != null) {
+            createSSC(jdata);
+        }
 
-
-
-
-
-
-    //############################################################################### 
-    // 
-    //                                 LOGIC START
-    // 
-    //###############################################################################
-
-    var picarroSocket;
-
-    function picarroConnect() {
-        var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-        var ws_path = ws_scheme + '://' + window.location.host + '/valentia_picarro/';
-        picarroSocket = new WebSocket(ws_path);
-        picarroSocket.onmessage = function (e) {
-            //console.log(e.data.message);
-            Picarro_Data = JSON.parse(e.data).message;
-            console.log(Picarro_Data);
-
-            if (Picarro_Data.Data_Type == 'update_pm') {
-                $("#gridPicarroPM").dxDataGrid("option", "dataSource", Picarro_Data.Data_PM.data);
-                //$("#gridPicarroJobs").dxDataGrid("option", "dataSource", Picarro_Data.Data_Jobs.data);
-                //DevExpress.ui.notify("Planned Maintenance Updated succesfully", "success", 600);
-            } else if (Picarro_Data.Data_Type == 'update_jobs') {
-                $("#gridPicarroJobs").dxDataGrid("option", "dataSource", Picarro_Data.Data_Jobs.data);
-                //DevExpress.ui.notify("Jobs Updated succesfully", "success", 600);
-            } else if (Picarro_Data.Data_Type == 'update_properties') {
-                $("#gridPicarroProperties").dxDataGrid("option", "dataSource", Picarro_Data.Data_Properties.data);
-                //DevExpress.ui.notify("Properties Updated succesfully", "success", 600);
-            } else if (Picarro_Data.Data_Type == 'update_alarms') {
-                $("#gridPicarroAlarms").dxDataGrid("option", "dataSource", Picarro_Data.Data_Alarms.data);
-            } else if (Picarro_Data.Data_Type == 'update_logs') {
-                $("#gridPicarroLogs").dxDataGrid("option", "dataSource", Picarro_Data.Data_Logs.data);
-            } else if (Picarro_Data.Data_Type == 'update_chart_1week') {
-                Picarro_Chart_1Week_Data = Picarro_Data.Data_Charts_1Week.data;
-                if (Picarro_Chart_Timespan == '1w') {                   
-                    $("#chartPicarro").dxChart("option", "dataSource", Picarro_Data.Data_Charts_1Week.data);
-                    $("#radarChart").dxPolarChart("option", "dataSource", Picarro_Data.Data_Charts_1Week.data);
-                    $("#chartWeather").dxChart("option", "dataSource", Picarro_Data.Data_Charts_1Week.data);
-                }                
-            } else if (Picarro_Data.Data_Type == 'update_chart_12hour') {
-                Picarro_Chart_12Hours_Data = Picarro_Data.Data_Charts_12Hours.data;
-                if (Picarro_Chart_Timespan == '12h') {
-                    $("#chartPicarro").dxChart("option", "dataSource", Picarro_Data.Data_Charts_12Hours.data);
-                    $("#radarChart").dxPolarChart("option", "dataSource", Picarro_Data.Data_Charts_12Hours.data);
-                    $("#chartWeather").dxChart("option", "dataSource", Picarro_Data.Data_Charts_12Hours.data);
-                }                
-            } else if (Picarro_Data.Data_Type == 'update_chart_1hour') {
-                Picarro_Chart_1Hour_Data = Picarro_Data.Data_Charts_1Hour.data;
-                if (Picarro_Chart_Timespan == '1h') {
-                    $("#chartPicarro").dxChart("option", "dataSource", Picarro_Data.Data_Charts_1Hour.data);
-                    $("#radarChart").dxPolarChart("option", "dataSource", Picarro_Data.Data_Charts_1Hour.data);
-                    $("#chartWeather").dxChart("option", "dataSource", Picarro_Data.Data_Charts_1Hour.data);
-                }                
-            } else if (Picarro_Data.Data_Type == 'update_chart_1day') {
-                Picarro_Chart_1Day_Data = Picarro_Data.Data_Charts_1Day.data;
-                if (Picarro_Chart_Timespan == '1d') {                    
-                    $("#chartPicarro").dxChart("option", "dataSource", Picarro_Data.Data_Charts_1Day.data);
-                    $("#radarChart").dxPolarChart("option", "dataSource", Picarro_Data.Data_Charts_1Day.data);
-                    $("#chartWeather").dxChart("option", "dataSource", Picarro_Data.Data_Charts_1Day.data);
-                }                
-            } else {
-                if (Picarro_Data != {}) {
-                    setValues(Picarro_Data);
-                }
-            }
-
-            picarroLoadPanel.hide();
-
-        };
-        picarroSocket.onclose = function (e) {
-            console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
-            picarroLoadPanel.show();
-            setTimeout(function () {
-                picarroConnect();
-            }, 1000);
-        };
-        picarroSocket.onerror = function (err) {
-            console.error(err);
-            picarroLoadPanel.show();
-        };
     }
-    picarroConnect();
+    //################################# SSC CHART  ###################################
+};
 
-    setInterval(function () {
-        if (picarroSocket.readyState === WebSocket.CLOSED) {
-            console.log('Picarro WebSocket Closed !!!!!!');
-            $('#picarro_websocket_status').removeClass('badge-outline-success');
-            $('#picarro_websocket_status').removeClass('badge-outline-danger');
-            $('#picarro_websocket_status').addClass('badge-outline-danger');
-        } else {
-            $('#picarro_websocket_status').removeClass('badge-outline-success');
-            $('#picarro_websocket_status').removeClass('badge-outline-danger');
-            $('#picarro_websocket_status').addClass('badge-outline-success');
-            console.log('Picarro WebSocket OK');
-        }
-        var endDate = new Date();
-        var startDate   = new Date(Picarro_Data.HeartBeat);
-        var timeDiff = (endDate.getTime() - startDate.getTime()) / 1000;
-        if (timeDiff > 70) {
-            $('#picarro_node_status').removeClass('badge-outline-success');
-            $('#picarro_data_status').removeClass('badge-outline-success');
-            $('#picarro_instrument_status').removeClass('badge-outline-success');
-            $('#dashboard_bgtask_status').removeClass('badge-outline-success');
+/* Controller
+------------------------------------------------ */
+$(document).ready(function () {
+    startWebSocket();
+    renderCharts();
+    renderMaps();
+    renderTableData();
 
-            $('#picarro_node_status').removeClass('badge-outline-danger');
-            $('#picarro_data_status').removeClass('badge-outline-danger');
-            $('#picarro_instrument_status').removeClass('badge-outline-danger');
-            $('#dashboard_bgtask_status').removeClass('badge-outline-danger');
-
-            $('#picarro_node_status').addClass('badge-outline-danger');
-            $('#picarro_data_status').addClass('badge-outline-danger');
-            $('#picarro_instrument_status').addClass('badge-outline-danger');
-            $('#dashboard_bgtask_status').addClass('badge-outline-danger'); 
-        } else {
-            $('#dashboard_bgtask_status').removeClass('badge-outline-danger');
-            $('#dashboard_bgtask_status').removeClass('badge-outline-success');
-            $('#dashboard_bgtask_status').addClass('badge-outline-success');            
-        }
-        console.log(timeDiff);
-    }, 10000);
-
-    $("#picarro_chart_switch_1H").click(function () {
-        Picarro_Chart_Timespan = '1h';
-        $("#chartPicarro").dxChart("option", "dataSource", Picarro_Chart_1Hour_Data);
-        $("#radarChart").dxPolarChart("option", "dataSource", Picarro_Chart_1Hour_Data);
-        $("#chartWeather").dxChart("option", "dataSource", Picarro_Chart_1Hour_Data);
+    $(document).on('theme-reload', function () {
+        $('[data-render="apexchart"], #chart-server, #world-map').empty();
+        renderCharts();
+        renderMaps();
     });
-
-    $("#picarro_chart_switch_12H").click(function () {
-        Picarro_Chart_Timespan = '12h';
-        $("#chartPicarro").dxChart("option", "dataSource", Picarro_Chart_12Hours_Data);
-        $("#radarChart").dxPolarChart("option", "dataSource", Picarro_Chart_12Hours_Data);
-        $("#chartWeather").dxChart("option", "dataSource", Picarro_Chart_12Hours_Data);
-    });
-
-    $("#picarro_chart_switch_1D").click(function () {
-        Picarro_Chart_Timespan = '1d';
-        $("#chartPicarro").dxChart("option", "dataSource", Picarro_Chart_1Day_Data);
-        $("#radarChart").dxPolarChart("option", "dataSource", Picarro_Chart_1Day_Data);
-        $("#chartWeather").dxChart("option", "dataSource", Picarro_Chart_1Day_Data);
-    });
-
-    $("#picarro_chart_switch_1W").click(function () {
-        Picarro_Chart_Timespan = '1w';
-        $("#chartPicarro").dxChart("option", "dataSource", Picarro_Chart_1Week_Data);
-        $("#radarChart").dxPolarChart("option", "dataSource", Picarro_Chart_1Week_Data);
-        $("#chartWeather").dxChart("option", "dataSource", Picarro_Chart_1Week_Data);
-    });
-
-    function setValues(dataArray) {
-        console.log(dataArray);
-        var thisDateTime = new Date(dataArray.Data.Data_DateTime);
-        thisDateTime = thisDateTime.toLocaleString();
-
-        $('#picarro_node_status').removeClass('badge-outline-success');
-        $('#picarro_node_status').removeClass('badge-outline-danger');
-        if (dataArray.Data.Data_NodeStatus == 1) {
-            $('#picarro_node_status').addClass('badge-outline-danger');
-        } else if (dataArray.Data.Data_NodeStatus == 0) {
-            $('#picarro_node_status').addClass('badge-outline-success');
-        }
-
-        $('#picarro_data_status').removeClass('badge-outline-success');
-        $('#picarro_data_status').removeClass('badge-outline-danger');
-        if (dataArray.Data.Data_DataStatus == 1) {
-            $('#picarro_data_status').addClass('badge-outline-danger');
-        } else if (dataArray.Data.Data_DataStatus == 0) {
-            $('#picarro_data_status').addClass('badge-outline-success');
-        }
-
-        $('#picarro_instrument_status').removeClass('badge-outline-success');
-        $('#picarro_instrument_status').removeClass('badge-outline-danger');
-        if (dataArray.Data.Data_InstrumentStatus == 1) {
-            $('#picarro_instrument_status').addClass('badge-outline-danger');
-        } else if (dataArray.Data.Data_InstrumentStatus == 0) {
-            $('#picarro_instrument_status').addClass('badge-outline-success');
-        }
-
-        setTextValues(dataArray);
-    }
-
-    function setTextValues(dataArray) {
-        var thisDateTime = new Date(dataArray.Data.Data_DateTime);
-        var thisTime = new Date(dataArray.Data.Data_DateTime).toLocaleTimeString();
-        var thisDate = new Date(dataArray.Data.Data_DateTime).toLocaleDateString();
-        thisDateTime = thisDateTime.toLocaleString();
-
-        $("#Time").text(thisTime);
-        $("#Date").text(thisDate);
-
-        $("#CO2_Value").text(dataArray.Data.Data_CO2.toFixed(3));
-        $("#CO2_Time").text(thisTime);
-        $("#CO2_Date").text(thisDate);
-
-        $("#CO_Value").text(dataArray.Data.Data_CO.toFixed(3));
-        $("#CO_Time").text(thisTime);
-        $("#CO_Date").text(thisDate);
-
-        $("#H2O_Value").text(dataArray.Data.Data_H2O.toFixed(3));
-        $("#H2O_Time").text(thisTime);
-        $("#H2O_Date").text(thisDate);
-
-        $("#CH4_Value").text(dataArray.Data.Data_CH4.toFixed(3));
-        $("#CH4_Time").text(thisTime);
-        $("#CH4_Date").text(thisDate);
-
-        $("#Wind_Value").text(dataArray.Data.Data_WindSpeed.toFixed(3));
-        $("#Gust_Value").text(dataArray.Data.Data_MaxGust.toFixed(3));
-        $("#Dir_Value").text(dataArray.Data.Data_WindDir.toFixed(3));
-        $("#Temp_Value").text(dataArray.Data.Data_GrassA.toFixed(3));
-        $("#Hum_Value").text(dataArray.Data.Data_HumA.toFixed(3));
-        $("#Pres_Value").text(dataArray.Data.Data_Pressure.toFixed(3));
-
-        $("#CH4_Dry_List_Value").text(dataArray.Data.Data_CH4_Dry.toFixed(3));
-        $("#CO2_Dry_List_Value").text(dataArray.Data.Data_CO2_Dry.toFixed(3));
-        $("#DateTime_List_Value").text(thisDateTime);        
-        $("#OutletValve_List_Value").text(dataArray.Data.Data_OutletValve.toFixed(3));
-        $("#Instrument_Humidity_List_Value").text(dataArray.Data.Instrument_Humidity.toFixed(3));
-        $("#Instrument_Pressure_List_Value").text(dataArray.Data.Instrument_Pressure.toFixed(3));
-        $("#Instrument_Status_List_Value").text(dataArray.Data.Instrument_Status);
-        $("#Instrument_Supply_Current_List_Value").text(dataArray.Data.Instrument_Supply_Current.toFixed(3));
-        $("#Instrument_Supply_Voltage_List_Value").text(dataArray.Data.Instrument_Supply_Voltage.toFixed(3));
-        $("#Instrument_Temp_List_Value").text(dataArray.Data.Instrument_Temp.toFixed(3));
-        $("#id_List_Value").text(dataArray.Data.id);
-
-        if (dataArray.Data.Data_MPVPosition > 1) {
-            document.getElementById("MPVPosition_List_Value").checked = true;
-        } else {
-            document.getElementById("MPVPosition_List_Value").checked = false;
-        }
-        if (dataArray.Data.Data_Solenoid_Valves > 1) {
-            document.getElementById("Solenoid_Valves_List_Value").checked = true;
-        } else {
-            document.getElementById("Solenoid_Valves_List_Value").checked = false;
-        }
-    }
-
 });

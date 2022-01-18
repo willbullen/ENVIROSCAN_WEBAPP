@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import NOX_Data, Node_Location, Node_Type, Nodes, SOX_Data, Defib_Data, Aethalometer_Data, Aethalometer_Logs, Picarro_Data, Picarro_Logs, Weather_Data, Weather_Logs, Kraken_Data, Tucson_Data, Tucson_Logs, Baloon_Data, Baloon_Logs, Picarro_PM, Picarro_Jobs, Picarro_Properties, Picarro_Alarms, Picarro_Property_Types
+from .models import Node_Category, Clients, NOX_Data, Node_Location, Node_Type, Nodes, SOX_Data, Defib_Data, Aethalometer_Data, Aethalometer_Logs, Picarro_Data, Picarro_Logs, Weather_Data, Weather_Logs, Kraken_Data, Tucson_Data, Tucson_Logs, Baloon_Data, Baloon_Logs, Picarro_PM, Picarro_Jobs, Picarro_Properties, Picarro_Alarms, Picarro_Property_Types
 
 class Aethalometer_Data_Serializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -39,6 +39,7 @@ class Picarro_Data_Serializer(serializers.HyperlinkedModelSerializer):
         model = Picarro_Data
         fields = [
             'id', 
+            'Node_ID',
             'Data_DateTime',
             'Data_CO2',
             'Data_CO2_Dry',
@@ -408,8 +409,21 @@ class Nodes_Serializer(serializers.HyperlinkedModelSerializer):
             'Node_Name',
             'Node_Description',
             'Node_Ip',
+            'Asset_Ip',
+            'Node_ID',
+            'Node_Lat',
+            'Node_Lng',
+            'Node_X',
+            'Node_Y',
+            'Node_Z',
+            'Asset_Status',
+            'Data_Status',
+            'Node_Status',
+            'Server_Status',
             'Type',
             'Location',
+            'Client',
+            'Category',
         ]
 
 class Node_Type_Serializer(serializers.HyperlinkedModelSerializer):
@@ -419,6 +433,10 @@ class Node_Type_Serializer(serializers.HyperlinkedModelSerializer):
             'id',
             'Type_Name',
             'Type_Description',
+            'Type_Make',
+            'Type_Model',
+            'Type_Kwargs',
+            'Type_Args',
         ]
 
 class Node_Location_Serializer(serializers.HyperlinkedModelSerializer):
@@ -430,4 +448,24 @@ class Node_Location_Serializer(serializers.HyperlinkedModelSerializer):
             'Location_Description',
             'Location_Lat',
             'Location_Lng',
+            'Site',
+        ]
+
+class Clients_Serializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Clients
+        fields = [
+            'id',
+            'Client_Name',
+            'Client_Description',
+        ]
+
+class Node_Category_Serializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Node_Category
+        fields = [
+            'id',
+            'Category_Name',
+            'Category_Description',
+            'Client',
         ]

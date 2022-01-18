@@ -30,140 +30,6 @@ class Aethalometer_Logs(models.Model):
 	class Meta:
 		ordering = ['Log_DateTime']
 
-class Picarro_Data(models.Model):
-	Data_DateTime = models.DateTimeField('date published')	
-	Data_CO2 = models.FloatField()
-	Data_CO2_Dry = models.FloatField()
-	Data_CO = models.FloatField()
-	Data_CH4 = models.FloatField()
-	Data_CH4_Dry = models.FloatField()
-	Data_H2O = models.FloatField()
-	Data_Amb_P = models.FloatField()
-	Data_CavityPressure = models.FloatField()
-	Data_Cavity_Temp = models.FloatField()
-	Data_DasTemp = models.FloatField()
-	Data_EtalonTemp = models.FloatField()
-	Data_WarmBoxTemp = models.FloatField()
-	Data_Species = models.FloatField()
-	Data_MPVPosition = models.FloatField()
-	Data_OutletValve = models.FloatField()
-	Data_Solenoid_Valves = models.FloatField()
-	Data_h2o_reported = models.FloatField()
-	Data_b_h2o_pct = models.FloatField()
-	Data_peak_14 = models.FloatField()
-	Data_peak84_raw = models.FloatField()
-
-	Data_MaxGust = models.FloatField()
-	Data_MaxGustDir = models.FloatField()
-	Data_WindDir = models.FloatField()
-	Data_WindSpeed = models.FloatField()	
-	Data_Pressure = models.FloatField()	
-	Data_DryA = models.FloatField()	
-	Data_GrassA = models.FloatField()	
-	Data_HumA = models.FloatField()	
-
-	Instrument_Supply_Voltage = models.FloatField()
-	Instrument_Supply_Current = models.FloatField()
-	Instrument_Temp = models.FloatField()
-	Instrument_Pressure = models.FloatField()
-	Instrument_Humidity = models.FloatField()
-	Instrument_Status = models.IntegerField()
-
-	objects = DataFrameManager()
-
-	class Meta:
-		ordering = ['Data_DateTime']
-
-class Picarro_Logs(models.Model):
-	Log_DateTime = models.DateTimeField('date published')
-	Log_Type = models.IntegerField()
-	Log_Details = models.CharField(max_length=200)
-
-	objects = DataFrameManager()
-
-	class Meta:
-		ordering = ['Log_DateTime']
-
-#class Picarro_Anomalies(models.Model):
-#	Anomaly_DateTime = models.DateTimeField('date published')
-#	Anomaly_Node_Id = models.IntegerField()
-#	Anomaly_Data_Id = models.IntegerField()
-#	Anomaly_Property_Id = models.IntegerField()
-#	Anomaly_Details = models.CharField(max_length=200)
-#
-#	objects = DataFrameManager()
-#
-#	class Meta:
-#		ordering = ['Anomaly_DateTime']
-
-class Picarro_Alarms(models.Model):
-	Alarms_DateTime = models.DateTimeField('date published')
-	Alarms_Type = models.IntegerField()
-	Alarms_Details = models.CharField(max_length=200)
-	Alarms_Acknowledged = models.BooleanField()
-
-	objects = DataFrameManager()
-
-	class Meta:
-		ordering = ['Alarms_DateTime']
-
-class Picarro_PM(models.Model):
-	PM_DateCreated = models.DateTimeField('date published')
-	PM_Title = models.CharField(max_length=100)
-	PM_Type = models.IntegerField()
-	PM_Time_Interval = models.IntegerField()
-	PM_Details = models.CharField(max_length=200, blank=True, null=True)
-
-	PM_Task = models.CharField(max_length=100, blank=True, null=True)
-	PM_Kwargs = models.CharField(max_length=200, blank=True, null=True)
-	PM_Args = models.CharField(max_length=200, blank=True, null=True)
-	PM_Enabled = models.IntegerField(0)
-	PM_Last_Run_At = models.DateTimeField(blank=True, null=True)
-	PM_Total_Run_Count = models.IntegerField(0)
-	PM_Date_Changed = models.DateTimeField(blank=True, null=True)
-	PM_One_Off = models.IntegerField(0)
-
-	objects = DataFrameManager()
-
-	class Meta:
-		ordering = ['PM_DateCreated']
-
-class Picarro_Jobs(models.Model):
-	Jobs_DateCreated = models.DateTimeField('date published')
-	Jobs_DateToBeCompleted = models.DateTimeField(blank=True, null=True)
-	Jobs_DateCompleted = models.DateTimeField(blank=True, null=True)
-	Jobs_Title = models.CharField(max_length=100)
-	Jobs_Description = models.CharField(max_length=400, blank=True, null=True)
-	Jobs_Notes = models.CharField(max_length=200, blank=True, null=True)
-	Jobs_Type = models.IntegerField()
-	Jobs_Status = models.IntegerField()
-	PM = models.ForeignKey(Picarro_PM, on_delete=models.CASCADE, blank=True, null=True)
-
-	objects = DataFrameManager()
-
-	class Meta:
-		ordering = ['Jobs_DateCreated']
-
-class Picarro_Property_Types(models.Model):
-	Properties_Type_Name = models.CharField(max_length=100)	
-
-	objects = DataFrameManager()
-
-class Picarro_Properties(models.Model):
-	Properties_DateCreated = models.DateTimeField('date published')
-	Properties_Type = models.IntegerField()
-	#Properties_Type = models.ForeignKey(Picarro_Property_Types, on_delete=models.CASCADE, blank=True, null=True)
-	Properties_Title = models.CharField(max_length=100)
-	Properties_Value = models.IntegerField()
-	Properties_Kwargs = models.CharField(max_length=200, blank=True, null=True)
-	Properties_Args = models.CharField(max_length=200, blank=True, null=True)
-
-	objects = DataFrameManager()
-
-	class Meta:
-		ordering = ['Properties_DateCreated']
-
-
 class Defib_Data(models.Model):
 	Data_DateTime = models.DateTimeField('date published', blank=True, null=True)
 	Defib_Id = models.IntegerField(blank=True, null=True)
@@ -389,11 +255,38 @@ class NOX_Data(models.Model):
 	class Meta:
 		ordering = ['Data_DateTime']
 
+
+
+
+
+# NODE
+
+class Clients(models.Model):
+	Client_Name = models.CharField(max_length=50)
+	Client_Description = models.CharField(max_length=200, blank=True, null=True)
+
+	def __str__(self):
+		return self.Client_Name
+
+	class Meta:
+		ordering = ['Client_Name']
+
+class Node_Category(models.Model):
+	Category_Name = models.CharField(max_length=50)
+	Category_Description = models.CharField(max_length=200, blank=True, null=True)
+	Client = models.ForeignKey(Clients, on_delete=models.CASCADE)
+
+	def __str__(self):
+		return self.Category_Name
+
+	class Meta:
+		ordering = ['Category_Name']
+
 class Node_Location(models.Model):
 	Location_Name = models.CharField(max_length=50)
-	Location_Description = models.CharField(max_length=200)
-	Location_Lat = models.CharField(max_length=20)
-	Location_Lng = models.CharField(max_length=20)
+	Location_Description = models.CharField(max_length=200, blank=True, null=True)
+	Location_Lat = models.CharField(max_length=20, blank=True, null=True)
+	Location_Lng = models.CharField(max_length=20, blank=True, null=True)
 
 	def __str__(self):
 		return self.Location_Name
@@ -403,7 +296,11 @@ class Node_Location(models.Model):
 
 class Node_Type(models.Model):
 	Type_Name = models.CharField(max_length=50)
-	Type_Description = models.CharField(max_length=200)
+	Type_Description = models.CharField(max_length=200, blank=True, null=True)
+	Type_Make = models.CharField(max_length=50, blank=True, null=True)
+	Type_Model = models.CharField(max_length=50, blank=True, null=True)
+	Type_Kwargs = models.CharField(max_length=200, blank=True, null=True)
+	Type_Args = models.CharField(max_length=200, blank=True, null=True)
 
 	def __str__(self):
 		return self.Type_Name
@@ -412,15 +309,152 @@ class Node_Type(models.Model):
 		ordering = ['Type_Name']
 
 class Nodes(models.Model):
+	Node_ID = models.CharField(max_length=20)
 	Node_Name = models.CharField(max_length=50)
-	Node_Description = models.CharField(max_length=200)
-	Node_Ip = models.CharField(max_length=20)
+	Node_Description = models.CharField(max_length=200, blank=True, null=True)
+	Node_Ip = models.CharField(max_length=20, blank=True, null=True)
+	Asset_Ip = models.CharField(max_length=20, blank=True, null=True)	
+
+	Node_Lat = models.CharField(max_length=20, blank=True, null=True)
+	Node_Lng = models.CharField(max_length=20, blank=True, null=True)
+	Node_X = models.CharField(max_length=20, blank=True, null=True)
+	Node_Y = models.CharField(max_length=20, blank=True, null=True)
+	Node_Z = models.CharField(max_length=20, blank=True, null=True)
+
+	Asset_Status =  models.IntegerField()
+	Data_Status =  models.IntegerField()
+	Node_Status =  models.IntegerField()
+	Server_Status =  models.IntegerField()
 	Type = models.ForeignKey(Node_Type, on_delete=models.CASCADE)
 	Location = models.ForeignKey(Node_Location, on_delete=models.CASCADE)
+	Client = models.ForeignKey(Clients, on_delete=models.CASCADE)
+	Category = models.ForeignKey(Node_Category, on_delete=models.CASCADE)
 
 	def __str__(self):
-		return self.Node_Name
+		return self.Node_ID
 
 	class Meta:
-		ordering = ['Node_Name']
+		ordering = ['Node_ID']
 
+#########   PICARRO G2401  ##########
+class Picarro_Data(models.Model):
+	Node_ID = models.ForeignKey(Nodes, on_delete=models.CASCADE)
+	Data_DateTime = models.DateTimeField('date published')	
+	Data_CO2 = models.FloatField()
+	Data_CO2_Dry = models.FloatField()
+	Data_CO = models.FloatField()
+	Data_CH4 = models.FloatField()
+	Data_CH4_Dry = models.FloatField()
+	Data_H2O = models.FloatField()
+	Data_Amb_P = models.FloatField()
+	Data_CavityPressure = models.FloatField()
+	Data_Cavity_Temp = models.FloatField()
+	Data_DasTemp = models.FloatField()
+	Data_EtalonTemp = models.FloatField()
+	Data_WarmBoxTemp = models.FloatField()
+	Data_Species = models.FloatField()
+	Data_MPVPosition = models.FloatField()
+	Data_OutletValve = models.FloatField()
+	Data_Solenoid_Valves = models.FloatField()
+	Data_h2o_reported = models.FloatField()
+	Data_b_h2o_pct = models.FloatField()
+	Data_peak_14 = models.FloatField()
+	Data_peak84_raw = models.FloatField()
+
+	Data_MaxGust = models.FloatField()
+	Data_MaxGustDir = models.FloatField()
+	Data_WindDir = models.FloatField()
+	Data_WindSpeed = models.FloatField()	
+	Data_Pressure = models.FloatField()	
+	Data_DryA = models.FloatField()	
+	Data_GrassA = models.FloatField()	
+	Data_HumA = models.FloatField()	
+
+	Instrument_Supply_Voltage = models.FloatField()
+	Instrument_Supply_Current = models.FloatField()
+	Instrument_Temp = models.FloatField()
+	Instrument_Pressure = models.FloatField()
+	Instrument_Humidity = models.FloatField()
+	Instrument_Status = models.IntegerField()
+
+	objects = DataFrameManager()
+
+	class Meta:
+		ordering = ['Data_DateTime']
+
+class Picarro_Logs(models.Model):
+	Log_DateTime = models.DateTimeField('date published')
+	Log_Type = models.IntegerField()
+	Log_Details = models.CharField(max_length=200)
+
+	objects = DataFrameManager()
+
+	class Meta:
+		ordering = ['Log_DateTime']
+
+class Picarro_Alarms(models.Model):
+	Alarms_DateTime = models.DateTimeField('date published')
+	Alarms_Type = models.IntegerField()
+	Alarms_Details = models.CharField(max_length=200)
+	Alarms_Acknowledged = models.BooleanField()
+
+	objects = DataFrameManager()
+
+	class Meta:
+		ordering = ['Alarms_DateTime']
+
+class Picarro_PM(models.Model):
+	PM_DateCreated = models.DateTimeField('date published')
+	PM_Title = models.CharField(max_length=100)
+	PM_Type = models.IntegerField()
+	PM_Time_Interval = models.IntegerField()
+	PM_Details = models.CharField(max_length=200, blank=True, null=True)
+
+	PM_Task = models.CharField(max_length=100, blank=True, null=True)
+	PM_Kwargs = models.CharField(max_length=200, blank=True, null=True)
+	PM_Args = models.CharField(max_length=200, blank=True, null=True)
+	PM_Enabled = models.IntegerField(0)
+	PM_Last_Run_At = models.DateTimeField(blank=True, null=True)
+	PM_Total_Run_Count = models.IntegerField(0)
+	PM_Date_Changed = models.DateTimeField(blank=True, null=True)
+	PM_One_Off = models.IntegerField(0)
+
+	objects = DataFrameManager()
+
+	class Meta:
+		ordering = ['PM_DateCreated']
+
+class Picarro_Jobs(models.Model):
+	Jobs_DateCreated = models.DateTimeField('date published')
+	Jobs_DateToBeCompleted = models.DateTimeField(blank=True, null=True)
+	Jobs_DateCompleted = models.DateTimeField(blank=True, null=True)
+	Jobs_Title = models.CharField(max_length=100)
+	Jobs_Description = models.CharField(max_length=400, blank=True, null=True)
+	Jobs_Notes = models.CharField(max_length=200, blank=True, null=True)
+	Jobs_Type = models.IntegerField()
+	Jobs_Status = models.IntegerField()
+	PM = models.ForeignKey(Picarro_PM, on_delete=models.CASCADE, blank=True, null=True)
+
+	objects = DataFrameManager()
+
+	class Meta:
+		ordering = ['Jobs_DateCreated']
+
+class Picarro_Property_Types(models.Model):
+	Properties_Type_Name = models.CharField(max_length=100)	
+
+	objects = DataFrameManager()
+
+class Picarro_Properties(models.Model):
+	Properties_DateCreated = models.DateTimeField('date published')
+	Properties_Type = models.IntegerField()
+	#Properties_Type = models.ForeignKey(Picarro_Property_Types, on_delete=models.CASCADE, blank=True, null=True)
+	Properties_Title = models.CharField(max_length=100)
+	Properties_Value = models.IntegerField()
+	Properties_Kwargs = models.CharField(max_length=200, blank=True, null=True)
+	Properties_Args = models.CharField(max_length=200, blank=True, null=True)
+
+	objects = DataFrameManager()
+
+	class Meta:
+		ordering = ['Properties_DateCreated']

@@ -9,6 +9,7 @@ def index(request):
     
     context = {}
     context['segment'] = 'index'
+    
 
     html_template = loader.get_template( 'index.html' )
     return HttpResponse(html_template.render(context, request))
@@ -22,16 +23,17 @@ def pages(request):
         
         load_template      = request.path.split('/')[-1]
         context['segment'] = load_template
+        context['test'] = 'this is a testicle...'
         
         html_template = loader.get_template( load_template )
         return HttpResponse(html_template.render(context, request))
         
     except template.TemplateDoesNotExist:
 
-        html_template = loader.get_template( 'page-404.html' )
+        html_template = loader.get_template( 'page_404_error.html' )
         return HttpResponse(html_template.render(context, request))
 
     except:
     
-        html_template = loader.get_template( 'page-500.html' )
+        html_template = loader.get_template( 'page_404_error.html' )
         return HttpResponse(html_template.render(context, request))

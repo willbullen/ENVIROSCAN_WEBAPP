@@ -25,6 +25,8 @@ router.register(r'nox_data', views.NOX_Data_ViewSet)
 router.register(r'nodes', views.Nodes_ViewSet)
 router.register(r'node_location', views.Node_Location_ViewSet)
 router.register(r'node_type', views.Node_Type_ViewSet)
+router.register(r'node_category', views.Node_Category_ViewSet)
+router.register(r'clients', views.Clients_ViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
@@ -38,5 +40,7 @@ urlpatterns = [
     path('defib/', include(router.urls)),
     path('nox/', include(router.urls)),
     path('sox/', include(router.urls)),
+    path('nodes/', include(router.urls)),
+    path('clients/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]

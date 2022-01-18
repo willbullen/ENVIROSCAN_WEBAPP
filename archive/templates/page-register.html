@@ -1,0 +1,90 @@
+{% extends "layouts/base-fullscreen.html" %}
+
+{% block title %} Register {% endblock title %}
+
+<!-- Specific Page CSS goes HERE  -->  
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+  <div class="content-wrapper auth p-0 theme-two">
+    <div class="row d-flex align-items-stretch">
+      <div class="col-md-4 banner-section d-none d-md-flex align-items-stretch justify-content-center">
+        <div class="slide-content bg-2"> </div>
+      </div>
+      <div class="col-12 col-md-8 h-100">
+        <div class="auto-form-wrapper d-flex align-items-center justify-content-center flex-column">
+          <div class="nav-get-started">
+            <p>Already have an account?</p> 
+            <a class="btn get-started-btn" href="/page-login.html" >SIGN IN</a>
+          </div>
+
+          <form role="form" method="post" action="">
+
+            <h3 class="mr-auto">
+              <a target="_blank" 
+                 href="https://appseed.us/admin-dashboards/flask-dashboard-staradmin-black-pro">Jinja Star Admin Black</a>
+            </h3>
+
+            <p class="mb-5 mr-auto">
+                <strong>Register</strong> - Enter your details below.
+            </p>
+            
+            <div class="form-group">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="mdi mdi-account-outline"></i>
+                  </span>
+                </div>
+                <input class="form-control" id="username_login" name="username" placeholder="Username" required="" type="text" value="">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="mdi mdi-email"></i>
+                  </span>
+                </div>
+                <input class="form-control" id="email_create" name="email" placeholder="Email" required="" type="text" value="">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="mdi mdi-lock-outline"></i>
+                  </span>
+                </div>
+                <input class="form-control" id="pwd_login" name="password" placeholder="Password" required="" type="password" value="">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <button type="submit" name="register" class="btn btn-primary submit-btn">REGISTER</button>
+            </div>
+            <div class="wrapper mt-5 text-gray">
+              <p class="footer-text">&copy; Bootstrapdash - Coded by AppSeed.</p>
+              <ul class="auth-footer text-gray">
+                <li>
+                  <a href="#">Terms & Conditions</a>
+                </li>
+                <li>
+                  <a href="#">Cookie Policy</a>
+                </li>
+              </ul>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

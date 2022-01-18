@@ -1,7 +1,7 @@
 import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import AsyncWebsocketConsumer, SyncConsumer, WebsocketConsumer, JsonWebsocketConsumer
-from data.models import Picarro_Data, Picarro_Alarms, Picarro_Logs, Picarro_Properties, Picarro_PM, Picarro_Jobs, SOX_Data, NOX_Data
+from data.models import Picarro_Data, Picarro_Alarms, Picarro_Logs, Picarro_Properties, Picarro_PM, Picarro_Jobs, SOX_Data, NOX_Data, Baloon_Data
 import time
 from time import sleep
 from datetime import datetime, timezone
@@ -135,6 +135,8 @@ class PicarroConsumer(WebsocketConsumer):
                     Data_InstrumentStatus = jsonData['Data_InstrumentStatus']
                     if (jsonData['Data_DateTime'] != self.datetime_check_picarro and jsonData['Data_CO2'] != ''):
                         Picarro_Data.objects.create(
+                            # NODE ID
+                            Node_ID = jsonData['Node_ID'],
                             # DATETIME STAMP
                             Data_DateTime = jsonData['Data_DateTime'],
                             # SERIAL DATA VARIABLES
@@ -196,6 +198,21 @@ class PicarroConsumer(WebsocketConsumer):
         new_time = time.time()
         ##################################################
 
+        ##################### CHART DATA #####################    
+        qs = Picarro_Data.objects.all().order_by('-id')[:1440]            
+        df = qs.to_dataframe(index='Data_DateTime').sort_index(ascending=True)
+
+        # ------ DAY --------
+        PicarroChartData_Day = {}
+        df_1d = df.resample('10Min').mean().fillna(method = 'backfill').tail(140)
+        PicarroChartData_Day['Data_Charts_1Day'] = json.loads(df_1d.to_json(orient="table"))
+        PicarroChartData_Day['Data_Type'] = "update_chart_1day"
+        self.async_send("valentia_picarro", PicarroChartData_Day)
+
+        print("--- PICARRO DATA EXECUTION TIME: %s SECONDS ---" % (time.time() - new_time))
+        new_time = time.time()
+        ##################################################
+
         ##################### ALARMS #####################
         PicarroAlarmData = {}
         qs_alarms = Picarro_Alarms.objects.all().order_by('-id')
@@ -218,106 +235,7 @@ class PicarroConsumer(WebsocketConsumer):
 
         print("--- LOGS EXECUTION TIME: %s SECONDS ---" % (time.time() - new_time))
         new_time = time.time()
-        ##################################################
-
-        ##################### PROPERTIES #####################
-        PicarroPropertyData = {}
-        qs_properties = Picarro_Properties.objects.all().order_by('-id')
-        df_properties = qs_properties.to_dataframe(index='Properties_DateCreated').sort_index(ascending=True)
-        PicarroPropertyData['Data_Properties'] = json.loads(df_properties.to_json(orient="table"))
-        PicarroPropertyData['Data_Type'] = "update_properties"
-        self.async_send("valentia_picarro", PicarroPropertyData)
-
-        print("--- PROPERTIES EXECUTION TIME: %s SECONDS ---" % (time.time() - new_time))
-        new_time = time.time()
-        ##################################################
-        
-        ##################### PM #####################
-        PicarroPMData = {}
-        qs_pm = Picarro_PM.objects.all().order_by('-id')
-        df_pm = qs_pm.to_dataframe(index='PM_DateCreated').sort_index(ascending=True)
-        PicarroPMData['Data_PM'] = json.loads(df_pm.to_json(orient="table"))
-        PicarroPMData['Data_Type'] = "update_pm"
-        self.async_send("valentia_picarro", PicarroPMData)
-
-        print("--- PM EXECUTION TIME: %s SECONDS ---" % (time.time() - new_time))
-        new_time = time.time()
-        ##################################################
-
-        ##################### JOBS #####################
-        PicarroJobData = {}
-        qs_jobs = Picarro_Jobs.objects.all().order_by('-id')
-        df_jobs = qs_jobs.to_dataframe(index='Jobs_DateCreated').sort_index(ascending=True)
-        PicarroJobData['Data_Jobs'] = json.loads(df_jobs.to_json(orient="table"))
-        PicarroJobData['Data_Type'] = "update_jobs"
-        self.async_send("valentia_picarro", PicarroJobData)
-
-        print("--- JOBS EXECUTION TIME: %s SECONDS ---" % (time.time() - new_time))
-        new_time = time.time()
-        ##################################################
-
-        ##################### CHART DATA #####################    
-        qs = Picarro_Data.objects.values(
-            'Data_DateTime', 
-            'Data_CO2', 
-            'Data_CO2_Dry', 
-            'Data_CO', 
-            'Data_CH4', 
-            'Data_CH4_Dry', 
-            'Data_H2O', 
-            'Data_MPVPosition', 
-            'Data_OutletValve', 
-            'Data_Solenoid_Valves',
-
-            'Data_MaxGust', 
-            'Data_MaxGustDir',
-            'Data_WindDir', 
-            'Data_WindSpeed',
-            'Data_Pressure', 
-            'Data_DryA', 
-            'Data_GrassA', 
-            'Data_HumA',
-
-            'Instrument_Supply_Voltage', 
-            'Instrument_Supply_Current', 
-            'Instrument_Temp', 
-            'Instrument_Pressure', 
-            'Instrument_Humidity', 
-            'Instrument_Status'
-            ).order_by('-id')[:1440]
-            
-        df = qs.to_dataframe(index='Data_DateTime').sort_index(ascending=True)
-        # ------ WEEK --------
-        PicarroChartData_Week = {}
-        df_1w = df.resample('H').mean().fillna(method = 'backfill').tail(168)
-        PicarroChartData_Week['Data_Charts_1Week'] = json.loads(df_1w.to_json(orient="table"))
-        PicarroChartData_Week['Data_Type'] = "update_chart_1week"
-        self.async_send("valentia_picarro", PicarroChartData_Week)
-
-        # ------ 12 HOURS --------
-        PicarroChartData_12Hours = {}
-        df_12h = df.resample('10Min').mean().fillna(method = 'backfill').tail(70)
-        PicarroChartData_12Hours['Data_Charts_12Hours'] = json.loads(df_12h.to_json(orient="table"))
-        PicarroChartData_12Hours['Data_Type'] = "update_chart_12hour"
-        self.async_send("valentia_picarro", PicarroChartData_12Hours)
-
-        # ------ HOUR --------    
-        PicarroChartData_Hour = {}
-        df_1h = df.resample('Min').mean().fillna(method = 'backfill').tail(62)
-        PicarroChartData_Hour['Data_Charts_1Hour'] = json.loads(df_1h.to_json(orient="table"))
-        PicarroChartData_Hour['Data_Type'] = "update_chart_1hour"
-        self.async_send("valentia_picarro", PicarroChartData_Hour)
-
-        # ------ DAY --------
-        PicarroChartData_Day = {}
-        df_1d = df.resample('10Min').mean().fillna(method = 'backfill').tail(140)
-        PicarroChartData_Day['Data_Charts_1Day'] = json.loads(df_1d.to_json(orient="table"))
-        PicarroChartData_Day['Data_Type'] = "update_chart_1day"
-        self.async_send("valentia_picarro", PicarroChartData_Day)
-
-        print("--- PICARRO DATA EXECUTION TIME: %s SECONDS ---" % (time.time() - new_time))
-        new_time = time.time()
-        ##################################################
+        ##################################################            
         
         ##################### LAST RECORD #####################
 
@@ -353,7 +271,7 @@ class PicarroConsumer(WebsocketConsumer):
 
         new_time = time.time()
         
-        PicarroData['Data']['Data_InstrumentStatus'] = df_1h.iloc[0]['Instrument_Status']    
+        #PicarroData['Data']['Data_InstrumentStatus'] = PicarroData['Data']['Instrument_Status']    
         
         PicarroData['HeartBeat'] = str(datetime.now())
 
@@ -516,6 +434,48 @@ class NOXConsumer(WebsocketConsumer):
                             Instrument_Status = jsonData['Instrument_Status']
                         )
                     self.datetime_check_nox = jsonData['Data_DateTime']
+
+    # Receive message from room_group
+    def stream_message(self, event):
+        message = event['message']
+        self.send(text_data=json.dumps({'message': message}))
+
+class BALOONConsumer(WebsocketConsumer):
+
+    datetime_check_baloon = ''
+
+    def connect(self):
+        self.room_group_name = 'baloon'
+        # Join room group
+        async_to_sync(self.channel_layer.group_add)(
+            self.room_group_name,
+            self.channel_name
+        )
+        self.accept()
+
+    def disconnect(self, close_code):
+        pass
+
+    def receive(self, text_data):
+        print('Message Received.............')
+        jsonData = json.loads(text_data)
+        print(jsonData)
+
+        if jsonData['Node'] == 'BALOON':
+            if jsonData['Module'] == 'Heartbeat':                
+                if jsonData['Action'] == 'Update':
+                    # STATUS
+                    Data_NodeStatus = jsonData['Data_NodeStatus']
+                    Data_DataStatus = jsonData['Data_DataStatus']
+                    Data_InstrumentStatus = jsonData['Data_InstrumentStatus']
+                    print(jsonData['Data'])
+                    #if jsonData['Data_DateTime'] != self.datetime_check_baloon:
+                    #    Baloon_Data.objects.create(
+                    #        # DATETIME STAMP
+                    #        Data_DateTime = jsonData['Data_DateTime'],
+                    #        # BALOON DATA VARIABLES
+                    #    )
+                    #self.datetime_check_baloon = jsonData['Data_DateTime']
 
     # Receive message from room_group
     def stream_message(self, event):
