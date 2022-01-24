@@ -21,6 +21,8 @@
 	<link href="/static/assets/plugins/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet" />
 	<link href="/static/assets/plugins/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css" rel="stylesheet" />
 	<link href="/static/assets/plugins/bootstrap-table/dist/bootstrap-table.min.css" rel="stylesheet" />
+
+	<link href="/static/assets/css/datatable.css" rel="stylesheet" />
 	<!-- ================== END page-css ================== -->
 
 </head>
@@ -561,10 +563,9 @@
 				</a>
 				<span class="ms-3">updated at  </span> <span class="ms-1" id="Time"><div class="spinner-border text-theme spinner-border-sm"></div></span> <span class="flex-grow-1" id="Date"></span>
 				
-				<span id="Asset_Status" class="badge bg-theme ms-2">ASSET</span>				
-				<span id="Data_Status" class="badge bg-theme ms-2">DATA</span>
-				<span id="Node_Status" class="badge bg-theme ms-2">NODE</span>
-				<span id="Server_Status" class="badge bg-theme ms-2">SERVER</span>
+				<span id="Asset_Status" class="badge bg-theme ms-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="OK">ASSET</span>
+				<span id="Node_Status" class="badge bg-theme ms-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="OK">NODE</span>
+				<span id="Server_Status" class="badge bg-theme ms-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="OK">SERVER</span>
 				
 			</div>
 			<!-- END daterangepicker -->
@@ -911,18 +912,18 @@
 							<!-- END title -->
 							<!-- BEGIN map -->
 							<div class="ratio h-250px ratio-21x9 mb-3">
-								<div id="ireland-map" class="jvectormap-without-padding"></div>
+								<div id="networkStatusMap" class="jvectormap-without-padding"></div>
 							</div>
 							<!-- END map -->
 							<!-- BEGIN row -->
 							<div class="row gx-4">
-								<!-- BEGIN col-6 -->
-								<div class="col-lg-6 mb-3 mb-lg-0">
+								<!-- BEGIN col-7 -->
+								<div class="col-lg-7 mb-3 mb-lg-0">
 									<table id="networkStatusTable" class="w-100 table-striped small mb-0 text-truncate text-white text-opacity-60"></table>
 								</div>
-								<!-- END col-6 -->
-								<!-- BEGIN col-6 -->
-								<div class="col-lg-6">
+								<!-- END col-7 -->
+								<!-- BEGIN col-5 -->
+								<div class="col-lg-5">
 									<!-- BEGIN card -->
 									<div class="card">
 										<!-- BEGIN card-body -->
@@ -930,7 +931,7 @@
 											<div class="d-flex align-items-center">												
 												<div class="flex-1 ps-2">
 													<div class="d-flex align-items-center fw-bold small">
-														<span id="headingNetworkStatus" class="flex-grow-1">PICARRO G2401 - VALENTIA ISLAND</span>
+														<span id="headingNetworkStatus" class="flex-grow-1"><div class="spinner-border text-theme spinner-border-sm"></div></span>
 													</div>
 													<table class="w-100 small mb-0 text-white text-opacity-60">
 														<tbody>
@@ -941,15 +942,7 @@
 																		<div class="w-6px h-6px rounded-pill me-2 bg-theme bg-opacity-95"></div> ASSET
 																	</div>
 																</td>
-																<td id="assetNetworkStatus" class="text-end text-theme">ERR</td>
-															</tr>
-															<tr>
-																<td>
-																	<div class="d-flex align-items-center">
-																		<div class="w-6px h-6px rounded-pill me-2 bg-theme bg-opacity-95"></div> DATA
-																	</div>
-																</td>
-																<td id="dataNetworkStatus" class="text-end text-theme">OK</td>
+																<td id="assetNetworkStatus" class="text-end text-theme"><div class="spinner-border text-theme spinner-border-sm"></div></td>
 															</tr>
 															<tr>
 																<td>
@@ -957,7 +950,7 @@
 																		<div class="w-6px h-6px rounded-pill me-2 bg-theme bg-opacity-95"></div> NODE
 																	</div>
 																</td>
-																<td id="nodeNetworkStatus" class="text-end text-theme">OK</td>
+																<td id="nodeNetworkStatus" class="text-end text-theme"><div class="spinner-border text-theme spinner-border-sm"></div></td>
 															</tr>
 															<tr>
 																<td>
@@ -965,7 +958,7 @@
 																		<div class="w-6px h-6px rounded-pill me-2 bg-theme bg-opacity-95"></div> SERVER
 																	</div>
 																</td>
-																<td id="serverNetworkStatus" class="text-end text-theme">OK</td>
+																<td id="serverNetworkStatus" class="text-end text-theme"><div class="spinner-border text-theme spinner-border-sm"></div></td>
 															</tr>
 
 														</tbody>
@@ -986,7 +979,7 @@
 									</div>
 									<!-- END card -->
 								</div>
-								<!-- END col-6 -->
+								<!-- END col-5 -->
 							</div>
 							<!-- END row -->
 						</div>

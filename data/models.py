@@ -265,6 +265,8 @@ class Clients(models.Model):
 	Client_Name = models.CharField(max_length=50)
 	Client_Description = models.CharField(max_length=200, blank=True, null=True)
 
+	objects = DataFrameManager()
+
 	def __str__(self):
 		return self.Client_Name
 
@@ -275,6 +277,8 @@ class Node_Category(models.Model):
 	Category_Name = models.CharField(max_length=50)
 	Category_Description = models.CharField(max_length=200, blank=True, null=True)
 	Client = models.ForeignKey(Clients, on_delete=models.CASCADE)
+
+	objects = DataFrameManager()
 
 	def __str__(self):
 		return self.Category_Name
@@ -287,6 +291,8 @@ class Node_Location(models.Model):
 	Location_Description = models.CharField(max_length=200, blank=True, null=True)
 	Location_Lat = models.CharField(max_length=20, blank=True, null=True)
 	Location_Lng = models.CharField(max_length=20, blank=True, null=True)
+
+	objects = DataFrameManager()
 
 	def __str__(self):
 		return self.Location_Name
@@ -302,6 +308,8 @@ class Node_Type(models.Model):
 	Type_Kwargs = models.CharField(max_length=200, blank=True, null=True)
 	Type_Args = models.CharField(max_length=200, blank=True, null=True)
 
+	objects = DataFrameManager()
+
 	def __str__(self):
 		return self.Type_Name
 
@@ -313,22 +321,26 @@ class Nodes(models.Model):
 	Node_Name = models.CharField(max_length=50)
 	Node_Description = models.CharField(max_length=200, blank=True, null=True)
 	Node_Ip = models.CharField(max_length=20, blank=True, null=True)
-	Asset_Ip = models.CharField(max_length=20, blank=True, null=True)	
-
+	Node_Device_ID = models.CharField(max_length=50, blank=True, null=True)
+	Asset_Ip = models.CharField(max_length=20, blank=True, null=True)
 	Node_Lat = models.CharField(max_length=20, blank=True, null=True)
 	Node_Lng = models.CharField(max_length=20, blank=True, null=True)
 	Node_X = models.CharField(max_length=20, blank=True, null=True)
 	Node_Y = models.CharField(max_length=20, blank=True, null=True)
 	Node_Z = models.CharField(max_length=20, blank=True, null=True)
-
+	Status =  models.IntegerField()
 	Asset_Status =  models.IntegerField()
-	Data_Status =  models.IntegerField()
+	Asset_Status_Description = models.CharField(max_length=200, blank=True, null=True)
 	Node_Status =  models.IntegerField()
+	Node_Status_Description = models.CharField(max_length=200, blank=True, null=True)
 	Server_Status =  models.IntegerField()
+	Server_Status_Description = models.CharField(max_length=200, blank=True, null=True)
 	Type = models.ForeignKey(Node_Type, on_delete=models.CASCADE)
 	Location = models.ForeignKey(Node_Location, on_delete=models.CASCADE)
 	Client = models.ForeignKey(Clients, on_delete=models.CASCADE)
 	Category = models.ForeignKey(Node_Category, on_delete=models.CASCADE)
+
+	objects = DataFrameManager()
 
 	def __str__(self):
 		return self.Node_ID

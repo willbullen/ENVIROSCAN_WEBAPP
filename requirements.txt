@@ -13,6 +13,7 @@ djangorestframework==3.12.4
 markdown==3.3.6
 Pillow==9.0.0
 django-crispy-forms==1.13.0
+balena-sdk==11.0.0
 
 # ---- SQL ---- #
 sqlparse==0.4.2
@@ -38,6 +39,8 @@ beatserver==0.0.7
 django-celery-beat==2.1.0
 gevent==21.8.0
 
+# ---- CAMERA STEAM ---- #
+opencv-python==4.5.5.62
+
 # ---- ARCHIVE ---- #
 #django-mqtt-bridge==0.3.7
-#balena-sdk==11.0.0

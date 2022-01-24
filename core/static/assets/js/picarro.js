@@ -1,44 +1,102 @@
+
+// SET UNIVERSAL VARIABLES
+var allStatusDataset = [];
+var thisStatusDataset = [];
+var thisNodeID = 0;
+
 var startWebSocket = function () {
     var picarroSocket;
     var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-    var ws_path = ws_scheme + '://' + window.location.host + '/valentia_picarro/';
-    picarroSocket = new WebSocket(ws_path);
+    var ws_path = ws_scheme + '://' + window.location.host + '/picarro/';
+    picarroSocket = new WebSocket(ws_path);    
 
     picarroSocket.onmessage = function (e) {
         ws_Data = JSON.parse(e.data).message;
         console.log(ws_Data);
+        // SET STATUS VALUES
+        if (ws_Data.Data_Type == 'StatusData') {
+            var StatusData = ws_Data.Data.data.map(function(h){ return {id: h.id, asset: h.Node_Name, location: h.Location, status: h.Status.toString(), asset_status: h.Asset_Status, asset_status_description: h.Asset_Status_Description, node_status: h.Node_Status, node_status_description: h.Node_Status_Description, server_status: h.Server_Status, server_status_description: h.Server_Status_Description, coords: [h.Node_Lat, h.Node_Lng]};});
+            // SET MAP VALUES
+            var mapObject = $('#networkStatusMap').vectorMap('get', 'mapObject'); 
+            mapObject.addMarkers(StatusData.map(function(h){ return {name: h.asset, latLng: h.coords, id: h.id};}), []);
+            mapObject.series.markers[0].setValues(StatusData.reduce(function(p, c, i){ p[i] = c.status; return p;},{}));
+            // SET MAP VALUES
+            var tableObject = $('#networkStatusTable').DataTable();
+            tableObject.clear();
+            tableObject.rows.add(StatusData.map(function(h){ return [h.asset, h.status, h.location, h.asset_status, h.data_status, h.node_status, h.server_status, h.id];}));
+            tableObject.draw();
+            // SET THIS NODE
+            thisNodeID = ws_Data.Node_ID;
+            // SET ALL STATUS DATASET
+            allStatusDataset = ws_Data.Data.data;
+            // SET THIS STATUS DATASET
+            thisStatusDataset = allStatusDataset[allStatusDataset.findIndex(obj => obj.id==thisNodeID)];
+        }
+        // SET SETUP VALUES
+        if (ws_Data.Data_Type == 'SetupData') {
+            // SET THIS NODE
+            thisNodeID = ws_Data.Node_ID;
+            // SET THIS STATUS DATASET
+            thisStatusDataset = ws_Data.Data.data[0];
+            // SET STATUS HEADING
+            $("#headingNetworkStatus").text(thisStatusDataset.Node_Name);
+            //-- SET ASSET STATUS
+            if (thisStatusDataset.Asset_Status == 1) {
+                $("#assetNetworkStatus").addClass('text-danger').text('ERROR');
+                $('#Asset_Status').addClass('bg-danger');
+            } else {
+                $("#assetNetworkStatus").removeClass('text-danger').text('OK');
+                $('#Asset_Status').removeClass('bg-danger');
+            }
+            //-- SET NODE STATUS
+            if (thisStatusDataset.Node_Status == 1) {
+                $("#nodeNetworkStatus").addClass('text-danger').text('ERROR');
+                $('#Node_Status').addClass('bg-danger');
+                $('#Node_Status').attr('data-original-title', 'Not OK!!!!');
+            } else {
+                $("#nodeNetworkStatus").removeClass('text-danger').text('OK');
+                $('#Node_Status').removeClass('bg-danger');
+                $('#Node_Status').attr('data-original-title', 'OK');
+            }
+            //-- SET SERVER STATUS
+            if (thisStatusDataset.Server_Status == 1) {
+                $("#serverNetworkStatus").addClass('text-danger').text('ERROR');
+            } else {
+                $("#serverNetworkStatus").removeClass('text-danger').text('OK');
+            }
+        }
         // SET CHART VALUES
-        if (ws_Data.Data_Type == 'update_chart_1day') {
-            $("#metRadarChart").dxPolarChart("option", "dataSource", ws_Data.Data_Charts_1Day.data);
-            $("#weatherChart").dxChart("option", "dataSource", ws_Data.Data_Charts_1Day.data);
-            $("#picarroChart").dxChart("option", "dataSource", ws_Data.Data_Charts_1Day.data);
+        if (ws_Data.Data_Type == 'HistoryData') {
+            $("#metRadarChart").dxPolarChart("option", "dataSource", ws_Data.Data.data);
+            $("#weatherChart").dxChart("option", "dataSource", ws_Data.Data.data);
+            $("#picarroChart").dxChart("option", "dataSource", ws_Data.Data.data);
 
-            $("#SSC_Voltage").dxChart("option", "dataSource", ws_Data.Data_Charts_1Day.data);
-            var maxMinAvg_Voltage = maxMinAvg(ws_Data.Data_Charts_1Day.data, "Instrument_Supply_Voltage");
+            $("#SSC_Voltage").dxChart("option", "dataSource", ws_Data.Data.data);
+            var maxMinAvg_Voltage = maxMinAvg(ws_Data.Data.data, "Instrument_Supply_Voltage");
             $("#Voltage_Max").text(maxMinAvg_Voltage[0].toFixed(2));
             $("#Voltage_Min").text(maxMinAvg_Voltage[1].toFixed(2));
             $("#Voltage_Ave").text(maxMinAvg_Voltage[2].toFixed(2));
 
-            $("#SSC_CavityTemp").dxChart("option", "dataSource", ws_Data.Data_Charts_1Day.data);
-            var maxMinAvg_CavityTemp = maxMinAvg(ws_Data.Data_Charts_1Day.data, "Data_Cavity_Temp");
+            $("#SSC_CavityTemp").dxChart("option", "dataSource", ws_Data.Data.data);
+            var maxMinAvg_CavityTemp = maxMinAvg(ws_Data.Data.data, "Data_Cavity_Temp");
             $("#CavityTemp_Max").text(maxMinAvg_CavityTemp[0].toFixed(2));
             $("#CavityTemp_Min").text(maxMinAvg_CavityTemp[1].toFixed(2));
             $("#CavityTemp_Ave").text(maxMinAvg_CavityTemp[2].toFixed(2));
 
-            $("#SSC_WarmBoxTemp").dxChart("option", "dataSource", ws_Data.Data_Charts_1Day.data);
-            var maxMinAvg_WarmBoxTemp = maxMinAvg(ws_Data.Data_Charts_1Day.data, "Data_WarmBoxTemp");
+            $("#SSC_WarmBoxTemp").dxChart("option", "dataSource", ws_Data.Data.data);
+            var maxMinAvg_WarmBoxTemp = maxMinAvg(ws_Data.Data.data, "Data_WarmBoxTemp");
             $("#WarmBoxTemp_Max").text(maxMinAvg_WarmBoxTemp[0].toFixed(2));
             $("#WarmBoxTemp_Min").text(maxMinAvg_WarmBoxTemp[1].toFixed(2));
             $("#WarmBoxTemp_Ave").text(maxMinAvg_WarmBoxTemp[2].toFixed(2));
 
-            $("#SSC_CavityPres").dxChart("option", "dataSource", ws_Data.Data_Charts_1Day.data);
-            var maxMinAvg_CavityPres = maxMinAvg(ws_Data.Data_Charts_1Day.data, "Data_CavityPressure");
+            $("#SSC_CavityPres").dxChart("option", "dataSource", ws_Data.Data.data);
+            var maxMinAvg_CavityPres = maxMinAvg(ws_Data.Data.data, "Data_CavityPressure");
             $("#CavityPres_Max").text(maxMinAvg_CavityPres[0].toFixed(2));
             $("#CavityPres_Min").text(maxMinAvg_CavityPres[1].toFixed(2));
             $("#CavityPres_Ave").text(maxMinAvg_CavityPres[2].toFixed(2));
         }
         // SET STATIC VALUES
-        if (ws_Data.Data_Type == 'update') {
+        if (ws_Data.Data_Type == 'CurrentData') {
             var thisDateTime = new Date(ws_Data.Data.Data_DateTime);
             var thisTime = new Date(ws_Data.Data.Data_DateTime).toLocaleTimeString();
             var thisDate = new Date(ws_Data.Data.Data_DateTime).toLocaleDateString();
@@ -49,25 +107,7 @@ var startWebSocket = function () {
             var timeDiff = (endDate.getTime() - startDate.getTime()) / 1000;
             if (timeDiff > 70) {
 
-            }
-
-            if (ws_Data.Data.Data_NodeStatus == 0) {
-                $('#Node_Status').addClass('bg-theme');
-            } else {
-                $('#Node_Status').addClass('bg-danger');
-            }
-
-            if (ws_Data.Data.Data_DataStatus == 0) {
-                $('#Data_Status').addClass('bg-theme');
-            } else {
-                $('#Data_Status').addClass('bg-danger');
-            }
-
-            if (ws_Data.Data.Data_InstrumentStatus == 0) {
-                $('#Asset_Status').addClass('bg-theme');
-            } else {
-                $('#Asset_Status').addClass('bg-danger');
-            }
+            }            
 
             $("#Time").text(thisTime);
             $("#Date").text(thisDate);
@@ -197,66 +237,6 @@ var startWebSocket = function () {
                 type: "MISC",
             }, ];
             generateDataVis(jsonDataVis);
-
-            // GENERATE TABLE
-            var jsonNetworkStatusTable = [{
-                header: [{
-                    title: "ASSETS",
-                    class: "w-50",
-                }, {
-                    title: "LOCATION",
-                    class: "w-25 text-end",
-                }, {
-                    title: "STATUS",
-                    class: "w-25 text-end",
-                }],
-                tr: [{
-                    class: "text-theme",
-                    td: [{
-                        id: "sox",
-                        title: "SOX",
-                        class: "text-end",
-                    }, {
-                        id: "sox",
-                        title: "COS",
-                        class: "text-end",
-                    }, {
-                        id: "sox",
-                        title: "OK",
-                        class: "text-end",
-                    }]
-                }, {
-                    class: "text-theme",
-                    td: [{
-                        id: "nox",
-                        title: "NOX",
-                        class: "text-end",
-                    }, {
-                        id: "nox",
-                        title: "COS",
-                        class: "text-end",
-                    }, {
-                        id: "nox",
-                        title: "OK",
-                        class: "text-end",
-                    }]
-                }, {
-                    class: "text-danger fw-bold",
-                    td: [{
-                        id: "nox",
-                        title: "PICARRO G2401",
-                        class: "text-end",
-                    }, {
-                        id: "nox",
-                        title: "VIOS",
-                        class: "text-end",
-                    }, {
-                        id: "nox",
-                        title: "ERR",
-                        class: "text-end",
-                    }]
-                }],
-            }, ];
         }
     };
 
@@ -280,37 +260,6 @@ function generateDataVis(jsonData) {
         }
     }
 }
-// GENERATE TABLE
-function generateTable(jsonData) {
-    html = "<table class='w-100 small mb-0 text-truncate text-white text-opacity-60'>";
-    // GENERATE HEADER
-    html += "<thead><tr class='text-white text-opacity-75'>";
-    headers = jsonData['header'];
-    for (var i = 0, ilen = headers.length; i < ilen; ++i) {
-        html += "<th class='" + headers[i]["class"] + "'>" + headers[i]["title"] + "</th>";
-    }
-    html += "</tr></thead>";
-    // GENERATE CONTENT
-    html += "<tbody>";
-    tr = jsonData['tr'];
-    for (var j = 0, jlen = tr.length; j < jlen; ++j) {
-        html += "<tr class='text-theme'>";
-        td = tr['td'];
-        for (var k = 0, klen = td.length; k < klen; ++k) {
-            html += "<td class='" + td[i]["class"] + "'><a href='#' id='" + td[i]["id"] + "' class='text-decoration-none'>" + td[i]["title"] + "</a></td>";
-        }
-        html += "</tr>";
-    }
-    html += "</tbody></table>";
-    return html;
-}
-
-$(document).ready(function () {
-    $("#testo").click(function () {
-        $('#heading').text("The Heading Changed");
-        console.log("testo");
-    });
-});
 
 function getPercentage(act, max) {
     return (act / max) * 100;
@@ -332,8 +281,6 @@ function maxMinAvg(arr, column) {
     var avg = sum / arr.length;
     return [max, min, avg];
 }
-
-
 
 // ARRAY SMALL SINGLE CHART
 var charts_SSC = [];
@@ -470,18 +417,9 @@ function createSSC(params) {
     });
 }
 
-var renderTableData = function () {
-    //-- SET DATA SOURCE
-    var dataSet = [
-        {asset: "SOX", location: "COS", status: "OK", asset_status: "OK", data_status: "OK", node_status: "ERR", server_status: "OK", coords: [51.80, -10.17]},
-        {asset: "NOX", location: "COS", status: "OK", asset_status: "OK", data_status: "OK", node_status: "OK", server_status: "OK", coords: [51.89, -10.42]},
-        {asset: "PICARRO G2401", location: "VIOS", status: "ERR", asset_status: "ERR", data_status: "OK", node_status: "OK", server_status: "OK", coords: [51.83, -10.20]},
-        {asset: "BLACK CARBON", location: "VIOS", status: "OK", asset_status: "OK", data_status: "ERR", node_status: "OK", server_status: "OK", coords: [51.91, -10.21]},
-        {asset: "UPS", location: "VIOS", status: "OK", asset_status: "OK", data_status: "ERR", node_status: "OK", server_status: "ERR", coords: [51.84, -10.30]},
-    ];
-    console.log(app.color.danger);
+var renderTableData = function () {    
     //-- GENERATE MAP
-    $('#ireland-map').vectorMap({
+    var networkStatusMap = $('#networkStatusMap').vectorMap({
         map: '26counties',
         normalizeFunction: 'polynomial',
         hoverOpacity: 0.5,
@@ -494,10 +432,10 @@ var renderTableData = function () {
             markers: [{
                 attribute: 'fill',
                 scale: {
-                    'ERR': '#FF0000',
-                    'OK': app.color.theme,
+                    '1': '#FF0000',
+                    '0': app.color.theme,
                 },
-                values: dataSet.reduce(function(p, c, i){ p[i] = c.status; return p;},{}),
+                values: [],
             }]
         },
         focusOn: {
@@ -518,78 +456,85 @@ var renderTableData = function () {
             }
         },
         backgroundColor: 'transparent',
-        markers: dataSet.map(function(h){ return {name: h.asset, latLng: h.coords};}),
-        onRegionClick: function (event, code, isSelected,  selectedRegions) {
-            console.log(code);
-            $('#ireland-map').vectorMap('get','mapObject').setFocus({region: code});
+        markers: [],
+        onRegionClick: function (event, code, isSelected,  selectedRegions) {            
+            $('#networkStatusMap').vectorMap('get','mapObject').setFocus({region: code});
         },
         onMarkerClick: function (event, index) {
-            console.log(dataSet[index]["status"]);
-            //$('#ireland-map').vectorMap('get','mapObject').setFocus({marker: index});
+            setAssetNetValues(allStatusDataset[index].id);
+            //$('#networkStatusMap').vectorMap('get','mapObject').setFocus({marker: index});
         },
     });
     //-- GENERATE TABLES
+    var pageScrollPos = 0;
     var networkStatusTable = $('#networkStatusTable').DataTable({
         searching: false,
         ordering: true,
         info: false,
         lengthChange: false,
         paging: false,
-        //responsive: true,
-        data: dataSet.map(function(h){ return [h.asset, h.location, h.status, h.asset_status, h.data_status, h.node_status, h.server_status];}),
+        scrollY: "85px",
+        scrollX: false,
+        scrollCollapse: false,
+        autoWidth: false,
+        data: [],
         columns: [{
-                title: "ASSETS"
+                title: "ASSETS",
+                width: "95%"
             },
             {
-                title: "LOCATION"
-            },
-            {
-                title: "STATUS"
+                title: "STAT",
+                width: "5%"
             },
         ],
+        preDrawCallback: function (settings) {
+            pageScrollPos = $('body').scrollTop();
+        },
+        drawCallback: function (settings) {
+            $('body').scrollTop(pageScrollPos);
+        },
         createdRow: function (row, data, dataIndex) {
-            if (data[2] == 'ERR') {
+            if (data[1] == 1) {
                 $(row).addClass('text-danger');
+                $(row).find('td:eq(1)').html('ERR');
+            } else {
+                $(row).addClass('text-theme');
+                $(row).find('td:eq(1)').html('OK');
             }
         }
     });
     $('#networkStatusTable tbody').on('click', 'tr', function () {
         var data = networkStatusTable.row(this).data();
-        $("#headingNetworkStatus").text(data[0] + ' - ' + data[1]);
-        //-- SET ASSET STATUS
-        if (data[3] == 'ERR') {
-            $("#assetNetworkStatus").addClass('text-danger');
-        } else {
-            $("#assetNetworkStatus").removeClass('text-danger');
-        }
-        $("#assetNetworkStatus").text(data[3]);
-        //-- SET DATA STATUS
-        if (data[4] == 'ERR') {
-            $("#dataNetworkStatus").addClass('text-danger');
-        } else {
-            $("#dataNetworkStatus").removeClass('text-danger');
-        }
-        $("#dataNetworkStatus").text(data[4]);
-        //-- SET NODE STATUS
-        if (data[5] == 'ERR') {
-            $("#nodeNetworkStatus").addClass('text-danger');
-        } else {
-            $("#nodeNetworkStatus").removeClass('text-danger');
-        }
-        $("#nodeNetworkStatus").text(data[5]);
-        //-- SET SERVER STATUS
-        if (data[6] == 'ERR') {
-            $("#serverNetworkStatus").addClass('text-danger');
-        } else {
-            $("#serverNetworkStatus").removeClass('text-danger');
-        }
-        $("#serverNetworkStatus").text(data[6]);
+        setAssetNetValues(data[7]);
     });
     $('#networkStatusTable tbody').on('mouseenter', 'td', function () {
         var rowIdx = networkStatusTable.cell(this).index().row;
-        //$(networkStatusTable.row().nodes()).removeClass('fw-bold');
-        //$(networkStatusTable.row(rowIdx).nodes()).addClass('fw-bold');
+        $(networkStatusTable.rows().nodes()).removeClass('fw-bold');
+        $(networkStatusTable.row(rowIdx).nodes()).addClass('fw-bold');
     });
+    function setAssetNetValues(id) {      
+        var thisNode = allStatusDataset[allStatusDataset.findIndex(obj => obj.id==thisNodeID)];
+        var selectedNode = allStatusDataset[allStatusDataset.findIndex(obj => obj.id==id)];
+        $("#headingNetworkStatus").text(selectedNode.Node_Name);
+        //-- SET ASSET STATUS
+        if (selectedNode.Asset_Status == 1) {
+            $("#assetNetworkStatus").addClass('text-danger').text('ERROR');
+        } else {
+            $("#assetNetworkStatus").removeClass('text-danger').text('OK');
+        }
+        //-- SET NODE STATUS
+        if (selectedNode.Node_Status == 1) {
+            $("#nodeNetworkStatus").addClass('text-danger').text('ERROR');
+        } else {
+            $("#nodeNetworkStatus").removeClass('text-danger').text('OK');
+        }
+        //-- SET SERVER STATUS
+        if (selectedNode.Server_Status == 1) {
+            $("#serverNetworkStatus").addClass('text-danger').text('ERROR');
+        } else {
+            $("#serverNetworkStatus").removeClass('text-danger').text('OK');
+        }        
+    }
 };
 
 var renderMaps = function () {
