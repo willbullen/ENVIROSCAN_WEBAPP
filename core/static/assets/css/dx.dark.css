@@ -3544,7 +3544,7 @@
   height: 22px;
   border-radius: 2px;
   border: 1px solid #4d4d4d;
-  background-color: #2a2a2a;
+  background-color: transparent;
 }
 .dx-checkbox-checked .dx-checkbox-icon {
   font: 16px/16px DXIcons;
@@ -3664,14 +3664,14 @@
 }
 .dx-switch.dx-state-readonly .dx-switch-container {
   border-color: #363636;
-  background-color: #2a2a2a;
+  background-color: transparent;
 }
 .dx-switch.dx-state-active .dx-switch-handle::before {
   background-color: #64c6eb;
 }
 .dx-switch.dx-state-active .dx-switch-container {
   border-color: #1ca8dd;
-  background-color: rgba(201,201,201,.2);
+  background-color: transparent;
 }
 .dx-switch.dx-state-hover .dx-switch-handle::before {
   background-color: #1ca8dd;

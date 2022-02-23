@@ -130,6 +130,8 @@ DATABASES = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
+
 #DATABASES = {
 #    'default': {
 #        'ENGINE': 'django.db.backends.sqlite3',

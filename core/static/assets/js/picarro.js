@@ -4,6 +4,152 @@ var allStatusDataset = [];
 var thisStatusDataset = [];
 var thisNodeID = 0;
 
+function setHistory(db_Data) {
+    // MET DATA
+    $("#metRadarChart").dxPolarChart("option", "dataSource", db_Data.Data.data);
+    $("#weatherChart").dxChart("option", "dataSource", db_Data.Data.data);
+    // CORE DATA
+    $("#picarroChart").dxChart("option", "dataSource", db_Data.Data.data);
+    // SUPPLY VOLTAGE
+    $("#SSC_Voltage").dxChart("option", "dataSource", db_Data.Data.data);
+    var maxMinAvg_Voltage = maxMinAvg(db_Data.Data.data, "Instrument_Supply_Voltage");
+    $("#Voltage_Max").text(maxMinAvg_Voltage[0].toFixed(2));
+    $("#Voltage_Min").text(maxMinAvg_Voltage[1].toFixed(2));
+    $("#Voltage_Ave").text(maxMinAvg_Voltage[2].toFixed(2));
+    // CAVITY TEMPERATURE
+    $("#SSC_CavityTemp").dxChart("option", "dataSource", db_Data.Data.data);
+    var maxMinAvg_CavityTemp = maxMinAvg(db_Data.Data.data, "Data_Cavity_Temp");
+    $("#CavityTemp_Max").text(maxMinAvg_CavityTemp[0].toFixed(2));
+    $("#CavityTemp_Min").text(maxMinAvg_CavityTemp[1].toFixed(2));
+    $("#CavityTemp_Ave").text(maxMinAvg_CavityTemp[2].toFixed(2));
+    // WARM BOX TEMPERATURE
+    $("#SSC_WarmBoxTemp").dxChart("option", "dataSource", db_Data.Data.data);
+    var maxMinAvg_WarmBoxTemp = maxMinAvg(db_Data.Data.data, "Data_WarmBoxTemp");
+    $("#WarmBoxTemp_Max").text(maxMinAvg_WarmBoxTemp[0].toFixed(2));
+    $("#WarmBoxTemp_Min").text(maxMinAvg_WarmBoxTemp[1].toFixed(2));
+    $("#WarmBoxTemp_Ave").text(maxMinAvg_WarmBoxTemp[2].toFixed(2));
+    // CAVITY PRESSURE
+    $("#SSC_CavityPres").dxChart("option", "dataSource", db_Data.Data.data);
+    var maxMinAvg_CavityPres = maxMinAvg(db_Data.Data.data, "Data_CavityPressure");
+    $("#CavityPres_Max").text(maxMinAvg_CavityPres[0].toFixed(2));
+    $("#CavityPres_Min").text(maxMinAvg_CavityPres[1].toFixed(2));
+    $("#CavityPres_Ave").text(maxMinAvg_CavityPres[2].toFixed(2));
+}
+function setCurrent(db_Data) {
+    var thisDateTime = new Date(db_Data.Data.Data_DateTime);
+    var thisTime = new Date(db_Data.Data.Data_DateTime).toLocaleTimeString();
+    var thisDate = new Date(db_Data.Data.Data_DateTime).toLocaleDateString();
+    thisDateTime = thisDateTime.toLocaleString();
+
+    var endDate = new Date();
+    var startDate = new Date(db_Data.HeartBeat);
+    var timeDiff = (endDate.getTime() - startDate.getTime()) / 1000;
+    if (timeDiff > 70) {
+
+    }
+    
+    // SET DATE TIME EVERYWHERE
+    for (var i = 0, len = 20; i < len; ++i) {
+        $("#Time_" + i).text(thisTime);
+    }
+    $("#Time").text(thisTime);
+    $("#Date").text(thisDate);
+    // CORE DATA
+    $("#CO2_Value").text(db_Data.Data.Data_CO2.toFixed(1));
+    $("#CO2_Bar").attr('style', 'width: ' + getPercentage(db_Data.Data.Data_CO2, 420) + '%');
+    $("#CO_Value").text(db_Data.Data.Data_CO.toFixed(1));
+    $("#CO_Bar").attr('style', 'width: ' + getPercentage(db_Data.Data.Data_CO, 2) + '%');
+    $("#H2O_Value").text(db_Data.Data.Data_H2O.toFixed(1));
+    $("#H2O_Bar").attr('style', 'width: ' + getPercentage(db_Data.Data.Data_H2O, 4) + '%');
+    $("#CH4_Value").text(db_Data.Data.Data_CH4.toFixed(1));
+    $("#CH4_Bar").attr('style', 'width: ' + getPercentage(db_Data.Data.Data_CH4, 3) + '%');
+    // SUPPLY VOLTAGE
+    $("#Voltage_Value").text(db_Data.Data.Instrument_Supply_Voltage.toFixed(1));
+    $("#Voltage_Bar").attr('style', 'width: ' + getPercentage(db_Data.Data.Instrument_Supply_Voltage, 26) + '%');
+    // CAVITY TEMPERATURE
+    $("#CavityTemp_Value").text(db_Data.Data.Data_Cavity_Temp.toFixed(1));
+    $("#CavityTemp_Bar").attr('style', 'width: ' + getPercentage(db_Data.Data.Data_Cavity_Temp, 45) + '%');
+    // WARM BOX TEMPERATURE
+    $("#CavityPres_Value").text(db_Data.Data.Data_CavityPressure.toFixed(1));
+    $("#CavityPres_Bar").attr('style', 'width: ' + getPercentage(db_Data.Data.Data_CavityPressure, 1) + '%');
+    // CAVITY PRESSURE
+    $("#WarmBoxTemp_Value").text(db_Data.Data.Data_WarmBoxTemp.toFixed(1));
+    $("#WarmBoxTemp_Bar").attr('style', 'width: ' + getPercentage(db_Data.Data.Data_WarmBoxTemp, 45) + '%');
+    // MISC DATA
+    $("#CO2_Dry_Value").text(db_Data.Data.Data_CO2_Dry.toFixed(1));
+    $("#CH4_Dry_Value").text(db_Data.Data.Data_CH4_Dry.toFixed(1));
+    $("#Amb_P_Value").text(db_Data.Data.Data_Amb_P.toFixed(1));
+    $("#DasTemp_Value").text(db_Data.Data.Data_DasTemp.toFixed(1));
+    $("#EtalonTemp_Value").text(db_Data.Data.Data_EtalonTemp.toFixed(1));
+    $("#Solenoid_Valves_Value").text(db_Data.Data.Data_Solenoid_Valves.toFixed(1));
+    $("#MPVPosition_Value").text(db_Data.Data.Data_MPVPosition.toFixed(1));
+    $("#OutletValve_Value").text(db_Data.Data.Data_OutletValve.toFixed(1));
+    $("#Species_Value").text(db_Data.Data.Data_Species.toFixed(1));
+    $("#H2O_Reported_Value").text(db_Data.Data.Data_h2o_reported.toFixed(1));
+    // MET DATA
+    $("#Wind_Value").text(db_Data.Data.Data_WindSpeed.toFixed(1));
+    $("#Gust_Value").text(db_Data.Data.Data_MaxGust.toFixed(1));
+    $("#Dir_Value").text(db_Data.Data.Data_WindDir.toFixed(1));
+    $("#Temp_Value").text(db_Data.Data.Data_GrassA.toFixed(1));
+    $("#Hum_Value").text(db_Data.Data.Data_HumA.toFixed(1));
+    $("#Pres_Value").text(db_Data.Data.Data_Pressure.toFixed(1));
+}
+function setStatus(db_Data) {
+    var StatusData = db_Data.Data.data.map(function(h){ return {id: h.id, asset: h.Node_Name, location: h.Location, status: h.Status.toString(), asset_status: h.Asset_Status, asset_status_description: h.Asset_Status_Description, node_status: h.Node_Status, node_status_description: h.Node_Status_Description, server_status: h.Server_Status, server_status_description: h.Server_Status_Description, coords: [h.Node_Lat, h.Node_Lng]};});
+    // SET MAP VALUES
+    var mapObject = $('#networkStatusMap').vectorMap('get', 'mapObject'); 
+    mapObject.addMarkers(StatusData.map(function(h){ return {name: h.asset, latLng: h.coords, id: h.id};}), []);
+    mapObject.series.markers[0].setValues(StatusData.reduce(function(p, c, i){ p[i] = c.status; return p;},{}));
+    // SET MAP VALUES
+    var tableObject = $('#networkStatusTable').DataTable();
+    tableObject.clear();
+    tableObject.rows.add(StatusData.map(function(h){ return [h.asset, h.status, h.location, h.asset_status, h.data_status, h.node_status, h.server_status, h.id];}));
+    tableObject.draw();
+    // SET THIS NODE
+    thisNodeID = db_Data.Node_ID;
+    // SET ALL STATUS DATASET
+    allStatusDataset = db_Data.Data.data;
+    // SET THIS STATUS DATASET
+    thisStatusDataset = allStatusDataset[allStatusDataset.findIndex(obj => obj.id==thisNodeID)];
+}
+function setSetup(db_Data) {
+    // SET THIS NODE
+    thisNodeID = db_Data.Node_ID;
+    // SET THIS STATUS DATASET
+    thisStatusDataset = db_Data.Data.data[0];
+    // SET STATUS HEADING
+    $("#headingNetworkStatus").text(thisStatusDataset.Node_Name);
+    //-- SET ASSET STATUS
+    if (thisStatusDataset.Asset_Status == 1) {
+        $("#assetNetworkStatus").addClass('text-danger').text('ERROR');
+        $('#Asset_Status').addClass('bg-danger');
+        $("#Asset_Status").attr('title', thisStatusDataset.Asset_Status_Description);
+        $("#Asset_Status").attr('data-original-title', thisStatusDataset.Asset_Status_Description);
+        $("#Asset_Status").tooltip('update');
+        $("#Asset_Status").tooltip('show');
+    } else {
+        $("#assetNetworkStatus").removeClass('text-danger').text('OK');
+        $('#Asset_Status').removeClass('bg-danger');
+        $("#Asset_Status").tooltip({ title : "OK" });
+    }
+    //-- SET NODE STATUS
+    if (thisStatusDataset.Node_Status == 1) {
+        $("#nodeNetworkStatus").addClass('text-danger').text('ERROR');
+        $('#Node_Status').addClass('bg-danger');
+        $("#Node_Status").tooltip({ title : "ERROR" });
+    } else {
+        $("#nodeNetworkStatus").removeClass('text-danger').text('OK');
+        $('#Node_Status').removeClass('bg-danger');
+        $("#Node_Status").tooltip({ title : "OK" });
+    }
+    //-- SET SERVER STATUS
+    if (thisStatusDataset.Server_Status == 1) {
+        $("#serverNetworkStatus").addClass('text-danger').text('ERROR');
+    } else {
+        $("#serverNetworkStatus").removeClass('text-danger').text('OK');
+    }
+}
+
 var startWebSocket = function () {
     var picarroSocket;
     var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
@@ -14,229 +160,20 @@ var startWebSocket = function () {
         ws_Data = JSON.parse(e.data).message;
         console.log(ws_Data);
         // SET STATUS VALUES
-        if (ws_Data.Data_Type == 'StatusData') {
-            var StatusData = ws_Data.Data.data.map(function(h){ return {id: h.id, asset: h.Node_Name, location: h.Location, status: h.Status.toString(), asset_status: h.Asset_Status, asset_status_description: h.Asset_Status_Description, node_status: h.Node_Status, node_status_description: h.Node_Status_Description, server_status: h.Server_Status, server_status_description: h.Server_Status_Description, coords: [h.Node_Lat, h.Node_Lng]};});
-            // SET MAP VALUES
-            var mapObject = $('#networkStatusMap').vectorMap('get', 'mapObject'); 
-            mapObject.addMarkers(StatusData.map(function(h){ return {name: h.asset, latLng: h.coords, id: h.id};}), []);
-            mapObject.series.markers[0].setValues(StatusData.reduce(function(p, c, i){ p[i] = c.status; return p;},{}));
-            // SET MAP VALUES
-            var tableObject = $('#networkStatusTable').DataTable();
-            tableObject.clear();
-            tableObject.rows.add(StatusData.map(function(h){ return [h.asset, h.status, h.location, h.asset_status, h.data_status, h.node_status, h.server_status, h.id];}));
-            tableObject.draw();
-            // SET THIS NODE
-            thisNodeID = ws_Data.Node_ID;
-            // SET ALL STATUS DATASET
-            allStatusDataset = ws_Data.Data.data;
-            // SET THIS STATUS DATASET
-            thisStatusDataset = allStatusDataset[allStatusDataset.findIndex(obj => obj.id==thisNodeID)];
+        if (ws_Data.Data_Type == 'Status_Data') {
+            setStatus(ws_Data);
         }
         // SET SETUP VALUES
-        if (ws_Data.Data_Type == 'SetupData') {
-            // SET THIS NODE
-            thisNodeID = ws_Data.Node_ID;
-            // SET THIS STATUS DATASET
-            thisStatusDataset = ws_Data.Data.data[0];
-            // SET STATUS HEADING
-            $("#headingNetworkStatus").text(thisStatusDataset.Node_Name);
-            //-- SET ASSET STATUS
-            if (thisStatusDataset.Asset_Status == 1) {
-                $("#assetNetworkStatus").addClass('text-danger').text('ERROR');
-                $('#Asset_Status').addClass('bg-danger');
-            } else {
-                $("#assetNetworkStatus").removeClass('text-danger').text('OK');
-                $('#Asset_Status').removeClass('bg-danger');
-            }
-            //-- SET NODE STATUS
-            if (thisStatusDataset.Node_Status == 1) {
-                $("#nodeNetworkStatus").addClass('text-danger').text('ERROR');
-                $('#Node_Status').addClass('bg-danger');
-                $('#Node_Status').attr('data-original-title', 'Not OK!!!!');
-            } else {
-                $("#nodeNetworkStatus").removeClass('text-danger').text('OK');
-                $('#Node_Status').removeClass('bg-danger');
-                $('#Node_Status').attr('data-original-title', 'OK');
-            }
-            //-- SET SERVER STATUS
-            if (thisStatusDataset.Server_Status == 1) {
-                $("#serverNetworkStatus").addClass('text-danger').text('ERROR');
-            } else {
-                $("#serverNetworkStatus").removeClass('text-danger').text('OK');
-            }
+        if (ws_Data.Data_Type == 'Setup_Data') {
+            setSetup(ws_Data);
         }
         // SET CHART VALUES
-        if (ws_Data.Data_Type == 'HistoryData') {
-            $("#metRadarChart").dxPolarChart("option", "dataSource", ws_Data.Data.data);
-            $("#weatherChart").dxChart("option", "dataSource", ws_Data.Data.data);
-            $("#picarroChart").dxChart("option", "dataSource", ws_Data.Data.data);
-
-            $("#SSC_Voltage").dxChart("option", "dataSource", ws_Data.Data.data);
-            var maxMinAvg_Voltage = maxMinAvg(ws_Data.Data.data, "Instrument_Supply_Voltage");
-            $("#Voltage_Max").text(maxMinAvg_Voltage[0].toFixed(2));
-            $("#Voltage_Min").text(maxMinAvg_Voltage[1].toFixed(2));
-            $("#Voltage_Ave").text(maxMinAvg_Voltage[2].toFixed(2));
-
-            $("#SSC_CavityTemp").dxChart("option", "dataSource", ws_Data.Data.data);
-            var maxMinAvg_CavityTemp = maxMinAvg(ws_Data.Data.data, "Data_Cavity_Temp");
-            $("#CavityTemp_Max").text(maxMinAvg_CavityTemp[0].toFixed(2));
-            $("#CavityTemp_Min").text(maxMinAvg_CavityTemp[1].toFixed(2));
-            $("#CavityTemp_Ave").text(maxMinAvg_CavityTemp[2].toFixed(2));
-
-            $("#SSC_WarmBoxTemp").dxChart("option", "dataSource", ws_Data.Data.data);
-            var maxMinAvg_WarmBoxTemp = maxMinAvg(ws_Data.Data.data, "Data_WarmBoxTemp");
-            $("#WarmBoxTemp_Max").text(maxMinAvg_WarmBoxTemp[0].toFixed(2));
-            $("#WarmBoxTemp_Min").text(maxMinAvg_WarmBoxTemp[1].toFixed(2));
-            $("#WarmBoxTemp_Ave").text(maxMinAvg_WarmBoxTemp[2].toFixed(2));
-
-            $("#SSC_CavityPres").dxChart("option", "dataSource", ws_Data.Data.data);
-            var maxMinAvg_CavityPres = maxMinAvg(ws_Data.Data.data, "Data_CavityPressure");
-            $("#CavityPres_Max").text(maxMinAvg_CavityPres[0].toFixed(2));
-            $("#CavityPres_Min").text(maxMinAvg_CavityPres[1].toFixed(2));
-            $("#CavityPres_Ave").text(maxMinAvg_CavityPres[2].toFixed(2));
+        if (ws_Data.Data_Type == 'History_Data') {
+            setHistory(ws_Data);
         }
         // SET STATIC VALUES
-        if (ws_Data.Data_Type == 'CurrentData') {
-            var thisDateTime = new Date(ws_Data.Data.Data_DateTime);
-            var thisTime = new Date(ws_Data.Data.Data_DateTime).toLocaleTimeString();
-            var thisDate = new Date(ws_Data.Data.Data_DateTime).toLocaleDateString();
-            thisDateTime = thisDateTime.toLocaleString();
-
-            var endDate = new Date();
-            var startDate = new Date(ws_Data.HeartBeat);
-            var timeDiff = (endDate.getTime() - startDate.getTime()) / 1000;
-            if (timeDiff > 70) {
-
-            }            
-
-            $("#Time").text(thisTime);
-            $("#Date").text(thisDate);
-
-            $("#CO2_Value").text(ws_Data.Data.Data_CO2.toFixed(1));
-            $("#CO2_Time").text(thisTime);
-            $("#CO2_Date").text(thisDate);
-            $("#CO2_Bar").attr('style', 'width: ' + getPercentage(ws_Data.Data.Data_CO2, 420) + '%');
-
-            $("#CO_Value").text(ws_Data.Data.Data_CO.toFixed(1));
-            $("#CO_Time").text(thisTime);
-            $("#CO_Date").text(thisDate);
-            $("#CO_Bar").attr('style', 'width: ' + getPercentage(ws_Data.Data.Data_CO, 2) + '%');
-
-            $("#H2O_Value").text(ws_Data.Data.Data_H2O.toFixed(1));
-            $("#H2O_Time").text(thisTime);
-            $("#H2O_Date").text(thisDate);
-            $("#H2O_Bar").attr('style', 'width: ' + getPercentage(ws_Data.Data.Data_H2O, 4) + '%');
-
-            $("#CH4_Value").text(ws_Data.Data.Data_CH4.toFixed(1));
-            $("#CH4_Time").text(thisTime);
-            $("#CH4_Date").text(thisDate);
-            $("#CH4_Bar").attr('style', 'width: ' + getPercentage(ws_Data.Data.Data_CH4, 3) + '%');
-
-            $("#Voltage_Value").text(ws_Data.Data.Instrument_Supply_Voltage.toFixed(1));
-            $("#Voltage_Time").text(thisTime);
-            $("#Voltage_Date").text(thisDate);
-            $("#Voltage_Bar").attr('style', 'width: ' + getPercentage(ws_Data.Data.Instrument_Supply_Voltage, 26) + '%');
-
-            $("#CavityTemp_Value").text(ws_Data.Data.Data_Cavity_Temp.toFixed(1));
-            $("#CavityTemp_Time").text(thisTime);
-            $("#CavityTemp_Date").text(thisDate);
-            $("#CavityTemp_Bar").attr('style', 'width: ' + getPercentage(ws_Data.Data.Data_Cavity_Temp, 45) + '%');
-
-            $("#CavityPres_Value").text(ws_Data.Data.Data_CavityPressure.toFixed(1));
-            $("#CavityPres_Time").text(thisTime);
-            $("#CavityPres_Date").text(thisDate);
-            $("#CavityPres_Bar").attr('style', 'width: ' + getPercentage(ws_Data.Data.Data_CavityPressure, 1) + '%');
-
-            $("#WarmBoxTemp_Value").text(ws_Data.Data.Data_WarmBoxTemp.toFixed(1));
-            $("#WarmBoxTemp_Time").text(thisTime);
-            $("#WarmBoxTemp_Date").text(thisDate);
-            $("#WarmBoxTemp_Bar").attr('style', 'width: ' + getPercentage(ws_Data.Data.Data_WarmBoxTemp, 45) + '%');
-
-            $("#Misc_1_Heading").text("CO2 DRY");
-            $("#Misc_1_Value").text(ws_Data.Data.Data_CO2_Dry.toFixed(1));
-            $("#Misc_1_Time").text(thisTime);
-            $("#Misc_1_Date").text(thisDate);
-
-            $("#Wind_Value").text(ws_Data.Data.Data_WindSpeed.toFixed(1));
-            $("#Gust_Value").text(ws_Data.Data.Data_MaxGust.toFixed(1));
-            $("#Dir_Value").text(ws_Data.Data.Data_WindDir.toFixed(1));
-            $("#Temp_Value").text(ws_Data.Data.Data_GrassA.toFixed(1));
-            $("#Hum_Value").text(ws_Data.Data.Data_HumA.toFixed(1));
-            $("#Pres_Value").text(ws_Data.Data.Data_Pressure.toFixed(1));
-
-            // MISC VALUES
-            var jsonDataVis = [{
-                data: ws_Data.Data.Data_CO2_Dry.toFixed(1),
-                heading: "CO2 DRY",
-                data_type: "PPM",
-                time: thisTime,
-                date: thisDate,
-                type: "MISC",
-            }, {
-                data: ws_Data.Data.Data_CH4_Dry.toFixed(1),
-                heading: "CH4 DRY",
-                data_type: "PPM",
-                time: thisTime,
-                date: thisDate,
-                type: "MISC",
-            }, {
-                data: ws_Data.Data.Data_Amb_P.toFixed(1),
-                heading: "AMBIENT PRESSURE",
-                data_type: "Pa",
-                time: thisTime,
-                date: thisDate,
-                type: "MISC",
-            }, {
-                data: ws_Data.Data.Data_DasTemp.toFixed(1),
-                heading: "DAS TEMPERATURE",
-                data_type: "C",
-                time: thisTime,
-                date: thisDate,
-                type: "MISC",
-            }, {
-                data: ws_Data.Data.Data_EtalonTemp.toFixed(1),
-                heading: "ETALON TEMPERATURE",
-                data_type: "C",
-                time: thisTime,
-                date: thisDate,
-                type: "MISC",
-            }, {
-                data: ws_Data.Data.Data_Solenoid_Valves.toFixed(1),
-                heading: "SOLENOID VALVE",
-                data_type: "",
-                time: thisTime,
-                date: thisDate,
-                type: "MISC",
-            }, {
-                data: ws_Data.Data.Data_MPVPosition.toFixed(1),
-                heading: "MPV POSITION",
-                data_type: "",
-                time: thisTime,
-                date: thisDate,
-                type: "MISC",
-            }, {
-                data: ws_Data.Data.Data_OutletValve.toFixed(1),
-                heading: "OUTLET VALVE",
-                data_type: "",
-                time: thisTime,
-                date: thisDate,
-                type: "MISC",
-            }, {
-                data: ws_Data.Data.Data_Species.toFixed(1),
-                heading: "SPECIES",
-                data_type: "",
-                time: thisTime,
-                date: thisDate,
-                type: "MISC",
-            }, {
-                data: ws_Data.Data.Data_h2o_reported.toFixed(1),
-                heading: "H2O REPORTED",
-                data_type: "",
-                time: thisTime,
-                date: thisDate,
-                type: "MISC",
-            }, ];
-            generateDataVis(jsonDataVis);
+        if (ws_Data.Data_Type == 'Current_Data') {
+            setCurrent(ws_Data);
         }
     };
 
@@ -248,18 +185,6 @@ var startWebSocket = function () {
         console.error(err);
     };
 };
-
-function generateDataVis(jsonData) {
-    for (var i = 0, len = jsonData.length; i < len; ++i) {
-        if (jsonData[i]["type"] == "MISC") {
-            $("#Misc_" + i + "_Heading").text(jsonData[i]["heading"]);
-            $("#Misc_" + i + "_Value").text(jsonData[i]["data"]);
-            $("#Misc_" + i + "_Time").text(jsonData[i]["time"]);
-            $("#Misc_" + i + "_Date").text(jsonData[i]["date"]);
-            $("#Misc_" + i + "_Date_Type").text(jsonData[i]["date_type"]);
-        }
-    }
-}
 
 function getPercentage(act, max) {
     return (act / max) * 100;
@@ -889,6 +814,13 @@ var renderCharts = function () {
     //################################# SSC CHART  ###################################
 };
 
+function initialSetup() {
+    setStatus(Status_Data);
+    setSetup(Setup_Data);
+    setHistory(History_Data);
+    setCurrent(Current_Data);
+}
+
 /* Controller
 ------------------------------------------------ */
 $(document).ready(function () {
@@ -896,10 +828,12 @@ $(document).ready(function () {
     renderCharts();
     renderMaps();
     renderTableData();
+    initialSetup();
 
     $(document).on('theme-reload', function () {
         $('[data-render="apexchart"], #chart-server, #world-map').empty();
         renderCharts();
         renderMaps();
+        renderTableData();
     });
 });

@@ -1,0 +1,214 @@
+{% extends "layouts/base.html" %}
+
+
+{% block content %}
+<!-- BEGIN #content -->
+<div id="content" class="app-content">
+	<!-- BEGIN page-header -->
+	<div class="d-flex fw-bold small">
+		<span class="flex-grow-1">
+			<h1 class="page-header">
+				DATA ANALYTICS AND QC
+			</h1>
+		</span>
+	</div>
+	<!-- END page-header -->
+
+	<!-- BEGIN daterangepicker -->
+	<div class="d-flex align-items-center mb-3">
+
+	</div>
+	<!-- END daterangepicker -->
+
+	<!-- BEGIN row -->
+	<div class="row">
+
+
+		<!-- BEGIN #formGrid -->
+		<div id="formGrid" class="col-xl-6 mb-3">
+			<div class="card">
+				<div class="card-body">
+					<!-- BEGIN title -->
+					<div class="d-flex fw-bold small mb-3">
+						<span class="flex-grow-1">ASSET SELECTION</span>
+					</div>
+					<!-- END title -->
+					<form>
+						<div class="mb-3 row">
+							<label for="inputAsset" class="col-sm-2 col-form-label">Asset</label>
+							<div class="col-sm-10">
+								<select class="form-select" id="exampleFormControlSelect1">
+									<option>Picarro - Valentia</option>
+									<option>Aethalometer - Valentia</option>
+									<option>NOX - Cahersiveen</option>
+									<option>SOX - Cahersiveen</option>
+									<option>Autosonde - Cahersiveen</option>
+									<option>Tucson - Cahersiveen</option>
+									<option>Generator - Valentia</option>
+									<option>UPS - Valentia</option>
+								</select>
+							</div>
+						</div>
+						<div class="mb-3 row">
+							<label for="inputField" class="col-sm-2 col-form-label">Field</label>
+							<div class="col-sm-10">
+								<select class="form-select" id="exampleFormControlSelect1">
+									<option>CO2</option>
+									<option>CO</option>
+									<option>H2O</option>
+									<option>CH4</option>
+								</select>
+							</div>
+						</div>
+						<fieldset class="mb-2">
+							<div class="row">
+								<label class="col-form-label col-sm-2 pt-0">Range</label>
+								<div class="col-sm-10">
+									<div id="range-selector"></div>
+								</div>
+							</div>
+						</fieldset>
+						<div class="form-group row">
+							<div class="col-sm-10 offset-sm-2">
+								<button type="submit" class="btn btn-outline-theme">GO</button>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="card-arrow">
+					<div class="card-arrow-top-left"></div>
+					<div class="card-arrow-top-right"></div>
+					<div class="card-arrow-bottom-left"></div>
+					<div class="card-arrow-bottom-right"></div>
+				</div>
+			</div>
+		</div>
+		<!-- END #formGrid -->
+
+
+		<!-- BEGIN #formGrid -->
+		<div id="formGrid" class="col-xl-6 mb-3">
+			<div class="card">
+				<div class="card-body">
+					<!-- BEGIN title -->
+					<div class="d-flex fw-bold small mb-3">
+						<span class="flex-grow-1">DATA POINT</span>
+					</div>
+					<!-- END title -->
+
+					<!-- BEGIN form -->
+					<div class="widget-container">
+						<div id="form"></div>
+					</div>
+					<!-- END form -->
+				</div>
+				<div class="card-arrow">
+					<div class="card-arrow-top-left"></div>
+					<div class="card-arrow-top-right"></div>
+					<div class="card-arrow-bottom-left"></div>
+					<div class="card-arrow-bottom-right"></div>
+				</div>
+			</div>
+		</div>
+		<!-- END #formGrid -->
+
+
+		<!-- BEGIN col-3 -->
+		<div class="col-xl-12 col-lg-12">
+			<!-- BEGIN card -->
+			<div class="card mb-3">
+				<!-- BEGIN card-body -->
+				<div class="card-body">
+					<!-- BEGIN title -->
+					<div class="d-flex fw-bold small">
+						<span class="flex-grow-1" id="Mini_Heading_1">CHART</span>
+						<a href="#" data-toggle="card-expand" class="text-white text-opacity-50 text-decoration-none"><i
+								class="bi bi-fullscreen"></i></a>
+					</div>
+					<!-- END title -->
+					<!-- BEGIN stat-lg -->
+					<div class="row align-items-center">
+						<div class="col-12">
+							<div id="Main_Chart"></div>
+							<div id="Main_Chart_Range_Selector"></div>
+						</div>
+					</div>
+					<!-- END stat-lg -->
+					<!-- BEGIN stat-sm -->
+
+					<!-- END stat-sm -->
+				</div>
+				<!-- END card-body -->
+
+				<!-- BEGIN card-arrow -->
+				<div class="card-arrow">
+					<div class="card-arrow-top-left"></div>
+					<div class="card-arrow-top-right"></div>
+					<div class="card-arrow-bottom-left"></div>
+					<div class="card-arrow-bottom-right"></div>
+				</div>
+				<!-- END card-arrow -->
+			</div>
+			<!-- END card -->
+		</div>
+		<!-- END col-3 -->
+
+		<!-- BEGIN col-6 -->
+		<div class="mb-3">
+			<!-- BEGIN card -->
+			<div class="card mb-3">
+				<!-- BEGIN card-body -->
+				<div class="card-body">
+					<!-- BEGIN title -->
+					<div class="d-flex fw-bold small mb-3">
+						<span class="flex-grow-1">CHANGE LOGS</span>
+						<a href="#" data-toggle="card-expand" class="text-white text-opacity-50 text-decoration-none"><i
+								class="bi bi-fullscreen"></i></a>
+					</div>
+					<!-- END title -->
+					
+					<!-- BEGIN table -->
+					<div class="col-lg-12 mb-3 mb-lg-0">
+						<table id="changeLogsTable" class="w-100 table-striped small mb-0 text-truncate text-white text-opacity-60"></table>
+					</div>
+					<!-- END table -->
+				</div>
+				<!-- END card-body -->
+
+				<!-- BEGIN card-arrow -->
+				<div class="card-arrow">
+					<div class="card-arrow-top-left"></div>
+					<div class="card-arrow-top-right"></div>
+					<div class="card-arrow-bottom-left"></div>
+					<div class="card-arrow-bottom-right"></div>
+				</div>
+				<!-- END card-arrow -->
+			</div>
+			<!-- END card -->
+		</div>
+		<!-- END col-6 -->
+
+	</div>
+	<!-- END row -->
+</div>
+<!-- END #content -->
+{% endblock content %}
+
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script>
+	function reviver(key, value) {
+		if (key === 'Data_DateTime') {
+			return new Date(value);
+		}
+		return value;
+	}
+
+	var History_Data = JSON.parse('{{History_Data|escapejs}}', reviver);
+</script>
+
+<script src="/static/assets/js/daqc.js"></script>
+
+{% endblock javascripts %}
