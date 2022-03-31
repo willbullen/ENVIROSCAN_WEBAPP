@@ -9,5 +9,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('authentication.urls')), 
     path('', include('data.urls')),
-    path('', include('app.urls')),
+    path('crypto/', include('app_crypto.urls')),
+    path('dalys/', include('app_dalys.urls')),
+    path('water/', include('app_water.urls')),
+    path('', include('app.urls')),    
 ]

@@ -45,8 +45,11 @@ INSTALLED_APPS = [
     'data',
     'app',
     'channels',
-    'beatserver',
-    'django_celery_beat',
+    'app_crypto',
+    'app_dalys',
+    'app_water',
+    #'beatserver',
+    #'django_celery_beat',
 ]
 
 MIDDLEWARE = [
