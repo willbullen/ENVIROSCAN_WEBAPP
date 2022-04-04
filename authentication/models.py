@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from PIL import Image
+from django_pandas.managers import DataFrameManager
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE) # Delete profile when user is deleted
@@ -19,3 +20,15 @@ class Profile(models.Model):
             output_size = (300, 300)
             img.thumbnail(output_size) # Resize image
             img.save(self.image.path) # Save it again and override the larger image
+
+class Organization(models.Model):
+	Organization_Name = models.CharField(max_length=50)
+	Organization_Description = models.CharField(max_length=200, blank=True, null=True)
+
+	objects = DataFrameManager()
+
+	def __str__(self):
+		return self.Organization_Name
+
+	class Meta:
+		ordering = ['Organization_Name']
