@@ -28,6 +28,7 @@ class SignUpForm(UserCreationForm):
                 "class": "form-control"
             }
         ))
+
     email = forms.EmailField(
         widget=forms.EmailInput(
             attrs={
@@ -35,6 +36,7 @@ class SignUpForm(UserCreationForm):
                 "class": "form-control"
             }
         ))
+
     password1 = forms.CharField(
         widget=forms.PasswordInput(
             attrs={
@@ -42,6 +44,7 @@ class SignUpForm(UserCreationForm):
                 "class": "form-control"
             }
         ))
+
     password2 = forms.CharField(
         widget=forms.PasswordInput(
             attrs={
@@ -61,7 +64,7 @@ class UserUpdateForm(forms.ModelForm):
         model = User
         fields = ['username', 'email']
 
-class ProfileUpdateForm(forms.ModelForm):
+class ProfileUpdateForm(forms.ModelForm):    
     class Meta:
         model = Profile
-        fields = ['image']
+        fields = ['image', 'organization']

@@ -8,6 +8,9 @@ from django.forms.utils import ErrorList
 from django.http import HttpResponse
 from .forms import LoginForm, SignUpForm, UserUpdateForm, ProfileUpdateForm
 
+from .models import Organization
+import json
+
 def login_view(request):
     form = LoginForm(request.POST or None)
     msg = None
@@ -27,15 +30,29 @@ def login_view(request):
     return render(request, "page_login.html", {"form": form, "msg" : msg})
 
 def register_user(request):
+
     msg     = None
     success = False
+    organizations = {}
+    
     if request.method == "POST":
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get("username")
-            raw_password = form.cleaned_data.get("password1")
+
+        u_form = SignUpForm(request.POST)
+        p_form = ProfileUpdateForm(request.POST)        
+
+        if u_form.is_valid() and p_form.is_valid():
+
+            organization = p_form.cleaned_data.get("organization")
+
+            u_form.save()
+
+            username = u_form.cleaned_data.get("username")
+            raw_password = u_form.cleaned_data.get("password1")
             user = authenticate(username=username, password=raw_password)
+
+            profile = p_form.save(commit=False)
+            profile.user = user
+            profile.save()
 
             msg     = 'User created - please <a href="/login">login</a>.'
             success = True
@@ -44,9 +61,11 @@ def register_user(request):
         else:
             msg = 'Form is not valid'    
     else:
-        form = SignUpForm()
+        u_form = SignUpForm()
 
-    return render(request, "page_register.html", {"form": form, "msg" : msg, "success" : success })
+    organizations = Organization.objects.all()
+
+    return render(request, "page_register.html", {"form": u_form, "msg" : msg, "success" : success, "list_organizations" : organizations })
 
 @login_required
 def profile(request):

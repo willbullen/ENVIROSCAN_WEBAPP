@@ -29,7 +29,7 @@
 						{% if msg %}
 							<span class="text-danger">{{ msg | safe }}</span>
 						{% else %}  
-							One Admin ID is all you need to access all the Admin services.
+							Sign up to your organizations dashboard, an activation email will be sent to you once the account is activated.
 						{% endif %}
 
 					</p>
@@ -54,34 +54,12 @@
 						<span class="text-danger">{{ form.password2.errors }}</span>
 					</div>
 					<div class="mb-3">
-						<label class="form-label">Profile Picture <span class="text-danger">*</span></label>
-						<input id="id_avitar" name="avitar" type="file" class="form-control form-control-lg bg-white bg-opacity-5" />
-					</div>
-					<div class="mb-3">
-						<label class="form-label">Country <span class="text-danger">*</span></label>
-						<select id="id_country" name="country" class="form-select form-select-lg bg-white bg-opacity-5">
-							<option>Ireland</option>
+						<label class="form-label">Organization <span class="text-danger">*</span></label>
+						<select id="id_organization" name="organization" class="form-select form-select-lg bg-white bg-opacity-5">
+							{% for organization in list_organizations %}
+								<option value="{{ organization.id }}">{{ organization.Organization_Name }}</option>
+							{% endfor %}
 						</select>
-					</div>					
-					<div class="mb-3">
-						<label class="form-label">Date of Birth <span class="text-danger">*</span></label>
-						<div class="row gx-2">
-							<div class="col-6">
-								<select class="form-select form-select-lg bg-white bg-opacity-5">
-									<option>Month</option>
-								</select>
-							</div>
-							<div class="col-3">
-								<select class="form-select form-select-lg bg-white bg-opacity-5">
-									<option>Day</option>
-								</select>
-							</div>
-							<div class="col-3">
-								<select class="form-select form-select-lg bg-white bg-opacity-5">
-									<option>Year</option>
-								</select>
-							</div>
-						</div>
 					</div>
 					<div class="mb-3">
 						<div class="form-check">
@@ -93,7 +71,7 @@
 						<button type="submit" class="btn btn-outline-theme btn-lg d-block w-100">Sign Up</button>
 					</div>
 					<div class="text-white text-opacity-50 text-center">
-						Already have an Admin ID? <a href="{% url 'login' %}">Sign In</a>
+						Already have an account? <a href="{% url 'login' %}">Sign In</a>
 					</div>
 				</form>
 			</div>

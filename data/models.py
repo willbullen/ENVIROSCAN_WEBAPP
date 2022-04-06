@@ -96,7 +96,9 @@ class Baloon_Logs(models.Model):
 
 
 
-# NODE
+######################################################
+################# MET EIREANN MODELS #################
+######################################################
 
 class Clients(models.Model):
 	Client_Name = models.CharField(max_length=50)
@@ -626,3 +628,120 @@ class Generator(models.Model):
 
 	class Meta:
 		ordering = ['Data_DateTime']
+
+
+######################################################
+################# CMMS SYSTEM MODELS #################
+######################################################
+
+class CMMS_Job_Types(models.Model):	
+	Job_Type_Title = models.CharField(max_length=100)
+	Job_Type_Description = models.CharField(max_length=500, blank = True, null = True)
+
+	objects = DataFrameManager()
+
+	def __str__(self):
+		return self.Job_Type_Title
+
+	class Meta:
+		ordering = ['Job_Type_Title']
+
+class CMMS_Job_Status(models.Model):	
+	Job_Status_Title = models.CharField(max_length=100)
+	Job_Status_Description = models.CharField(max_length=500, blank = True, null = True)
+
+	objects = DataFrameManager()
+
+	def __str__(self):
+		return self.Job_Status_Title
+
+	class Meta:
+		ordering = ['Job_Status_Title']
+
+class CMMS_Job_Priority(models.Model):	
+	Job_Priority_Title = models.CharField(max_length=100)
+	Job_Priority_Description = models.CharField(max_length=500, blank = True, null = True)
+
+	objects = DataFrameManager()
+
+	def __str__(self):
+		return self.Job_Priority_Title
+
+	class Meta:
+		ordering = ['Job_Priority_Title']
+
+class CMMS_Job_Schedule_Type(models.Model):	
+	Job_Schedule_Type_Title = models.CharField(max_length=100)
+	Job_Schedule_Type_Description = models.CharField(max_length=500, blank = True, null = True)
+
+	objects = DataFrameManager()
+
+	def __str__(self):
+		return self.Job_Schedule_Type_Title
+
+	class Meta:
+		ordering = ['Job_Schedule_Type_Title']
+
+class CMMS_Job_Schedule_Period(models.Model):	
+	Job_Schedule_Period = models.CharField(max_length=100)
+	Job_Schedule_Period_Description = models.CharField(max_length=500, blank = True, null = True)
+
+	objects = DataFrameManager()
+
+	def __str__(self):
+		return self.Job_Schedule_Period
+
+	class Meta:
+		ordering = ['Job_Schedule_Period']
+
+class CMMS_Jobs(models.Model):
+	Node_ID = models.ForeignKey(Nodes, on_delete=models.CASCADE)
+	Job_Created_DateTime = models.DateTimeField('date published')
+	Job_Title = models.CharField(max_length=100)
+	Job_Description = models.CharField(max_length=500, blank = True, null = True)
+	Job_Start_Date = models.DateTimeField('start date', blank = True, null = True)
+	Job_End_Date = models.DateTimeField('end date', blank = True, null = True)
+	Job_Type = models.ForeignKey(CMMS_Job_Types, on_delete=models.CASCADE)
+	Job_Status = models.ForeignKey(CMMS_Job_Status, on_delete=models.CASCADE)
+	Job_Priority = models.ForeignKey(CMMS_Job_Priority, on_delete=models.CASCADE)
+	Job_Schedule_Type = models.ForeignKey(CMMS_Job_Schedule_Type, on_delete=models.CASCADE, blank = True, null = True)
+	Job_Schedule_Period = models.ForeignKey(CMMS_Job_Schedule_Period, on_delete=models.CASCADE, blank = True, null = True)
+	Job_Schedule_Period_Value = models.IntegerField(blank = True, null = True)
+	Job_Completed_Comments = models.CharField(max_length=1000, blank = True, null = True)
+
+	objects = DataFrameManager()
+
+	def __str__(self):
+		return self.Job_Title
+
+	class Meta:
+		ordering = ['Job_Created_DateTime']
+
+class CMMS_Job_Tasks(models.Model):	
+	Job = models.ForeignKey(CMMS_Jobs, on_delete=models.CASCADE)
+	Job_Task_Title = models.CharField(max_length=100)
+	Job_Task_Description = models.CharField(max_length=500, blank = True, null = True)
+	Job_Task_Completed_Date = models.DateTimeField('date completed', blank = True, null = True)
+	Job_Task_Completed_Comments = models.CharField(max_length=1000, blank = True, null = True)
+
+	objects = DataFrameManager()
+
+	def __str__(self):
+		return self.Job_Task_Title
+
+	class Meta:
+		ordering = ['Job_Task_Title']
+
+class CMMS_Job_Attachments(models.Model):	
+	Job = models.ForeignKey(CMMS_Jobs, on_delete=models.CASCADE)
+	Job_Attachment_Title = models.CharField(max_length=100)
+	Job_Attachment_Description = models.CharField(max_length=500, blank = True, null = True)
+	Job_Attachment_Filepath = models.FileField(upload_to = 'files/', null = True, verbose_name = "")
+
+	objects = DataFrameManager()
+
+	def __str__(self):
+		return self.Job_Attachment_Title
+
+	class Meta:
+		ordering = ['Job_Attachment_Title']	
