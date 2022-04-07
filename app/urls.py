@@ -8,6 +8,9 @@ from . import views
 
 urlpatterns = [
 
+    # CMMS
+    path('cmms/', views.cmms, name='cmms'),
+
     # The home page
     path('', views.index, name='home'),
 

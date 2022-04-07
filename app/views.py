@@ -4,19 +4,72 @@ from django.template import loader
 from django.http import HttpResponse
 from django import template
 import json
+from django.contrib import messages
 
-from data.models import UPS, Generator, Autosonde_Ground_Station, Aethalometer_Data, Autosonde_Soundings, Autosonde_Sounding_Data, Autosonde_Logs, Nodes, SOX_Data, NOX_Data, Picarro_Data, Tucson_Data
+from data.models import CMMS_Jobs, CMMS_Job_Tasks, UPS, Generator, Autosonde_Ground_Station, Aethalometer_Data, Autosonde_Soundings, Autosonde_Sounding_Data, Autosonde_Logs, Nodes, SOX_Data, NOX_Data, Picarro_Data, Tucson_Data
+from django.core import serializers
+
+from .forms import CMMS_Jobs_Form, CMMS_Job_Tasks_Form
 from django.core import serializers
 
 @login_required(login_url="/login/")
-def index(request):
-    
+def index(request):    
     context = {}
-    context['segment'] = 'index'
-    
+    context['segment'] = 'index'    
 
     html_template = loader.get_template( 'index.html' )
     return HttpResponse(html_template.render(context, request))
+
+@login_required(login_url="/login/")
+def cmms(request):
+
+    jobs = []
+    i = 0
+    for job in CMMS_Jobs.objects.all():
+        jobs.append({
+            "job_id": job.pk, 
+            "job_author": job.Author.username,
+            "job_create_date": job.Job_Created_DateTime,
+            "job_title": job.Job_Title, 
+            "job_description": job.Job_Description,            
+            "job_start_date": job.Job_Start_Date,
+            "job_end_date": job.Job_End_Date,
+            "job_type": job.Job_Type.Job_Type_Title,
+            "job_status": job.Job_Status.Job_Status_Title,
+            "job_priority": job.Job_Priority.Job_Priority_Title,
+            "job_schedule_type": job.Job_Schedule_Type.Job_Schedule_Type_Title,
+            "job_schedule_period": job.Job_Schedule_Period,
+            "job_schedule_period_value": job.Job_Schedule_Period_Value,
+            "job_completed_date": job.Job_Completed_Date,
+            "job_completed_comments": job.Job_Completed_Comments,
+            "tasks": [],
+            "attachments": [],
+        })
+        for task in CMMS_Job_Tasks.objects.filter(Job = job):
+            jobs[i]["tasks"].append({
+                "task_id": task.pk, 
+                "task_title": task.Job_Task_Title,
+                "task_description": task.Job_Task_Description,
+                "task_status": task.Job_Task_Status,
+                "task_completed_date": task.Job_Task_Completed_Date,
+                "task_completed_comments": task.Job_Task_Completed_Comments,
+            })
+        i =+ 1
+
+    print(jobs)
+
+    if request.method == 'POST':
+        form = CMMS_Jobs_Form(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username') 
+            messages.success(request, f'Task has been saved.') 
+            return redirect('login')
+    else:
+        form = CMMS_Jobs_Form()
+
+    html_template = loader.get_template('dashboard_cmms.html')
+    return HttpResponse(html_template.render({'form': form, 'jobs': jobs}, request))
 
 @login_required(login_url="/login/")
 def pages(request):
