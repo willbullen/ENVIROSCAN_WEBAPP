@@ -1,6 +1,7 @@
 from django.db import models
 from django_pandas.managers import DataFrameManager
 from django.contrib.auth.models import User
+from datetime import datetime
 
 class Defib_Data(models.Model):
 	Data_DateTime = models.DateTimeField('date published', blank=True, null=True)
@@ -657,18 +658,6 @@ class CMMS_Job_Status(models.Model):
 	class Meta:
 		ordering = ['Job_Status_Title']
 
-class CMMS_Job_Task_Status(models.Model):	
-	Job_Task_Status_Title = models.CharField(max_length=100)
-	Job_Task_Status_Description = models.CharField(max_length=500, blank = True, null = True)
-
-	objects = DataFrameManager()
-
-	def __str__(self):
-		return self.Job_Task_Status_Title
-
-	class Meta:
-		ordering = ['Job_Task_Status_Title']
-
 class CMMS_Job_Priority(models.Model):	
 	Job_Priority_Title = models.CharField(max_length=100)
 	Job_Priority_Description = models.CharField(max_length=500, blank = True, null = True)
@@ -707,8 +696,8 @@ class CMMS_Job_Schedule_Period(models.Model):
 
 class CMMS_Jobs(models.Model):
 	Node_ID = models.ForeignKey(Nodes, on_delete=models.CASCADE)
-	Author = models.ForeignKey(User, on_delete=models.CASCADE, db_column="user")
-	Job_Created_DateTime = models.DateTimeField('date published')
+	Author = models.ForeignKey(User, on_delete=models.CASCADE, db_column="user", blank = True, null = True)
+	Job_Created_DateTime = models.DateTimeField(default=datetime.now, blank=True)
 	Job_Title = models.CharField(max_length=100)
 	Job_Description = models.CharField(max_length=500, blank = True, null = True)
 	Job_Start_Date = models.DateTimeField('start date', blank = True, null = True)
@@ -734,7 +723,7 @@ class CMMS_Job_Tasks(models.Model):
 	Job = models.ForeignKey(CMMS_Jobs, related_name = 'Tasks', on_delete=models.CASCADE)
 	Job_Task_Title = models.CharField(max_length=100)
 	Job_Task_Description = models.CharField(max_length=500, blank = True, null = True)
-	Job_Task_Status = models.ForeignKey(CMMS_Job_Task_Status, on_delete=models.CASCADE, blank = True, null = True)
+	Job_Task_Status = models.BooleanField(default=False)
 	Job_Task_Completed_Date = models.DateTimeField('date completed', blank = True, null = True)
 	Job_Task_Completed_Comments = models.CharField(max_length=1000, blank = True, null = True)
 

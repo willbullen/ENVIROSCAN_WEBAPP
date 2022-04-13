@@ -42,5 +42,8 @@ gevent==21.8.0
 # ---- CAMERA STEAM ---- #
 opencv-python==4.5.5.62
 
+# ---- FORMS ---- #
+django-bootstrap-modal-forms
+
 # ---- ARCHIVE ---- #
 #django-mqtt-bridge==0.3.7

@@ -9,8 +9,11 @@ from django.contrib import messages
 from data.models import CMMS_Jobs, CMMS_Job_Tasks, UPS, Generator, Autosonde_Ground_Station, Aethalometer_Data, Autosonde_Soundings, Autosonde_Sounding_Data, Autosonde_Logs, Nodes, SOX_Data, NOX_Data, Picarro_Data, Tucson_Data
 from django.core import serializers
 
-from .forms import CMMS_Jobs_Form, CMMS_Job_Tasks_Form
+from .forms import CMMS_Jobs_Form, CMMS_Job_Tasks_Form, CMMS_Job_Tasks_Formset
+from data.models import CMMS_Job_Types, CMMS_Job_Status, CMMS_Job_Priority, CMMS_Job_Schedule_Type, CMMS_Job_Schedule_Period
 from django.core import serializers
+
+from django.db.models import Count
 
 @login_required(login_url="/login/")
 def index(request):    
@@ -23,12 +26,238 @@ def index(request):
 @login_required(login_url="/login/")
 def cmms(request):
 
+    if request.method == 'GET':
+        
+        job_form = CMMS_Jobs_Form(request.GET or None)
+        tasks_formset = CMMS_Job_Tasks_Formset(queryset = CMMS_Job_Tasks.objects.none())
+
+    elif request.method == 'POST':
+
+        job_form = CMMS_Jobs_Form(request.POST)
+        tasks_formset = CMMS_Job_Tasks_Formset(request.POST)
+
+        if job_form.is_valid() and tasks_formset.is_valid():
+
+            job = job_form.save()            
+            
+            for form in tasks_formset:
+                task = form.save(commit=False)
+                task.Job = job
+                task.save()
+
+            return redirect('/cmms/')
+
+        else:
+            print(job_form.errors)
+
+    context = {
+        'job_form': job_form,
+        'tasks_formset': tasks_formset,
+        'open_jobs': get_jobs(),
+    }
+
+    html_template = loader.get_template('dashboard_cmms.html')
+    return HttpResponse(html_template.render(context, request))
+
+#-- daqc
+@login_required(login_url="/login/")
+def daqc(request):
+    context = {}
+
+    if request.method == 'GET' and 'id' in request.GET:
+        Node_ID = request.GET['id']
+    else:
+        Node_ID = '0'
+
+    context['History_Data'] = get_test_data(Node_ID, SOX_Data) 
+
+    html_template = loader.get_template('dashboard_daqc.html')
+    return HttpResponse(html_template.render(context, request))   
+
+#-- sox
+@login_required(login_url="/login/")
+def sox(request):
+    context = {}
+
+    if request.method == 'GET' and 'id' in request.GET:
+        Node_ID = request.GET['id']
+    else:
+        Node_ID = '0'
+
+    context['History_Data'] = get_history_data(Node_ID, SOX_Data)           
+    context['Current_Data'] = get_current_data(Node_ID, SOX_Data)            
+    context['Status_Data'] = get_status_data()            
+    context['Setup_Data'] = get_setup_data(Node_ID, Nodes)
+
+    html_template = loader.get_template('dashboard_sox.html')
+    return HttpResponse(html_template.render(context, request))        
+    
+#-- nox
+@login_required(login_url="/login/")
+def nox(request):
+    context = {}
+
+    if request.method == 'GET' and 'id' in request.GET:
+        Node_ID = request.GET['id']
+    else:
+        Node_ID = '0'
+
+    context['History_Data'] = get_history_data(Node_ID, NOX_Data)           
+    context['Current_Data'] = get_current_data(Node_ID, NOX_Data)            
+    context['Status_Data'] = get_status_data()            
+    context['Setup_Data'] = get_setup_data(Node_ID, Nodes)
+
+    html_template = loader.get_template('dashboard_nox.html')
+    return HttpResponse(html_template.render(context, request)) 
+
+#-- picarro
+@login_required(login_url="/login/")
+def picarro(request):
+    context = {}
+
+    if request.method == 'GET' and 'id' in request.GET:
+        Node_ID = request.GET['id']
+    else:
+        Node_ID = '0'
+
+    context['History_Data'] = get_history_data(Node_ID, Picarro_Data)           
+    context['Current_Data'] = get_current_data(Node_ID, Picarro_Data)            
+    context['Status_Data'] = get_status_data()            
+    context['Setup_Data'] = get_setup_data(Node_ID, Nodes)
+
+    html_template = loader.get_template('dashboard_picarro.html')
+    return HttpResponse(html_template.render(context, request)) 
+
+#-- aethalometer
+@login_required(login_url="/login/")
+def aethalometer(request):
+    context = {}
+
+    if request.method == 'GET' and 'id' in request.GET:
+        Node_ID = request.GET['id']
+    else:
+        Node_ID = '0'
+
+    context['History_Data'] = get_history_data(Node_ID, Aethalometer_Data)           
+    context['Current_Data'] = get_current_data(Node_ID, Aethalometer_Data)            
+    context['Status_Data'] = get_status_data()            
+    context['Setup_Data'] = get_setup_data(Node_ID, Nodes)
+
+    html_template = loader.get_template('dashboard_aethalometer.html')
+    return HttpResponse(html_template.render(context, request)) 
+
+#-- autosonde
+@login_required(login_url="/login/")
+def autosonde(request):
+    context = {}
+
+    if request.method == 'GET' and 'id' in request.GET:
+        Node_ID = request.GET['id']
+    else:
+        Node_ID = '0'
+
+    Sounding_ID = Autosonde_Soundings.objects.filter(Node_ID = Node_ID).latest('id').id                   
+    context['Ground_Station_Data'] = get_groundstation_data(Node_ID, Autosonde_Ground_Station) # GROUND STATION DATA            
+    context['Sounding_Data'] = get_sounding_data(Node_ID, Sounding_ID, Autosonde_Sounding_Data) # SOUNDING            
+    context['Soundings_Data'] = get_soundings(Node_ID, Sounding_ID, Autosonde_Soundings) # SOUNDING DATA            
+    context['Log_Data'] = get_log_data(Node_ID, Autosonde_Logs) # LOG DATA            
+    context['Status_Data'] = get_status_data() # STATUS DATA            
+    context['Setup_Data'] = get_setup_data(Node_ID, Nodes) # SETUP DATA
+
+    html_template = loader.get_template('dashboard_autosonde.html')
+    return HttpResponse(html_template.render(context, request)) 
+
+#-- tucson
+@login_required(login_url="/login/")
+def tucson(request):
+    context = {}
+
+    if request.method == 'GET' and 'id' in request.GET:
+        Node_ID = request.GET['id']
+    else:
+        Node_ID = '0'
+
+    context['History_Data'] = get_history_data(Node_ID, Tucson_Data)           
+    context['Current_Data'] = get_current_data(Node_ID, Tucson_Data)            
+    context['Status_Data'] = get_status_data()            
+    context['Setup_Data'] = get_setup_data(Node_ID, Nodes)
+
+    html_template = loader.get_template('dashboard_tucson.html')
+    return HttpResponse(html_template.render(context, request)) 
+
+#-- generator
+@login_required(login_url="/login/")
+def generator(request):
+    context = {}
+
+    if request.method == 'GET' and 'id' in request.GET:
+        Node_ID = request.GET['id']
+    else:
+        Node_ID = '0'
+
+    context['History_Data'] = get_history_data(Node_ID, Generator)           
+    context['Current_Data'] = get_current_data(Node_ID, Generator)            
+    context['Status_Data'] = get_status_data()            
+    context['Setup_Data'] = get_setup_data(Node_ID, Nodes)
+
+    html_template = loader.get_template('dashboard_generator.html')
+    return HttpResponse(html_template.render(context, request)) 
+
+#-- ups
+@login_required(login_url="/login/")
+def ups(request):
+    context = {}
+
+    if request.method == 'GET' and 'id' in request.GET:
+        Node_ID = request.GET['id']
+    else:
+        Node_ID = '0'
+
+    context['History_Data'] = get_history_data(Node_ID, UPS)           
+    context['Current_Data'] = get_current_data(Node_ID, UPS)            
+    context['Status_Data'] = get_status_data()            
+    context['Setup_Data'] = get_setup_data(Node_ID, Nodes)
+
+    html_template = loader.get_template('dashboard_ups.html')
+    return HttpResponse(html_template.render(context, request)) 
+
+@login_required(login_url="/login/")
+def pages(request):
+    context = {}
+    # All resource paths end in .html.
+    # Pick out the html file name from the url. And load that template.
+    try:        
+        load_template      = request.path.split('/')[-1]
+        context['segment'] = load_template
+
+        html_template = loader.get_template( load_template )
+        return HttpResponse(html_template.render(context, request))
+        
+    except template.TemplateDoesNotExist:
+        html_template = loader.get_template( 'page_404_error.html' )
+        return HttpResponse(html_template.render(context, request))
+
+    except Exception as e:
+        print('{!r} - Load Template Failed!'.format(e))   
+        html_template = loader.get_template( 'page_404_error.html' )
+        return HttpResponse(html_template.render(context, request))
+
+
+
+
+
+def get_jobs():
+    # -- JOBS
     jobs = []
     i = 0
     for job in CMMS_Jobs.objects.all():
+        tasks_total = CMMS_Job_Tasks.objects.filter(Job = job).count()
+        task_completed = CMMS_Job_Tasks.objects.filter(Job = job, Job_Task_Status = True).count()
+        task_completed_pecent = (tasks_total/task_completed)*100 if task_completed != 0 else 0
+        task_completed_style = "style='width: 66%;'"
         jobs.append({
             "job_id": job.pk, 
-            "job_author": job.Author.username,
+            #"job_author": job.Author.username,
             "job_create_date": job.Job_Created_DateTime,
             "job_title": job.Job_Title, 
             "job_description": job.Job_Description,            
@@ -43,9 +272,14 @@ def cmms(request):
             "job_completed_date": job.Job_Completed_Date,
             "job_completed_comments": job.Job_Completed_Comments,
             "tasks": [],
+            "task_total": tasks_total,
+            "task_completed": task_completed,
+            "task_completed_pecent": task_completed_pecent,
+            "task_completed_style": task_completed_style,
             "attachments": [],
         })
-        for task in CMMS_Job_Tasks.objects.filter(Job = job):
+        tasks = CMMS_Job_Tasks.objects.filter(Job = job)
+        for task in tasks:
             jobs[i]["tasks"].append({
                 "task_id": task.pk, 
                 "task_title": task.Job_Task_Title,
@@ -55,108 +289,7 @@ def cmms(request):
                 "task_completed_comments": task.Job_Task_Completed_Comments,
             })
         i =+ 1
-
-    print(jobs)
-
-    if request.method == 'POST':
-        form = CMMS_Jobs_Form(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username') 
-            messages.success(request, f'Task has been saved.') 
-            return redirect('login')
-    else:
-        form = CMMS_Jobs_Form()
-
-    html_template = loader.get_template('dashboard_cmms.html')
-    return HttpResponse(html_template.render({'form': form, 'jobs': jobs}, request))
-
-@login_required(login_url="/login/")
-def pages(request):
-    context = {}
-    # All resource paths end in .html.
-    # Pick out the html file name from the url. And load that template.
-    try:
-        
-        load_template      = request.path.split('/')[-1]
-        context['segment'] = load_template
-        context['test'] = 'this is a testicle...'
-
-        if request.method == 'GET' and 'node_type' in request.GET:
-            Node_Type = request.GET['node_type']
-        else:
-            Node_Type = 'none'
-
-        if request.method == 'GET' and 'id' in request.GET:
-            Node_ID = request.GET['id']
-        else:
-            Node_ID = '0'
-
-        #Node_Type = request.GET.get('node_type')
-        #Node_ID = request.GET.get('id')
-
-        print('NODE ID: ' + Node_ID)
-        print('NODE TYPE: ' + Node_Type)
-
-        if Node_Type == 'autosonde':
-            Sounding_ID = Autosonde_Soundings.objects.filter(Node_ID = Node_ID).latest('id').id                   
-            context['Ground_Station_Data'] = get_groundstation_data(Node_ID, Autosonde_Ground_Station) # GROUND STATION DATA            
-            context['Sounding_Data'] = get_sounding_data(Node_ID, Sounding_ID, Autosonde_Sounding_Data) # SOUNDING            
-            context['Soundings_Data'] = get_soundings(Node_ID, Sounding_ID, Autosonde_Soundings) # SOUNDING DATA            
-            context['Log_Data'] = get_log_data(Node_ID, Autosonde_Logs) # LOG DATA            
-            context['Status_Data'] = get_status_data() # STATUS DATA            
-            context['Setup_Data'] = get_setup_data(Node_ID, Nodes) # SETUP DATA
-        elif Node_Type == 'sox':            
-            context['History_Data'] = get_history_data(Node_ID, SOX_Data) # HISTORY            
-            context['Current_Data'] = get_current_data(Node_ID, SOX_Data) # CURRENT            
-            context['Status_Data'] = get_status_data() # STATUS DATA            
-            context['Setup_Data'] = get_setup_data(Node_ID, Nodes) # SETUP DATA
-        elif Node_Type == 'nox':            
-            context['History_Data'] = get_history_data(Node_ID, NOX_Data) # HISTORY
-            context['Current_Data'] = get_current_data(Node_ID, NOX_Data) # CURRENT
-            context['Status_Data'] = get_status_data() # STATUS DATA
-            context['Setup_Data'] = get_setup_data(Node_ID, Nodes) # SETUP DATA
-        elif Node_Type == 'picarro':            
-            context['History_Data'] = get_history_data(Node_ID, Picarro_Data) # HISTORY
-            context['Current_Data'] = get_current_data(Node_ID, Picarro_Data) # CURRENT
-            context['Status_Data'] = get_status_data() # STATUS DATA
-            context['Setup_Data'] = get_setup_data(Node_ID, Nodes) # SETUP DATA
-        elif Node_Type == 'tucson':            
-            context['History_Data'] = get_history_data(Node_ID, Tucson_Data) # HISTORY
-            context['Current_Data'] = get_current_data(Node_ID, Tucson_Data) # CURRENT
-            context['Status_Data'] = get_status_data() # STATUS DATA
-            context['Setup_Data'] = get_setup_data(Node_ID, Nodes) # SETUP DATA
-        elif Node_Type == 'aethalometer':            
-            context['History_Data'] = get_history_data(Node_ID, Aethalometer_Data) # HISTORY
-            context['Current_Data'] = get_current_data(Node_ID, Aethalometer_Data) # CURRENT
-            context['Status_Data'] = get_status_data() # STATUS DATA
-            context['Setup_Data'] = get_setup_data(Node_ID, Nodes) # SETUP DATA
-        elif Node_Type == 'ups':            
-            context['History_Data'] = get_history_data(Node_ID, UPS) # HISTORY
-            context['Current_Data'] = get_current_data(Node_ID, UPS) # CURRENT
-            context['Status_Data'] = get_status_data() # STATUS DATA
-            context['Setup_Data'] = get_setup_data(Node_ID, Nodes) # SETUP DATA
-        elif Node_Type == 'generator':            
-            context['History_Data'] = get_history_data(Node_ID, Generator) # HISTORY
-            context['Current_Data'] = get_current_data(Node_ID, Generator) # CURRENT
-            context['Status_Data'] = get_status_data() # STATUS DATA
-            context['Setup_Data'] = get_setup_data(Node_ID, Nodes) # SETUP DATA
-        elif Node_Type == 'daqc':            
-            context['History_Data'] = get_test_data(Node_ID, SOX_Data) # HISTORY
-        else:
-            context['Status_Data'] = get_status_data() # STATUS DATA
-
-        html_template = loader.get_template( load_template )
-        return HttpResponse(html_template.render(context, request))
-        
-    except template.TemplateDoesNotExist:
-        html_template = loader.get_template( 'page_404_error.html' )
-        return HttpResponse(html_template.render(context, request))
-
-    except Exception as e:
-        print('{!r} - Load Template Failed!'.format(e))   
-        html_template = loader.get_template( 'page_404_error.html' )
-        return HttpResponse(html_template.render(context, request))
+    return jobs
 
 def get_test_data(node_id, object):
     test = {}
