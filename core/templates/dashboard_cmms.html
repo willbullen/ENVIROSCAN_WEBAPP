@@ -11,8 +11,7 @@
 			</h1>
 		</div>
 		<div class="ms-auto">
-			<a href="#modalAddTask" data-bs-toggle="modal" class="btn btn-outline-theme"><i
-					class="fa fa-plus-circle me-1"></i> Add Task</a>
+			<a href="/cmms/add/" class="btn btn-outline-theme"><i class="fa fa-plus-circle me-1"></i> Add Job</a>
 		</div>
 	</div>
 
@@ -66,7 +65,7 @@
 					<!-- BEGIN list-group-item -->
 					<div class="list-group-item d-flex px-3">
 						<div class="me-3 pt-1">
-							<i class="fa fa-tools text-red fa-fw fa-lg"></i>
+							<a class="contact" href="/cmms/edit/{{ job.job_id }}" title="Edit"><i class="fa fa-tools text-red fa-fw fa-lg"></i></a>
 						</div>
 						<div class="flex-fill">
 							<div class="fw-400">{{ job.job_title }}</div>
@@ -323,127 +322,36 @@
 		<!-- BEGIN col-4 -->
 	</div>
 	<!-- END row -->
-
-
-
-
-
-
-	<!-- BEGIN modal -->
-	<form method="POST" enctype="multipart/form-data">
-		<div class="modal fade" id="modalAddTask">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					{% csrf_token %}
-					{{ job_form.Author }}
-					<div class="modal-header">
-						<h5 class="modal-title">Add Task</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-					</div>
-					<div class="modal-body">
-						<div class="mb-3">
-							<label class="form-label">Asset</label>
-							{{job_form.Node_ID}}
-						</div>
-						<div class="mb-3">
-							<label class="form-label">Title</label>
-							{{job_form.Job_Title}}
-						</div>
-						<div class="mb-3">
-							<label class="form-label">Description</label>
-							{{job_form.Job_Description}}
-						</div>
-						<div class="mb-3">
-							<label class="form-label">Job Status</label>
-							{{job_form.Job_Status}}
-						</div>
-						<div class="mb-3">
-							<label class="form-label">Start Date</label>
-							<div class="input-group">
-								{{job_form.Job_Start_Date}}
-								<label class="input-group-text" for="datepicker">
-									<i class="fa fa-calendar"></i>
-								</label>
-							</div>
-						</div>
-						<div class="mb-3">
-							<label class="form-label">End Date</label>
-							<div class="input-group">
-								{{job_form.Job_End_Date}}
-								<label class="input-group-text" for="datepicker">
-									<i class="fa fa-calendar"></i>
-								</label>
-							</div>
-						</div>
-						<div class="mb-3">
-							<label class="form-label">Type</label>
-							{{job_form.Job_Type}}
-						</div>
-						<div class="mb-3">
-							<label class="form-label">Priority</label>
-							{{job_form.Job_Priority}}
-						</div>
-						<div class="mb-3">
-							<label class="form-label">Schedule Type</label>
-							{{job_form.Job_Schedule_Type}}
-						</div>
-						<div class="mb-3">
-							<label class="form-label">Schedule Period</label>
-							{{job_form.Job_Schedule_Period}}
-						</div>
-						<div class="mb-3">
-							<label class="form-label">Schedule Period Value</label>
-							{{job_form.Job_Schedule_Period_Value}}
-						</div>
-						<div class="mb-3">
-							<label class="form-label">Completed Date</label>
-							<div class="input-group">
-								{{job_form.Job_Completed_Date}}
-								<label class="input-group-text" for="datepicker">
-									<i class="fa fa-calendar"></i>
-								</label>
-							</div>
-						</div>
-						<div class="mb-3">
-							<label class="form-label">Completed Comments</label>
-							{{job_form.Job_Completed_Comments}}
-						</div>
-						{{ tasks_formset.management_form }}
-						{% for task in tasks_formset %}
-						<div class="mb-3">
-							<label class="form-label">Task</label>
-							<div class="input-group">
-								{{task.Job_Task_Title}}
-								<label class="input-group-text">
-									<i class="fa fa-plus-square add-form-row"></i>
-								</label>
-							</div>						
-						</div>
-						{% endfor %}
-					</div>
-					<div class="modal-footer">
-						<a href="#" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</a>
-						<button type="submit" class="btn btn-outline-theme">Create</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</form>
-	<!-- END modal -->
-
-
-
-
-
-
 </div>
 <!-- END #content -->
+
+<!-- BEGIN MODAL -->
+<div class="modal fade" tabindex="-1" role="dialog" id="modal">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content"></div>
+	</div>
+</div>
+<!-- END MODAL -->
+
 {% endblock content %}
-
-
-
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
+
+<script type="text/javascript">
+	const modal = new bootstrap.Modal(document.getElementById("modal"))
+    // Create Item Modal Form
+    $(function () {
+        $(".create_item").each(function () {
+            $(this).modalForm({formURL: $(this).data('id')});
+        });
+    });
+    // Update Item Modal Form
+    $(function () {
+        $(".update_item").each(function () {
+            $(this).modalForm({formURL: $(this).data('id')});
+        });
+    });
+</script>
 
 <script type="text/javascript">
 	'{% for job in open_jobs %}'
@@ -453,71 +361,5 @@
 	$('#datepicker').datepicker({
 		autoclose: true
 	});
-
-	function updateElementIndex(el, prefix, ndx) {
-		var id_regex = new RegExp('(' + prefix + '-\\d+)');
-		var replacement = prefix + '-' + ndx;
-		if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
-		if (el.id) el.id = el.id.replace(id_regex, replacement);
-		if (el.name) el.name = el.name.replace(id_regex, replacement);
-	}
-
-	function cloneMore(selector, prefix) {
-		var newElement = $(selector).clone(true);
-		var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
-		newElement.find(':input:not([type=button]):not([type=submit]):not([type=reset])').each(function() {
-			var name = $(this).attr('name')
-			if(name) {
-				name = name.replace('-' + (total-1) + '-', '-' + total + '-');
-				var id = 'id_' + name;
-				$(this).attr({'name': name, 'id': id}).val('').removeAttr('checked');
-			}
-		});
-		newElement.find('label').each(function() {
-			var forValue = $(this).attr('for');
-			if (forValue) {
-			forValue = forValue.replace('-' + (total-1) + '-', '-' + total + '-');
-			$(this).attr({'for': forValue});
-			}
-		});
-		total++;
-		$('#id_' + prefix + '-TOTAL_FORMS').val(total);
-		$(selector).after(newElement);
-		var conditionRow = $('.form-row:not(:last)');
-		conditionRow.find('.btn.add-form-row')
-		.removeClass('btn-success').addClass('btn-danger')
-		.removeClass('add-form-row').addClass('remove-form-row')
-		.html('-');
-		return false;
-	}
-
-	function deleteForm(prefix, btn) {
-		var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
-		if (total > 1){
-			btn.closest('.form-row').remove();
-			var forms = $('.form-row');
-			$('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
-			for (var i=0, formCount=forms.length; i<formCount; i++) {
-				$(forms.get(i)).find(':input').each(function() {
-					updateElementIndex(this, prefix, i);
-				});
-			}
-		}
-		return false;
-	}
-
-	$(document).on('click', '.add-form-row', function(e){
-		e.preventDefault();
-		cloneMore('.form-row:last', 'job_form');
-		return false;
-	});
-
-	$(document).on('click', '.remove-form-row', function(e){
-		e.preventDefault();
-		deleteForm('job_form', $(this));
-		return false;
-	});
-
 </script>
-
 {% endblock javascripts %}

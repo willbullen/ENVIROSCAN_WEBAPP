@@ -34,7 +34,7 @@ ALLOWED_HOSTS = ['localhost', 'enviroscan.azurewebsites.net', 'www.enviroscan.io
 
 INSTALLED_APPS = [
     'authentication',
-    'crispy_forms',
+    #'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'app_crypto',
     'app_dalys',
     'app_water',
-    'bootstrap_modal_forms',
+    #'bootstrap_modal_forms',
+    'background_task',
     #'beatserver',
     #'django_celery_beat',
 ]
@@ -194,12 +195,12 @@ STATICFILES_DIRS = (
 )
 #############################################################
 ## CELERY BEATS
-CELERY_BROKER_URL = 'redis://:Po0AuJljh9cvvuiUWFeqZFOpJde3SsCVHAzCaCbvplw=@enviroscan.redis.cache.windows.net:6379/0'
-CELERY_RESULT_BACKEND = 'redis://:Po0AuJljh9cvvuiUWFeqZFOpJde3SsCVHAzCaCbvplw=@enviroscan.redis.cache.windows.net:6379/0'
+#CELERY_BROKER_URL = 'redis://:Po0AuJljh9cvvuiUWFeqZFOpJde3SsCVHAzCaCbvplw=@enviroscan.redis.cache.windows.net:6379/0'
+#CELERY_RESULT_BACKEND = 'redis://:Po0AuJljh9cvvuiUWFeqZFOpJde3SsCVHAzCaCbvplw=@enviroscan.redis.cache.windows.net:6379/0'
 
-CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+#CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 #############################################################
 
 
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+#CRISPY_TEMPLATE_PACK = 'bootstrap4'

@@ -1,33 +1,497 @@
 {% extends "layouts/base.html" %}
 
 
-		{% block content %}
-		<!-- BEGIN #content -->
-		<div id="content" class="app-content">
-			<!-- BEGIN page-header -->			
-			<div class="d-flex fw-bold small">
-				<span class="flex-grow-1">
-					<h1 class="page-header">
-						MET EIREANN HOME <small>just the begining of everythings.</small>
-					</h1>
-				</span>
+{% block content %}
+<!-- BEGIN #content -->
+<div id="content" class="app-content">
+	<!-- BEGIN page-header -->
+	<div class="d-flex fw-bold small">
+		<span class="flex-grow-1">
+			<h1 class="page-header">
+				MET EIREANN 
+			</h1>			
+			<p>List widget is created by using existing Bootstrap <code>.list-group</code> component with
+				<code>.d-flex</code> and hud utilities css classes.</p>
+		</span>
+	</div>
+	<!-- END page-header -->
+
+	<!-- BEGIN -->
+	<!-- BEGIN #listWidget -->
+	<div id="listWidget" class="mb-5">
+		<div class="card">
+			<div class="card-body">
+				<div class="row">
+					<div class="col-xl-6">
+						<div class="text-white text-opacity-50 small mb-2"><b>VALENTIA SITE</b></div>
+						<div class="list-group mb-3">
+							<!-- BEGIN PICARRO -->
+							<div class="list-group-item d-flex align-items-center">
+								<div class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+									P
+								</div>
+								<div class="flex-fill px-3">
+									<div class="fw-bold">Picarro</div>
+									<div class="small text-white text-opacity-50">Last Updated: 1 minute ago</div>
+								</div>
+								<div class="opacity-10 px-3">
+									<span id="Asset_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+									<span id="Server_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
+								</div>
+								<div class="dropdown">
+									<a href="#" data-bs-toggle="dropdown" class="text-white text-opacity-50"><i class="fa fa-ellipsis-h"></i></a>
+									<div class="dropdown-menu dropdown-menu-end">
+										<a href="../picarro_dash/?id=1" class="dropdown-item">Dashboard</a>
+										<a href="../daqc/?id=1" class="dropdown-item">DAQC</a>
+										<a href="#" class="dropdown-item">Settings</a>
+									</div>
+								</div>
+							</div>
+							<!-- END PICARRO -->
+							<!-- BEGIN AETHALOMETER -->
+							<div class="list-group-item d-flex align-items-center">
+								<div class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+									A
+								</div>
+								<div class="flex-fill px-3">
+									<div class="fw-bold">Aethalometer</div>
+									<div class="small text-white text-opacity-50">Last Updated: 1 minute ago</div>
+								</div>
+								<div class="opacity-10 px-3">
+									<span id="Asset_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+									<span id="Server_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
+								</div>
+								<div class="dropdown">
+									<a href="#" data-bs-toggle="dropdown" class="text-white text-opacity-50"><i class="fa fa-ellipsis-h"></i></a>
+									<div class="dropdown-menu dropdown-menu-end">
+										<a href="#" class="dropdown-item">Dashboard</a>
+										<a href="#" class="dropdown-item">DAQC</a>
+										<a href="#" class="dropdown-item">Settings</a>
+									</div>
+								</div>
+							</div>
+							<!-- END AETHALOMETER -->
+							<!-- BEGIN METEOROLOGY -->
+							<div class="list-group-item d-flex align-items-center">
+								<div class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+									M
+								</div>
+								<div class="flex-fill px-3">
+									<div class="fw-bold">Meteorology</div>
+									<div class="small text-white text-opacity-50">Last Updated: 1 minute ago</div>
+								</div>
+								<div class="opacity-10 px-3">
+									<span id="Asset_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+									<span id="Server_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
+								</div>
+								<div class="dropdown">
+									<a href="#" data-bs-toggle="dropdown" class="text-white text-opacity-50"><i class="fa fa-ellipsis-h"></i></a>
+									<div class="dropdown-menu dropdown-menu-end">
+										<a href="../picarro_dash/?id=1" class="dropdown-item">Dashboard</a>
+										<a href="../daqc/?id=1" class="dropdown-item">DAQC</a>
+										<a href="#" class="dropdown-item">Settings</a>
+									</div>
+								</div>
+							</div>
+							<!-- END METEOROLOGY -->
+							<!-- BEGIN GENERATOR -->
+							<div class="list-group-item d-flex align-items-center">
+								<div class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-red text-white rounded-2 ms-n1">
+									G
+								</div>
+								<div class="flex-fill px-3">
+									<div class="fw-bold">Generator</div>
+									<div class="small text-white text-opacity-50">Last Updated: 1 minute ago</div>
+								</div>
+								<div class="opacity-10 px-3">
+									<span id="Asset_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+									<span id="Server_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
+								</div>
+								<div class="dropdown">
+									<a href="#" data-bs-toggle="dropdown" class="text-white text-opacity-50"><i class="fa fa-ellipsis-h"></i></a>
+									<div class="dropdown-menu dropdown-menu-end">
+										<a href="../picarro_dash/?id=1" class="dropdown-item">Dashboard</a>
+										<a href="../daqc/?id=1" class="dropdown-item">DAQC</a>
+										<a href="#" class="dropdown-item">Settings</a>
+									</div>
+								</div>
+							</div>
+							<!-- END GENERATOR -->
+							<!-- BEGIN UPS -->
+							<div class="list-group-item d-flex align-items-center">
+								<div class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+									U
+								</div>
+								<div class="flex-fill px-3">
+									<div class="fw-bold">UPS</div>
+									<div class="small text-white text-opacity-50">Last Updated: 1 minute ago</div>
+								</div>
+								<div class="opacity-10 px-3">
+									<span id="Asset_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+									<span id="Server_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
+								</div>
+								<div class="dropdown">
+									<a href="#" data-bs-toggle="dropdown" class="text-white text-opacity-50"><i class="fa fa-ellipsis-h"></i></a>
+									<div class="dropdown-menu dropdown-menu-end">
+										<a href="../picarro_dash/?id=1" class="dropdown-item">Dashboard</a>
+										<a href="../daqc/?id=1" class="dropdown-item">DAQC</a>
+										<a href="#" class="dropdown-item">Settings</a>
+									</div>
+								</div>
+							</div>
+							<!-- END UPS -->
+							<!-- BEGIN ACSM -->
+							<div class="list-group-item d-flex align-items-center">
+								<div class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+									A
+								</div>
+								<div class="flex-fill px-3">
+									<div class="fw-bold">ACSM</div>
+									<div class="small text-white text-opacity-50">Last Updated: 1 minute ago</div>
+								</div>
+								<div class="opacity-10 px-3">
+									<span id="Asset_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+									<span id="Server_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
+								</div>
+								<div class="dropdown">
+									<a href="#" data-bs-toggle="dropdown" class="text-white text-opacity-50"><i class="fa fa-ellipsis-h"></i></a>
+									<div class="dropdown-menu dropdown-menu-end">
+										<a href="../picarro_dash/?id=1" class="dropdown-item">Dashboard</a>
+										<a href="../daqc/?id=1" class="dropdown-item">DAQC</a>
+										<a href="#" class="dropdown-item">Settings</a>
+									</div>
+								</div>
+							</div>
+							<!-- END ACSM -->
+						</div>
+
+						<div class="text-white text-opacity-50 small mb-2"><b>CAHERSIVEEN SITE</b></div>
+						<div class="list-group mb-3">
+							<!-- BEGIN NOX -->
+							<div class="list-group-item d-flex align-items-center">
+								<div class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+									N
+								</div>
+								<div class="flex-fill px-3">
+									<div class="fw-bold">NOX</div>
+									<div class="small text-white text-opacity-50">Last Updated: 1 minute ago</div>
+								</div>
+								<div class="opacity-10 px-3">
+									<span id="Asset_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+									<span id="Server_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
+								</div>
+								<div class="dropdown">
+									<a href="#" data-bs-toggle="dropdown" class="text-white text-opacity-50"><i class="fa fa-ellipsis-h"></i></a>
+									<div class="dropdown-menu dropdown-menu-end">
+										<a href="../picarro_dash/?id=1" class="dropdown-item">Dashboard</a>
+										<a href="../daqc/?id=1" class="dropdown-item">DAQC</a>
+										<a href="#" class="dropdown-item">Settings</a>
+									</div>
+								</div>
+							</div>
+							<!-- END NOX -->
+							<!-- BEGIN SOX -->
+							<div class="list-group-item d-flex align-items-center">
+								<div class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+									P
+								</div>
+								<div class="flex-fill px-3">
+									<div class="fw-bold">SOX</div>
+									<div class="small text-white text-opacity-50">Last Updated: 1 minute ago</div>
+								</div>
+								<div class="opacity-10 px-3">
+									<span id="Asset_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+									<span id="Server_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
+								</div>
+								<div class="dropdown">
+									<a href="#" data-bs-toggle="dropdown" class="text-white text-opacity-50"><i class="fa fa-ellipsis-h"></i></a>
+									<div class="dropdown-menu dropdown-menu-end">
+										<a href="../picarro_dash/?id=1" class="dropdown-item">Dashboard</a>
+										<a href="../daqc/?id=1" class="dropdown-item">DAQC</a>
+										<a href="#" class="dropdown-item">Settings</a>
+									</div>
+								</div>
+							</div>
+							<!-- END SOX -->
+							<!-- BEGIN TUCSON -->
+							<div class="list-group-item d-flex align-items-center">
+								<div class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+									T
+								</div>
+								<div class="flex-fill px-3">
+									<div class="fw-bold">Tucson</div>
+									<div class="small text-white text-opacity-50">Last Updated: 1 minute ago</div>
+								</div>
+								<div class="opacity-10 px-3">
+									<span id="Asset_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+									<span id="Server_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
+								</div>
+								<div class="dropdown">
+									<a href="#" data-bs-toggle="dropdown" class="text-white text-opacity-50"><i class="fa fa-ellipsis-h"></i></a>
+									<div class="dropdown-menu dropdown-menu-end">
+										<a href="../picarro_dash/?id=1" class="dropdown-item">Dashboard</a>
+										<a href="../daqc/?id=1" class="dropdown-item">DAQC</a>
+										<a href="#" class="dropdown-item">Settings</a>
+									</div>
+								</div>
+							</div>
+							<!-- END TUCSON -->
+							<!-- BEGIN METEOROLOGY -->
+							<div class="list-group-item d-flex align-items-center">
+								<div class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+									M
+								</div>
+								<div class="flex-fill px-3">
+									<div class="fw-bold">Meteorology</div>
+									<div class="small text-white text-opacity-50">Last Updated: 1 minute ago</div>
+								</div>
+								<div class="opacity-10 px-3">
+									<span id="Asset_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+									<span id="Server_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
+								</div>
+								<div class="dropdown">
+									<a href="#" data-bs-toggle="dropdown" class="text-white text-opacity-50"><i class="fa fa-ellipsis-h"></i></a>
+									<div class="dropdown-menu dropdown-menu-end">
+										<a href="../picarro_dash/?id=1" class="dropdown-item">Dashboard</a>
+										<a href="../daqc/?id=1" class="dropdown-item">DAQC</a>
+										<a href="#" class="dropdown-item">Settings</a>
+									</div>
+								</div>
+							</div>
+							<!-- END METEOROLOGY -->
+							<!-- BEGIN GENERATOR -->
+							<div class="list-group-item d-flex align-items-center">
+								<div class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+									G
+								</div>
+								<div class="flex-fill px-3">
+									<div class="fw-bold">Generator</div>
+									<div class="small text-white text-opacity-50">Last Updated: 1 minute ago</div>
+								</div>
+								<div class="opacity-10 px-3">
+									<span id="Asset_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+									<span id="Server_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
+								</div>
+								<div class="dropdown">
+									<a href="#" data-bs-toggle="dropdown" class="text-white text-opacity-50"><i class="fa fa-ellipsis-h"></i></a>
+									<div class="dropdown-menu dropdown-menu-end">
+										<a href="../picarro_dash/?id=1" class="dropdown-item">Dashboard</a>
+										<a href="../daqc/?id=1" class="dropdown-item">DAQC</a>
+										<a href="#" class="dropdown-item">Settings</a>
+									</div>
+								</div>
+							</div>
+							<!-- END GENERATOR -->
+							<!-- BEGIN UPS -->
+							<div class="list-group-item d-flex align-items-center">
+								<div class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+									U
+								</div>
+								<div class="flex-fill px-3">
+									<div class="fw-bold">UPS</div>
+									<div class="small text-white text-opacity-50">Last Updated: 1 minute ago</div>
+								</div>
+								<div class="opacity-10 px-3">
+									<span id="Asset_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+									<span id="Server_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
+								</div>
+								<div class="dropdown">
+									<a href="#" data-bs-toggle="dropdown" class="text-white text-opacity-50"><i class="fa fa-ellipsis-h"></i></a>
+									<div class="dropdown-menu dropdown-menu-end">
+										<a href="../picarro_dash/?id=1" class="dropdown-item">Dashboard</a>
+										<a href="../daqc/?id=1" class="dropdown-item">DAQC</a>
+										<a href="#" class="dropdown-item">Settings</a>
+									</div>
+								</div>
+							</div>
+							<!-- END UPS -->
+						</div>
+						
+					</div>
+					<div class="col-xl-6">
+
+						<div class="text-white text-opacity-50 small mb-2"><b>MAP</b></div>
+						<!-- BEGIN map -->
+						<div class="map-container">
+							<div id="siteMap"></div>
+						</div>
+						<!-- END map -->
+						
+					</div>
+				</div>
 			</div>
-			<!-- END page-header -->
+			<div class="card-arrow">
+				<div class="card-arrow-top-left"></div>
+				<div class="card-arrow-top-right"></div>
+				<div class="card-arrow-bottom-left"></div>
+				<div class="card-arrow-bottom-right"></div>
+			</div>
 		</div>
-		<!-- END #content -->
-		{% endblock content %}
+	</div>
+	<!-- END -->
+
+</div>
+<!-- END #content -->
+{% endblock content %}
 
 
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 
 <script>
-	var History_Data = JSON.parse('{{History_Data|escapejs}}');
-	var Current_Data = JSON.parse('{{Current_Data|escapejs}}');
-    var Status_Data = JSON.parse('{{Status_Data|escapejs}}');
-    var Setup_Data = JSON.parse('{{Setup_Data|escapejs}}');
-</script>
 
-<script src="/static/assets/js/home.js"></script>
+
+
+
+
+
+
+	var startWebSocket = function () {
+		var soxSocket;
+		var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+		var ws_path = ws_scheme + '://' + window.location.host + '/status/';
+		soxSocket = new WebSocket(ws_path);    
+
+		soxSocket.onmessage = function (e) {
+			ws_Data = JSON.parse(e.data).message;
+			setSetup(ws_Data);
+		};
+
+		soxSocket.onclose = function (e) {
+			console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+		};
+
+		soxSocket.onerror = function (err) {
+			console.error(err);
+		};
+	};
+
+	function setSetup(db_Data) {
+		// SET THIS NODE
+		thisNodeID = db_Data.Node_ID;
+		// SET THIS STATUS DATASET
+		thisStatusDataset = db_Data.Data.data[0];
+		// SET STATUS HEADING
+		$("#headingNetworkStatus").text(thisStatusDataset.Node_Name);
+		//-- SET ASSET STATUS
+		if (thisStatusDataset.Asset_Status == 1) {
+			$("#assetNetworkStatus").addClass('text-danger').text('ERROR');
+			$('#Asset_Status').addClass('bg-danger');
+			$("#Asset_Status").attr('title', thisStatusDataset.Asset_Status_Description);
+			$("#Asset_Status").attr('data-original-title', thisStatusDataset.Asset_Status_Description);
+			$("#Asset_Status").tooltip('update');
+			$("#Asset_Status").tooltip('show');
+		} else {
+			$("#assetNetworkStatus").removeClass('text-danger').text('OK');
+			$('#Asset_Status').removeClass('bg-danger');
+			$("#Asset_Status").tooltip({ title : "OK" });
+		}
+		//-- SET NODE STATUS
+		if (thisStatusDataset.Node_Status == 1) {
+			$("#nodeNetworkStatus").addClass('text-danger').text('ERROR');
+			$('#Node_Status').addClass('bg-danger');
+			$("#Node_Status").tooltip({ title : "ERROR" });
+		} else {
+			$("#nodeNetworkStatus").removeClass('text-danger').text('OK');
+			$('#Node_Status').removeClass('bg-danger');
+			$("#Node_Status").tooltip({ title : "OK" });
+		}
+		//-- SET SERVER STATUS
+		if (thisStatusDataset.Server_Status == 1) {
+			$("#serverNetworkStatus").addClass('text-danger').text('ERROR');
+		} else {
+			$("#serverNetworkStatus").removeClass('text-danger').text('OK');
+		}
+	}
+	
+
+
+
+	
+	var streamsData = []
+
+	var renderMaps = function () {
+
+		$('#siteMap').dxVectorMap({
+			// [minLongitude, maxLatitude, maxLongitude, minLatitude]
+			size: {
+				height: 700,
+			},
+			bounds: [-12, 55, -5, 51],
+			maxZoomFactor: 1000,
+			background: {
+				color: 'transparent',
+				borderColor: 'transparent',
+			},
+			layers: [{
+				dataSource: mapData
+			}, {
+				type: 'marker',
+				elementType: 'image',
+				dataField: 'url',
+				size: 51,
+				label: {
+					dataField: 'text',
+					font: {
+						size: 14,
+					},
+				},
+				//dataSource: equipmentData,
+			}, {
+				name: 'water',
+				dataSource: streamsData,
+				//colorGroupingField: 'tag',
+				//colorGroups: [0, 1, 2],
+				//palette: ['#3c20c8', '#d82020'],
+				//borderColor: 'none',
+				hoverEnabled: false,
+			}],
+			legends: [{
+				font: {
+					size: 14,
+				},
+				horizontalAlignment: 'right',
+				verticalAlignment: 'top',
+				customizeText() {
+					if (this.color === '#3c20c8') {
+						return 'Cold';
+					}
+					return 'Warm';
+				},
+				source: {
+					layer: 'water',
+					grouping: 'color'
+				},
+			}],
+		});
+
+	};
+
+	/* Controller
+	------------------------------------------------ */
+	$(document).ready(function () {
+
+		renderMaps();
+		startWebSocket();
+		//initialSetup();
+
+		$(document).on('theme-reload', function () {
+			renderMaps();
+		});
+
+	});
+</script>
 
 {% endblock javascripts %}

@@ -1,7 +1,7 @@
 import os
 
 from channels.auth import AuthMiddlewareStack
-from channels.routing import ProtocolTypeRouter, URLRouter, ChannelNameRouter
+from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
 import app.routing
 
@@ -16,8 +16,4 @@ application = ProtocolTypeRouter({
             app.routing.websocket_urlpatterns
         )
     ),
-    'channel': ChannelNameRouter({
-        #"testing-print": BackgroundJobConsumer(),
-        #"mqtt.pub": MqttConsumer()
-    })
 })

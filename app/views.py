@@ -6,14 +6,27 @@ from django import template
 import json
 from django.contrib import messages
 
-from data.models import CMMS_Jobs, CMMS_Job_Tasks, UPS, Generator, Autosonde_Ground_Station, Aethalometer_Data, Autosonde_Soundings, Autosonde_Sounding_Data, Autosonde_Logs, Nodes, SOX_Data, NOX_Data, Picarro_Data, Tucson_Data
+from data.models import (
+    CMMS_Jobs, 
+    CMMS_Job_Tasks, 
+    UPS, 
+    Generator, 
+    Autosonde_Ground_Station, 
+    Aethalometer_Data, 
+    Autosonde_Soundings, 
+    Autosonde_Sounding_Data, 
+    Autosonde_Logs, 
+    Nodes, 
+    SOX_Data, 
+    NOX_Data, 
+    Picarro_Data, 
+    Tucson_Data
+)
+
 from django.core import serializers
 
-from .forms import CMMS_Jobs_Form, CMMS_Job_Tasks_Form, CMMS_Job_Tasks_Formset
-from data.models import CMMS_Job_Types, CMMS_Job_Status, CMMS_Job_Priority, CMMS_Job_Schedule_Type, CMMS_Job_Schedule_Period
+from .forms import CMMS_Jobs_Form, CMMS_Job_Tasks_Form, TasksFormSet
 from django.core import serializers
-
-from django.db.models import Count
 
 @login_required(login_url="/login/")
 def index(request):    
@@ -25,38 +38,63 @@ def index(request):
 
 @login_required(login_url="/login/")
 def cmms(request):
-
     if request.method == 'GET':
-        
-        job_form = CMMS_Jobs_Form(request.GET or None)
-        tasks_formset = CMMS_Job_Tasks_Formset(queryset = CMMS_Job_Tasks.objects.none())
+        if 'id' in request.GET:
+            Job_ID = request.GET['id']
+    context = {
+        'open_jobs': get_jobs(),
+    }
+    html_template = loader.get_template('dashboard_cmms.html')
+    return HttpResponse(html_template.render(context, request))
 
-    elif request.method == 'POST':
-
-        job_form = CMMS_Jobs_Form(request.POST)
-        tasks_formset = CMMS_Job_Tasks_Formset(request.POST)
-
-        if job_form.is_valid() and tasks_formset.is_valid():
-
-            job = job_form.save()            
-            
-            for form in tasks_formset:
-                task = form.save(commit=False)
-                task.Job = job
-                task.save()
-
-            return redirect('/cmms/')
-
+@login_required(login_url="/login/")
+def cmms_edit(request, pk):
+    job = get_object_or_404(CMMS_Jobs, pk=pk)
+    if request.method == "POST":
+        job_form = CMMS_Jobs_Form(request.POST, instance=job)
+        if job_form.is_valid():
+            job_task = job_form.save()
+            tasks_formset = TasksFormSet(request.POST, instance=job_task)
+            print(tasks_formset.errors)
+            if tasks_formset.is_valid():
+                tasks_formset.save()
+                return HttpResponse('../')
+            else:
+                print('SHIT TASK FORM')
         else:
-            print(job_form.errors)
-
+            print('SHIT JOB FORM')        
+    else:
+        job_form = CMMS_Jobs_Form(instance=job)
+        tasks_formset = TasksFormSet(instance=job)
     context = {
         'job_form': job_form,
         'tasks_formset': tasks_formset,
         'open_jobs': get_jobs(),
     }
+    html_template = loader.get_template('dashboard_cmms_edit.html')
+    return HttpResponse(html_template.render(context, request))
 
-    html_template = loader.get_template('dashboard_cmms.html')
+@login_required(login_url="/login/")
+def cmms_add(request):
+    context = {}
+    if request.method == "POST":
+        job_form = CMMS_Jobs_Form(request.POST)
+        if job_form.is_valid():
+            job = job_form.save()
+            tasks_formset = TasksFormSet(request.POST, instance=job)
+            print(tasks_formset.errors)
+            if tasks_formset.is_valid():
+                tasks_formset.save()
+                return HttpResponse('../')
+    else:
+        job_form = CMMS_Jobs_Form()
+        tasks_formset = TasksFormSet()
+    context = {
+        'job_form': job_form,
+        'tasks_formset': tasks_formset,
+        'open_jobs': get_jobs(),
+    }
+    html_template = loader.get_template('dashboard_cmms_add.html')
     return HttpResponse(html_template.render(context, request))
 
 #-- daqc
@@ -278,7 +316,7 @@ def get_jobs():
             "task_completed_style": task_completed_style,
             "attachments": [],
         })
-        tasks = CMMS_Job_Tasks.objects.filter(Job = job)
+        tasks = CMMS_Job_Tasks.objects.filter(Job = job.id)
         for task in tasks:
             jobs[i]["tasks"].append({
                 "task_id": task.pk, 
@@ -288,7 +326,9 @@ def get_jobs():
                 "task_completed_date": task.Job_Task_Completed_Date,
                 "task_completed_comments": task.Job_Task_Completed_Comments,
             })
-        i =+ 1
+
+        i += 1
+
     return jobs
 
 def get_test_data(node_id, object):

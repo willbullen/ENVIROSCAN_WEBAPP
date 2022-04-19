@@ -10,6 +10,9 @@ urlpatterns = [
 
     # cmms
     path('cmms/', views.cmms, name='cmms'),
+    path('cmms/edit/<pk>', views.cmms_edit, name='cmms edit'),
+    path('cmms/add/', views.cmms_add, name='cmms add'),
+
 
     # daqc
     path('daqc/', views.daqc, name='daqc'),

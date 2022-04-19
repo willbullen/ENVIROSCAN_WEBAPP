@@ -8,6 +8,30 @@ import datetime
 from django.core import serializers
 from channels.layers import get_channel_layer
 
+class StatusConsumer(WebsocketConsumer):
+
+    group_name = 'status'
+
+    def async_send(self, channel_name, jsonData):
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(channel_name, {"type": "stream.message", 'message': jsonData})
+
+    def connect(self):
+        async_to_sync(self.channel_layer.group_add)(
+            self.group_name,
+            self.channel_name
+        )
+        self.accept()
+
+    def disconnect(self, close_code):
+        pass
+
+    def receive(self, text_data):
+        jsonData = json.loads(text_data)
+
+    def background_task(self):
+        print('')
+
 class HomeConsumer(WebsocketConsumer):
     # SET VARIABLES
     db_name = 'UPS'
@@ -343,6 +367,7 @@ class NOXConsumer(WebsocketConsumer):
         async_to_sync(channel_layer.group_send)(channel_name, {"type": "stream.message", 'message': jsonData})
 
     def connect(self):
+        print('NOX WEBSOCKET CONNECTED.............')
         # JOIN ROOM GROUP
         async_to_sync(self.channel_layer.group_add)(
             self.group_name,
@@ -354,6 +379,7 @@ class NOXConsumer(WebsocketConsumer):
         pass
 
     def receive(self, text_data):
+        print('RECEIVING DATA.............')
         jsonData = json.loads(text_data)        
         if jsonData['Action'] == 'Heartbeat':
             # GET NODE ID

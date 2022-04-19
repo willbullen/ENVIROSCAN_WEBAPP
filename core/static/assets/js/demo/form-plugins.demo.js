@@ -9,6 +9,9 @@ var handleRenderDatepicker = function() {
 	$('#datepicker-default').datepicker({
 		autoclose: true
 	});
+	$('#start-date').datepicker({
+		autoclose: true
+	});
 	$('#datepicker-component').datepicker({
 		autoclose: true
 	});
