@@ -178,6 +178,7 @@ class Nodes(models.Model):
 	Location = models.ForeignKey(Node_Location, on_delete=models.CASCADE)
 	Client = models.ForeignKey(Clients, on_delete=models.CASCADE)
 	Category = models.ForeignKey(Node_Category, on_delete=models.CASCADE)
+	Last_Updated = models.DateTimeField('last updated', blank=True, null=True)
 
 	objects = DataFrameManager()
 

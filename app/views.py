@@ -29,9 +29,12 @@ from .forms import CMMS_Jobs_Form, CMMS_Job_Tasks_Form, TasksFormSet
 from django.core import serializers
 
 @login_required(login_url="/login/")
-def index(request):    
-    context = {}
-    context['segment'] = 'index'    
+def index(request):
+    
+    context = {
+        'asset_list': Nodes.objects.all(),
+        'segment': 'index',
+    }
 
     html_template = loader.get_template( 'index.html' )
     return HttpResponse(html_template.render(context, request))

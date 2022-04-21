@@ -439,6 +439,7 @@ class Nodes_Serializer(serializers.ModelSerializer):
             'Location',
             'Client',
             'Category',
+            'Last_Updated',
         ]
 
 class Node_Type_Serializer(serializers.ModelSerializer):
