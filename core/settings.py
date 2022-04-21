@@ -33,8 +33,8 @@ ALLOWED_HOSTS = ['localhost', 'enviroscan.azurewebsites.net', 'www.enviroscan.io
 # Application definition
 
 INSTALLED_APPS = [
-    'authentication',
-    #'crispy_forms',
+    'authentication',   
+    'crispy_forms', 
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -43,14 +43,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'data',
-    'app',
+    'app',    
     'channels',
     'app_crypto',
     'app_dalys',
     'app_water',
+    #'beatserver',    
     #'bootstrap_modal_forms',
-    'background_task',
-    #'beatserver',
+    #'background_task',    
     #'django_celery_beat',
 ]
 
@@ -203,4 +203,4 @@ STATICFILES_DIRS = (
 #############################################################
 
 
-#CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

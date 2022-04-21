@@ -8,6 +8,7 @@ import datetime
 from django.core import serializers
 from channels.layers import get_channel_layer
 
+
 class StatusConsumer(WebsocketConsumer):
 
     group_name = 'status'
@@ -28,9 +29,6 @@ class StatusConsumer(WebsocketConsumer):
 
     def receive(self, text_data):
         jsonData = json.loads(text_data)
-
-    def background_task(self):
-        print('')
 
 class HomeConsumer(WebsocketConsumer):
     # SET VARIABLES

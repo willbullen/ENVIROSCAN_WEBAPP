@@ -1,10 +1,10 @@
 from datetime import timedelta
 
 BEAT_SCHEDULE = {
-    'testing-print': [
+    'get-status': [
         {
             # will call update_picarro method of BackgroundJobConsumer
-            'type': 'test.print',
+            'type': 'get.status',
             # message to pass to the consumer
             'message': {'testing': 'one'},
             # Every minute

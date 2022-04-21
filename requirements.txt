@@ -40,7 +40,7 @@ channels-redis==3.3.1
 #gevent==21.8.0
 
 # ---- CAMERA STEAM ---- #
-opencv-python==4.5.5.62
+#opencv-python==4.5.5.62
 
 # ---- FORMS ---- #
 #django-bootstrap-modal-forms
@@ -49,4 +49,4 @@ opencv-python==4.5.5.62
 #django-mqtt-bridge==0.3.7
 
 # ---- BACKGROUND TASKS ---- #
-django-background-tasks==1.2.5
+#django-background-tasks==1.2.5

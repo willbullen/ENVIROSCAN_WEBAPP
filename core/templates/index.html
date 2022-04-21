@@ -27,7 +27,7 @@
 						<div class="list-group mb-3">
 							<!-- BEGIN PICARRO -->
 							<div class="list-group-item d-flex align-items-center">
-								<div class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+								<div id="Status_PICARRO_G2401_01" class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
 									P
 								</div>
 								<div class="flex-fill px-3">
@@ -35,23 +35,29 @@
 									<div class="small text-white text-opacity-50">Last Updated: 1 minute ago</div>
 								</div>
 								<div class="opacity-10 px-3">
-									<span id="Asset_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
-									<span id="Node_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
-									<span id="Server_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
+									<span id="Asset_Status_PICARRO_G2401_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status_PICARRO_G2401_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+									<span id="Server_Status_PICARRO_G2401_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
 								</div>
-								<div class="dropdown">
-									<a href="#" data-bs-toggle="dropdown" class="text-white text-opacity-50"><i class="fa fa-ellipsis-h"></i></a>
-									<div class="dropdown-menu dropdown-menu-end">
-										<a href="../picarro_dash/?id=1" class="dropdown-item">Dashboard</a>
-										<a href="../daqc/?id=1" class="dropdown-item">DAQC</a>
-										<a href="#" class="dropdown-item">Settings</a>
-									</div>
+								<div class="fs-12px ms-auto">
+									<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+										<i class="fa fa-plus-circle"></i>
+									</a>
 								</div>
 							</div>
 							<!-- END PICARRO -->
+							<!-- BEGIN PICARRO DETAILS -->
+							<div class="collapse list-group-item" id="collapseOne">
+								<div>
+									<div class="fw-bold">Picarro Detail</div>
+								</div>
+							</div>
+							<!-- END PICARRO DETAILS -->
+
+
 							<!-- BEGIN AETHALOMETER -->
 							<div class="list-group-item d-flex align-items-center">
-								<div class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+								<div id="Status_AETHALOMETER_AE33_01" class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
 									A
 								</div>
 								<div class="flex-fill px-3">
@@ -59,9 +65,9 @@
 									<div class="small text-white text-opacity-50">Last Updated: 1 minute ago</div>
 								</div>
 								<div class="opacity-10 px-3">
-									<span id="Asset_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
-									<span id="Node_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
-									<span id="Server_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
+									<span id="Asset_Status_AETHALOMETER_AE33_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status_AETHALOMETER_AE33_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+									<span id="Server_Status_AETHALOMETER_AE33_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
 								</div>
 								<div class="dropdown">
 									<a href="#" data-bs-toggle="dropdown" class="text-white text-opacity-50"><i class="fa fa-ellipsis-h"></i></a>
@@ -75,7 +81,7 @@
 							<!-- END AETHALOMETER -->
 							<!-- BEGIN METEOROLOGY -->
 							<div class="list-group-item d-flex align-items-center">
-								<div class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+								<div id="Status_METEOROLOGY_01" class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
 									M
 								</div>
 								<div class="flex-fill px-3">
@@ -83,9 +89,9 @@
 									<div class="small text-white text-opacity-50">Last Updated: 1 minute ago</div>
 								</div>
 								<div class="opacity-10 px-3">
-									<span id="Asset_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
-									<span id="Node_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
-									<span id="Server_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
+									<span id="Asset_Status_METEOROLOGY_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status_METEOROLOGY_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+									<span id="Server_Status_METEOROLOGY_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
 								</div>
 								<div class="dropdown">
 									<a href="#" data-bs-toggle="dropdown" class="text-white text-opacity-50"><i class="fa fa-ellipsis-h"></i></a>
@@ -99,7 +105,7 @@
 							<!-- END METEOROLOGY -->
 							<!-- BEGIN GENERATOR -->
 							<div class="list-group-item d-flex align-items-center">
-								<div class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-red text-white rounded-2 ms-n1">
+								<div id="Status_GENERATOR_01" class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
 									G
 								</div>
 								<div class="flex-fill px-3">
@@ -107,9 +113,9 @@
 									<div class="small text-white text-opacity-50">Last Updated: 1 minute ago</div>
 								</div>
 								<div class="opacity-10 px-3">
-									<span id="Asset_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
-									<span id="Node_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
-									<span id="Server_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
+									<span id="Asset_Status_GENERATOR_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status_GENERATOR_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+									<span id="Server_Status_GENERATOR_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
 								</div>
 								<div class="dropdown">
 									<a href="#" data-bs-toggle="dropdown" class="text-white text-opacity-50"><i class="fa fa-ellipsis-h"></i></a>
@@ -123,7 +129,7 @@
 							<!-- END GENERATOR -->
 							<!-- BEGIN UPS -->
 							<div class="list-group-item d-flex align-items-center">
-								<div class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+								<div id="Status_UPS_01" class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
 									U
 								</div>
 								<div class="flex-fill px-3">
@@ -131,9 +137,9 @@
 									<div class="small text-white text-opacity-50">Last Updated: 1 minute ago</div>
 								</div>
 								<div class="opacity-10 px-3">
-									<span id="Asset_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
-									<span id="Node_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
-									<span id="Server_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
+									<span id="Asset_Status_UPS_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status_UPS_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+									<span id="Server_Status_UPS_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
 								</div>
 								<div class="dropdown">
 									<a href="#" data-bs-toggle="dropdown" class="text-white text-opacity-50"><i class="fa fa-ellipsis-h"></i></a>
@@ -147,7 +153,7 @@
 							<!-- END UPS -->
 							<!-- BEGIN ACSM -->
 							<div class="list-group-item d-flex align-items-center">
-								<div class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+								<div id="Status_ACSM_01" class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
 									A
 								</div>
 								<div class="flex-fill px-3">
@@ -155,9 +161,9 @@
 									<div class="small text-white text-opacity-50">Last Updated: 1 minute ago</div>
 								</div>
 								<div class="opacity-10 px-3">
-									<span id="Asset_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
-									<span id="Node_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
-									<span id="Server_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
+									<span id="Asset_Status_ACSM_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status_ACSM_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+									<span id="Server_Status_ACSM_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
 								</div>
 								<div class="dropdown">
 									<a href="#" data-bs-toggle="dropdown" class="text-white text-opacity-50"><i class="fa fa-ellipsis-h"></i></a>
@@ -175,7 +181,7 @@
 						<div class="list-group mb-3">
 							<!-- BEGIN NOX -->
 							<div class="list-group-item d-flex align-items-center">
-								<div class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+								<div id="Status_NOX_01" class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
 									N
 								</div>
 								<div class="flex-fill px-3">
@@ -183,9 +189,9 @@
 									<div class="small text-white text-opacity-50">Last Updated: 1 minute ago</div>
 								</div>
 								<div class="opacity-10 px-3">
-									<span id="Asset_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
-									<span id="Node_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
-									<span id="Server_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
+									<span id="Asset_Status_NOX_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status_NOX_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+									<span id="Server_Status_NOX_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
 								</div>
 								<div class="dropdown">
 									<a href="#" data-bs-toggle="dropdown" class="text-white text-opacity-50"><i class="fa fa-ellipsis-h"></i></a>
@@ -199,7 +205,7 @@
 							<!-- END NOX -->
 							<!-- BEGIN SOX -->
 							<div class="list-group-item d-flex align-items-center">
-								<div class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+								<div id="Status_SOX_01" class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
 									P
 								</div>
 								<div class="flex-fill px-3">
@@ -207,9 +213,9 @@
 									<div class="small text-white text-opacity-50">Last Updated: 1 minute ago</div>
 								</div>
 								<div class="opacity-10 px-3">
-									<span id="Asset_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
-									<span id="Node_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
-									<span id="Server_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
+									<span id="Asset_Status_SOX_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status_SOX_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+									<span id="Server_Status_SOX_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
 								</div>
 								<div class="dropdown">
 									<a href="#" data-bs-toggle="dropdown" class="text-white text-opacity-50"><i class="fa fa-ellipsis-h"></i></a>
@@ -223,7 +229,7 @@
 							<!-- END SOX -->
 							<!-- BEGIN TUCSON -->
 							<div class="list-group-item d-flex align-items-center">
-								<div class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+								<div id="Status_TUCSON_STATION_01" class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
 									T
 								</div>
 								<div class="flex-fill px-3">
@@ -231,9 +237,9 @@
 									<div class="small text-white text-opacity-50">Last Updated: 1 minute ago</div>
 								</div>
 								<div class="opacity-10 px-3">
-									<span id="Asset_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
-									<span id="Node_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
-									<span id="Server_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
+									<span id="Asset_Status_TUCSON_STATION_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status_TUCSON_STATION_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+									<span id="Server_Status_TUCSON_STATION_01" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
 								</div>
 								<div class="dropdown">
 									<a href="#" data-bs-toggle="dropdown" class="text-white text-opacity-50"><i class="fa fa-ellipsis-h"></i></a>
@@ -247,7 +253,7 @@
 							<!-- END TUCSON -->
 							<!-- BEGIN METEOROLOGY -->
 							<div class="list-group-item d-flex align-items-center">
-								<div class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+								<div id="Status_METEOROLOGY_02" class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
 									M
 								</div>
 								<div class="flex-fill px-3">
@@ -255,9 +261,9 @@
 									<div class="small text-white text-opacity-50">Last Updated: 1 minute ago</div>
 								</div>
 								<div class="opacity-10 px-3">
-									<span id="Asset_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
-									<span id="Node_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
-									<span id="Server_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
+									<span id="Asset_Status_METEOROLOGY_02" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status_METEOROLOGY_02" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+									<span id="Server_Status_METEOROLOGY_02" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
 								</div>
 								<div class="dropdown">
 									<a href="#" data-bs-toggle="dropdown" class="text-white text-opacity-50"><i class="fa fa-ellipsis-h"></i></a>
@@ -271,7 +277,7 @@
 							<!-- END METEOROLOGY -->
 							<!-- BEGIN GENERATOR -->
 							<div class="list-group-item d-flex align-items-center">
-								<div class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+								<div id="Status_GENERATOR_02" class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
 									G
 								</div>
 								<div class="flex-fill px-3">
@@ -279,9 +285,9 @@
 									<div class="small text-white text-opacity-50">Last Updated: 1 minute ago</div>
 								</div>
 								<div class="opacity-10 px-3">
-									<span id="Asset_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
-									<span id="Node_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
-									<span id="Server_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
+									<span id="Asset_Status_GENERATOR_02" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status_GENERATOR_02" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+									<span id="Server_Status_GENERATOR_02" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
 								</div>
 								<div class="dropdown">
 									<a href="#" data-bs-toggle="dropdown" class="text-white text-opacity-50"><i class="fa fa-ellipsis-h"></i></a>
@@ -295,7 +301,7 @@
 							<!-- END GENERATOR -->
 							<!-- BEGIN UPS -->
 							<div class="list-group-item d-flex align-items-center">
-								<div class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+								<div id="Status_UPS_02" class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
 									U
 								</div>
 								<div class="flex-fill px-3">
@@ -303,9 +309,9 @@
 									<div class="small text-white text-opacity-50">Last Updated: 1 minute ago</div>
 								</div>
 								<div class="opacity-10 px-3">
-									<span id="Asset_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
-									<span id="Node_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
-									<span id="Server_Status" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
+									<span id="Asset_Status_UPS_02" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status_UPS_02" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+									<span id="Server_Status_UPS_02" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
 								</div>
 								<div class="dropdown">
 									<a href="#" data-bs-toggle="dropdown" class="text-white text-opacity-50"><i class="fa fa-ellipsis-h"></i></a>
@@ -352,7 +358,93 @@
 
 <script>
 
+	function setAssetStatus(data, element_id) {
+		element_id = '#Asset_Status_' + data.Node_ID
+		if (data.Asset_Status == 1) {
+			$(element_id).addClass('bg-danger');
+			$(element_id).attr('title', data.Asset_Status_Description);
+		} else {
+			$(element_id).removeClass('bg-danger');
+		}
+	}
 
+	function setNodeStatus(data) {
+		element_id = '#Node_Status_' + data.Node_ID
+		if (data.Node_Status == 1) {
+			$(element_id).addClass('bg-danger');
+			$(element_id).attr('title', data.Asset_Status_Description);
+		} else {
+			$(element_id).removeClass('bg-danger');
+		}
+	}
+
+	function setServerStatus(data) {
+		element_id = '#Server_Status_' + data.Node_ID
+		if (data.Server_Status == 1) {
+			$(element_id).addClass('bg-danger');
+			$(element_id).attr('title', data.Asset_Status_Description);
+		} else {
+			$(element_id).removeClass('bg-danger');
+		}
+	}
+
+	function setOverallStatus(data) {
+		element_id = '#Status_' + data.Node_ID
+		if (data.Asset_Status == 1 || data.Server_Status == 1 || data.Node_Status == 1) {
+			$(element_id).removeClass('bg-gradient-cyan-blue');
+			$(element_id).addClass('bg-gradient-red');
+			$(element_id).attr('title', 'ERROR');
+		} else {
+			$(element_id).removeClass('bg-gradient-red');
+			$(element_id).addClass('bg-gradient-cyan-blue');
+			$(element_id).attr('title', 'OK');
+		}
+	}
+
+	// -- GET OVERALL STATUS 
+	var ajax_call = function() {
+		$.ajax({
+			type: 'GET',
+			url: '../nodes/node/',
+			headers: {
+				"Authorization": "Basic " + btoa("admin" + ":" + "will1977"),
+				'Accept' : 'application/json'
+			},
+			success: function(data) {
+				console.log(data)
+				$.each(data['results'], function(i, asset) {
+					console.log(asset.Node_ID)
+					setAssetStatus(asset)
+					setNodeStatus(asset)
+					setServerStatus(asset)
+					setOverallStatus(asset)
+					balena_data = get_node_data(asset.Node_Device_ID)
+				});				
+			}
+		});
+	};
+
+	var interval = 60000; // 60 secs
+	setInterval(ajax_call, interval);
+
+	function get_node_data(uuid) {
+		auth_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTQ0NDM3LCJ1c2VybmFtZSI6ImdoX3dpbGxidWxsZW4iLCJlbWFpbCI6IndpbGxpYW1idWxsZW5AZ21haWwuY29tIiwiY3JlYXRlZF9hdCI6IjIwMjAtMDEtMjlUMTY6MjY6MjMuMTgwWiIsImp3dF9zZWNyZXQiOiJEMklEQlBRUVJEWFRKTVUyQlJTM0hBR1BMSk9SWTM2NyIsImhhc19kaXNhYmxlZF9uZXdzbGV0dGVyIjpmYWxzZSwiZmlyc3RfbmFtZSI6IldpbGxpYW0iLCJsYXN0X25hbWUiOiJCdWxsZW4iLCJhY2NvdW50X3R5cGUiOiJwZXJzb25hbCIsInNvY2lhbF9zZXJ2aWNlX2FjY291bnQiOlt7InByb3ZpZGVyIjoiZ2l0aHViIiwiZGlzcGxheV9uYW1lIjoid2lsbGJ1bGxlbiJ9XSwiY29tcGFueSI6IkVudmlyb3NjYW4gSW9UIiwiaGFzUGFzc3dvcmRTZXQiOnRydWUsIm5lZWRzUGFzc3dvcmRSZXNldCI6ZmFsc2UsInB1YmxpY19rZXkiOnRydWUsImZlYXR1cmVzIjpbXSwiaW50ZXJjb21Vc2VyTmFtZSI6ImdoX3dpbGxidWxsZW4iLCJpbnRlcmNvbVVzZXJIYXNoIjoiOTExZWRjMmVmOWNmZTY3ZDY5ZmRhMDg0YjkyN2UwZDVkNzQxODE3YWZiZjA0ODliYmU4ZTVmNjNiNGY1ZDQwMiIsInBlcm1pc3Npb25zIjpbXSwiYXV0aFRpbWUiOjE2NDk4NDQ2MTY2MDcsImlzX3ZlcmlmaWVkIjp0cnVlLCJtdXN0X2JlX3ZlcmlmaWVkIjpmYWxzZSwiYWN0b3IiOjQyNzU4NDUsImlhdCI6MTY1MDQ3NDUzOCwiZXhwIjoxNjUxMDc5MzM4fQ.ZRSJrQzNlcHM7YXOuH5hneEf7PDt4gJ7xIF8YGrXvPU'
+		//uuid = '1cbccd93410c800062b0f9e3160e33e4'
+		balena_data = []
+		$.ajax({
+			type: 'GET',
+			url: "https://api.balena-cloud.com/v6/device?\$filter=uuid%20eq%20'" + uuid + "'", 
+			headers: {
+				"Authorization": "Bearer " + auth_token,
+				'Accept' : 'application/json'
+			},
+			success: function(data) {
+				console.log(data)
+				balena_data = data				
+			}
+		});
+		return balena_data
+	}
 
 
 
@@ -366,7 +458,6 @@
 
 		soxSocket.onmessage = function (e) {
 			ws_Data = JSON.parse(e.data).message;
-			setSetup(ws_Data);
 		};
 
 		soxSocket.onclose = function (e) {
@@ -377,44 +468,6 @@
 			console.error(err);
 		};
 	};
-
-	function setSetup(db_Data) {
-		// SET THIS NODE
-		thisNodeID = db_Data.Node_ID;
-		// SET THIS STATUS DATASET
-		thisStatusDataset = db_Data.Data.data[0];
-		// SET STATUS HEADING
-		$("#headingNetworkStatus").text(thisStatusDataset.Node_Name);
-		//-- SET ASSET STATUS
-		if (thisStatusDataset.Asset_Status == 1) {
-			$("#assetNetworkStatus").addClass('text-danger').text('ERROR');
-			$('#Asset_Status').addClass('bg-danger');
-			$("#Asset_Status").attr('title', thisStatusDataset.Asset_Status_Description);
-			$("#Asset_Status").attr('data-original-title', thisStatusDataset.Asset_Status_Description);
-			$("#Asset_Status").tooltip('update');
-			$("#Asset_Status").tooltip('show');
-		} else {
-			$("#assetNetworkStatus").removeClass('text-danger').text('OK');
-			$('#Asset_Status').removeClass('bg-danger');
-			$("#Asset_Status").tooltip({ title : "OK" });
-		}
-		//-- SET NODE STATUS
-		if (thisStatusDataset.Node_Status == 1) {
-			$("#nodeNetworkStatus").addClass('text-danger').text('ERROR');
-			$('#Node_Status').addClass('bg-danger');
-			$("#Node_Status").tooltip({ title : "ERROR" });
-		} else {
-			$("#nodeNetworkStatus").removeClass('text-danger').text('OK');
-			$('#Node_Status').removeClass('bg-danger');
-			$("#Node_Status").tooltip({ title : "OK" });
-		}
-		//-- SET SERVER STATUS
-		if (thisStatusDataset.Server_Status == 1) {
-			$("#serverNetworkStatus").addClass('text-danger').text('ERROR');
-		} else {
-			$("#serverNetworkStatus").removeClass('text-danger').text('OK');
-		}
-	}
 	
 
 
@@ -485,6 +538,7 @@
 
 		renderMaps();
 		startWebSocket();
+		ajax_call();
 		//initialSetup();
 
 		$(document).on('theme-reload', function () {
