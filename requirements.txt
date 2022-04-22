@@ -21,7 +21,7 @@ sqlparse==0.4.2
 #django-mssql-backend-azure==2.9.2
 mssql-django==1.1.1
 pyodbc==4.0.32
-#django-pandas
+django-pandas==0.6.6
 
 # ---- DJANGO ---- #
 Django==3.2.11
@@ -35,9 +35,9 @@ channels==3.0.4
 channels-redis==3.3.1
 
 # ---- CELERY ---- #
-beatserver==0.0.7
-django-celery-beat==2.1.0
-gevent==21.8.0
+#beatserver==0.0.7
+#django-celery-beat==2.1.0
+#gevent==21.8.0
 
 # ---- CAMERA STEAM ---- #
 opencv-python==4.5.5.62
