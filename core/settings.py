@@ -181,6 +181,8 @@ USE_TZ = True
 STATIC_ROOT = os.path.normpath(os.path.join(CORE_DIR, 'staticfiles'))
 STATIC_URL = '/static/'
 
+#print(STATIC_ROOT)
+
 MEDIA_ROOT = os.path.normpath(os.path.join(BASE_DIR, 'media')) # Directory where uploaded media is saved.
 MEDIA_URL = '/media/' # Public URL at the browser
 
