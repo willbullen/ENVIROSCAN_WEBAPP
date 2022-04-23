@@ -25,14 +25,17 @@
 					<div class="col-xl-6">
 						<div class="text-white text-opacity-50 small mb-2"><b>VALENTIA SITE</b></div>
 						<div class="list-group mb-3">							
-						{% for asset in asset_list %}
-							<!-- BEGIN ASSET -->							
+						{% for asset in asset_list %}														
 							{% if 'Valentia Island' in asset.Location.Location_Name %}
+							<!-- BEGIN ASSET -->
 							<input type="hidden" id="hidden_Node_Status_{{ asset.Node_Device_ID }}" value="0">
+							<input type="hidden" id="hidden_Asset_Status_{{ asset.Node_Device_ID }}" value="0">
 							<div class="list-group-item d-flex align-items-center">
-								<div id="Status_{{ asset.Node_Device_ID }}" class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
-									{{ asset.Node_Name|make_list|first }}
-								</div>
+								<a href="#" class="text-white text-opacity-50" id="#go_map_{{ asset.Node_ID }}">
+									<div id="Status_{{ asset.Node_Device_ID }}" class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+										{{ asset.Node_Name|make_list|first }}
+									</div>
+								</a>
 								<div class="flex-fill px-3">
 									<div class="fw-bold">{{ asset.Node_Name }}</div>
 									<div class="small text-white text-opacity-50">Last Updated: {{ asset.Last_Updated|timesince }}</div>
@@ -40,7 +43,6 @@
 								<div class="opacity-10 px-3">
 									<span id="Asset_Status_{{ asset.Node_Device_ID }}" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
 									<span id="Node_Status_{{ asset.Node_Device_ID }}" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
-									<span id="Server_Status_{{ asset.Node_Device_ID }}" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
 								</div>
 								<div class="fs-12px ms-auto">
 									<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#collapse_{{ asset.Node_ID }}">
@@ -142,7 +144,6 @@
 								<div class="opacity-10 px-3">
 									<span id="Asset_Status_{{ asset.Node_Device_ID }}" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
 									<span id="Node_Status_{{ asset.Node_Device_ID }}" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
-									<span id="Server_Status_{{ asset.Node_Device_ID }}" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
 								</div>
 								<div class="fs-12px ms-auto">
 									<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#collapse_{{ asset.Node_ID }}">
@@ -157,32 +158,12 @@
 								<div class="row justify-content-center">
 									<!-- BEGIN col-12 -->
 									<div class="col-xl-12 mb-1">
-										<div class="d-flex mb-1">
-											Node
+										<div class="fw-bold">Node</div>
+										<div class="small text-white text-opacity-50">
+											<span id="value_status_{{ asset.Node_Device_ID }}"></span> for the last <span id="value_duration_online_{{ asset.Node_Device_ID }}"></span>
 										</div>
 									</div>
 									<!-- END col-12 -->
-								</div>
-								<!-- END ROW -->
-
-								<!-- BEGIN ROW -->
-								<div class="row justify-content-center">
-									<!-- BEGIN col-6 -->
-									<div class="col-xl-6 mb-1">
-										<div class="d-flex mb-1 text-opacity-50">
-											Status : 
-											<span id="value_status_{{ asset.Node_Device_ID }}"></span>
-										</div>
-									</div>
-									<!-- END col-6 -->
-									<!-- BEGIN col-6 -->
-									<div class="col-xl-6 mb-1">
-										<div class="d-flex mb-1 text-opacity-50">
-											Online For : 
-											<span id="value_duration_online_{{ asset.Node_Device_ID }}"></span>
-										</div>
-									</div>
-									<!-- END col-6 -->
 								</div>
 								<!-- END ROW -->
 								<!-- BEGIN ROW -->
@@ -287,7 +268,12 @@
 			$(element_id).addClass('bg-danger');
 			$(element_id).attr('title', data.Asset_Status_Description);
 		} else {
-			$(element_id).removeClass('bg-danger');
+			if ($("#hidden_Asset_Status_" + data.Node_Device_ID).val() != '1') {
+				$(element_id).removeClass('bg-danger');
+			} else {
+				$(element_id).addClass('bg-danger');
+				$(element_id).attr('title', 'Last time data updated was too long.');
+			}
 		}
 	}
 
@@ -306,19 +292,9 @@
 		}
 	}
 
-	function setServerStatus(data) {
-		element_id = '#Server_Status_' + data.Node_Device_ID
-		if (data.Server_Status == 1) {
-			$(element_id).addClass('bg-danger');
-			$(element_id).attr('title', data.Asset_Status_Description);
-		} else {
-			$(element_id).removeClass('bg-danger');
-		}
-	}
-
 	function setOverallStatus(data) {
 		element_id = '#Status_' + data.Node_Device_ID
-		if (data.Asset_Status == 1 || data.Server_Status == 1 || data.Node_Status == 1) {
+		if (data.Asset_Status == 1 || data.Node_Status == 1 || $("#hidden_Node_Status_" + data.Node_Device_ID).val() == 1 || $("#hidden_Asset_Status_" + data.Node_Device_ID).val() == 1) {
 			$(element_id).removeClass('bg-gradient-cyan-blue');
 			$(element_id).addClass('bg-gradient-red');
 			$(element_id).attr('title', 'ERROR');
@@ -330,6 +306,9 @@
 	}
 
 	// -- GET OVERALL STATUS 
+	var markersData = []
+	var newMarker = {}
+	var icon = ''
 	var ajax_call = function() {
 		$.ajax({
 			type: 'GET',
@@ -339,17 +318,42 @@
 				'Accept' : 'application/json'
 			},
 			success: function(data) {
-				$.each(data['results'], function(i, asset) {					
+				$.each(data['results'], function(i, asset) {
+					
+					if (asset.Asset_Status == 1) {icon = '/static/assets/img/map/error_marker.png'} else {icon = '/static/assets/img/map/ok_marker.png'}					
+					newMarker = {
+						location: {
+							lat: asset.Node_Lat, 
+							lng: asset.Node_Lng
+						},
+						tooltip: {
+							text: asset.Node_Name,
+						},
+						iconSrc: icon,
+					}
+					markersData.push(newMarker)
+					console.log(asset.Node_Name + ': ' + parseInt(Math.abs(new Date()-new Date(asset.Last_Updated)) / (1000 * 60)))
+					if (parseInt(Math.abs(new Date()-new Date(asset.Last_Updated)) / (1000 * 60)) > 2) {
+						$('#Asset_Status_' + asset.Node_Device_ID).addClass('bg-danger');
+						$('#Asset_Status_' + asset.Node_Device_ID).attr('title', 'Last time data updated was too long.');
+						$("#hidden_Asset_Status_" + asset.Node_Device_ID).val('1');
+					} else {
+						$('#Asset_Status_' + asset.Node_Device_ID).removeClass('bg-danger');
+						$("#hidden_Asset_Status_" + asset.Node_Device_ID).val('0');
+					}
+
 					setAssetStatus(asset)
 					setNodeStatus(asset)
-					setServerStatus(asset)
 					setOverallStatus(asset)
-				});				
+
+				});
+				$("#siteMap").dxMap({
+					//zoom: 5,
+					markers: markersData
+				});
 			}
 		});
-	};
-	var interval_status = 60000; // 60 secs
-	setInterval(ajax_call, interval_status);
+	};	
 
 	// -- GET BALENA DATA 
 	var balena_ajax_call = function() {
@@ -364,8 +368,7 @@
 			},
 			success: function(data) {
 				balena_data = data['d']
-				$.each(balena_data, function(i, asset) {
-					console.log(asset.device_name + ': ' + asset.api_heartbeat_state)
+				$.each(balena_data, function(i, asset) {					
 					$("#value_status_" + asset.uuid).text(asset.api_heartbeat_state);
 					$("#value_duration_online_" + asset.uuid).text(parseInt(Math.abs(new Date()-new Date(asset.last_connectivity_event)) / (1000 * 60 * 60) % 24) + ' hours ago.');
 					$("#value_cpu_" + asset.uuid).text(' ' + asset.cpu_usage + ' % ');
@@ -385,99 +388,34 @@
 					} else {
 						$('#Node_Status_' + asset.uuid).removeClass('bg-danger');
 						$("#hidden_Node_Status_" + asset.uuid).val('0');
-					}
+					}					
 				});
 			}
 		});
 	}
-	var interval_balena = 60000; // 60 secs
-	setInterval(balena_ajax_call, interval_balena);
-
+	
 	function getPercentage(act, max) {
 		return (act / max) * 100;
 	}
 
-
-
-	var startWebSocket = function () {
-		var soxSocket;
-		var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-		var ws_path = ws_scheme + '://' + window.location.host + '/status/';
-		soxSocket = new WebSocket(ws_path);    
-
-		soxSocket.onmessage = function (e) {
-			ws_Data = JSON.parse(e.data).message;
-		};
-
-		soxSocket.onclose = function (e) {
-			console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
-		};
-
-		soxSocket.onerror = function (err) {
-			console.error(err);
-		};
-	};
-	
-
-
-
-	
-	var streamsData = []
-
 	var renderMaps = function () {
 
-		$('#siteMap').dxVectorMap({
-			// [minLongitude, maxLatitude, maxLongitude, minLatitude]
-			size: {
-				height: 700,
+		var siteMap = $('#siteMap').dxMap({
+			center: [51.94011137604235, -10.244128704071045],
+			zoom: 14,
+			height: 560,
+			width: '100%',
+			provider: 'bing',
+			controls: true,
+			apiKey: {
+			// Specify your API keys for each map provider:
+			// bing: "YOUR_BING_MAPS_API_KEY",
+			// google: "YOUR_GOOGLE_MAPS_API_KEY",
+			// googleStatic: "YOUR_GOOGLE_STATIC_MAPS_API_KEY"
 			},
-			bounds: [-12, 55, -5, 51],
-			maxZoomFactor: 1000,
-			background: {
-				color: 'transparent',
-				borderColor: 'transparent',
-			},
-			layers: [{
-				dataSource: mapData
-			}, {
-				type: 'marker',
-				elementType: 'image',
-				dataField: 'url',
-				size: 51,
-				label: {
-					dataField: 'text',
-					font: {
-						size: 14,
-					},
-				},
-				//dataSource: equipmentData,
-			}, {
-				name: 'water',
-				dataSource: streamsData,
-				//colorGroupingField: 'tag',
-				//colorGroups: [0, 1, 2],
-				//palette: ['#3c20c8', '#d82020'],
-				//borderColor: 'none',
-				hoverEnabled: false,
-			}],
-			legends: [{
-				font: {
-					size: 14,
-				},
-				horizontalAlignment: 'right',
-				verticalAlignment: 'top',
-				customizeText() {
-					if (this.color === '#3c20c8') {
-						return 'Cold';
-					}
-					return 'Warm';
-				},
-				source: {
-					layer: 'water',
-					grouping: 'color'
-				},
-			}],
-		});
+			type: 'hybrid',
+    		markers: markersData,
+		}).dxMap('instance');
 
 	};
 
@@ -486,13 +424,19 @@
 	$(document).ready(function () {
 
 		renderMaps();
-		startWebSocket();
 		ajax_call();
 		balena_ajax_call();
-		//initialSetup();
+
+		var interval_balena = 60000; // 60 secs
+		setInterval(balena_ajax_call, interval_balena);
+
+		var interval_status = 60000; // 60 secs
+		setInterval(ajax_call, interval_status);
 
 		$(document).on('theme-reload', function () {
 			renderMaps();
+			ajax_call();
+			balena_ajax_call();
 		});
 
 	});
