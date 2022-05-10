@@ -4,11 +4,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from django.http import Http404
+from django.http import Http404, HttpResponse
 import json
+from django.core import serializers
 
-from .serializers import UPS_Serializer, Generator_Serializer, Autosonde_Ground_Station_Serializer, Autosonde_Logs_Serializer, Autosonde_Sounding_Data_Serializer, Autosonde_Soundings_Serializer, Node_Category_Serializer, Clients_Serializer, Nodes_Serializer, Node_Type_Serializer, Node_Location_Serializer, SOX_Data_Serializer, NOX_Data_Serializer, Defib_Data_Serializer, Picarro_Data_Serializer, Picarro_Logs_Serializer, Aethalometer_Data_Serializer, Aethalometer_Logs_Serializer, Weather_Data_Serializer, Weather_Logs_Serializer, Tucson_Data_Serializer, Tucson_Logs_Serializer, Baloon_Data_Serializer, Baloon_Logs_Serializer, Kraken_Data_Serializer, Picarro_PM_Serializer, Picarro_Jobs_Serializer, Picarro_Properties_Serializer, Picarro_Alarms_Serializer, Picarro_Property_Types_Serializer
-from .models import UPS, Generator, Autosonde_Ground_Station, Autosonde_Logs, Autosonde_Sounding_Data, Autosonde_Soundings, Node_Category, Clients, Nodes, Node_Type, Node_Location, SOX_Data, NOX_Data, Defib_Data, Picarro_Data, Picarro_Logs, Weather_Data, Weather_Logs, Aethalometer_Data, Aethalometer_Logs, Kraken_Data, Tucson_Data, Tucson_Logs, Baloon_Data, Baloon_Logs, Picarro_PM, Picarro_Jobs, Picarro_Properties, Picarro_Alarms, Picarro_Property_Types
+from .serializers import GeneralSerializer, DAQC_Fields_Serializer, UPS_Serializer, Generator_Serializer, Autosonde_Ground_Station_Serializer, Autosonde_Logs_Serializer, Autosonde_Sounding_Data_Serializer, Autosonde_Soundings_Serializer, Node_Category_Serializer, Clients_Serializer, Nodes_Serializer, Node_Type_Serializer, Node_Location_Serializer, SOX_Data_Serializer, NOX_Data_Serializer, Defib_Data_Serializer, Picarro_Data_Serializer, Picarro_Logs_Serializer, Aethalometer_Data_Serializer, Aethalometer_Logs_Serializer, Weather_Data_Serializer, Weather_Logs_Serializer, Tucson_Data_Serializer, Tucson_Logs_Serializer, Baloon_Data_Serializer, Baloon_Logs_Serializer, Kraken_Data_Serializer, Picarro_PM_Serializer, Picarro_Jobs_Serializer, Picarro_Properties_Serializer, Picarro_Alarms_Serializer, Picarro_Property_Types_Serializer
+from .models import DAQC_Fields, UPS, Generator, Autosonde_Ground_Station, Autosonde_Logs, Autosonde_Sounding_Data, Autosonde_Soundings, Node_Category, Clients, Nodes, Node_Type, Node_Location, SOX_Data, NOX_Data, Defib_Data, Picarro_Data, Picarro_Logs, Weather_Data, Weather_Logs, Aethalometer_Data, Aethalometer_Logs, Kraken_Data, Tucson_Data, Tucson_Logs, Baloon_Data, Baloon_Logs, Picarro_PM, Picarro_Jobs, Picarro_Properties, Picarro_Alarms, Picarro_Property_Types
+
+from django.apps import apps
 
 class Aethalometer_Data_ViewSet(viewsets.ModelViewSet):
     queryset = Aethalometer_Data.objects.all().order_by('Data_DateTime')
@@ -129,6 +132,53 @@ class UPS_ViewSet(viewsets.ModelViewSet):
 class Generator_ViewSet(viewsets.ModelViewSet):
     queryset = Generator.objects.all().order_by('Data_DateTime')
     serializer_class = Generator_Serializer
+
+################ DAQC ################
+
+class DAQC_Fields_ViewSet(viewsets.ModelViewSet):
+    queryset = DAQC_Fields.objects.all().order_by('Node')
+    serializer_class = DAQC_Fields_Serializer
+
+class DAQC_Fields_By_Node_ViewSet(viewsets.ModelViewSet):
+    
+    queryset = DAQC_Fields.objects.all().order_by('Node')
+    serializer_class = DAQC_Fields_Serializer
+
+    def retrieve(self, request, pk=None):
+        item = DAQC_Fields.objects.filter(Node=pk)
+        #print(serializers.serialize('json', item))
+        return Response(serializers.serialize('json', item))
+
+
+class DAQC_Get_Data_ViewSet(viewsets.ModelViewSet):
+
+    def list(self, request):
+        model = apps.get_model('data', self.request.query_params.get('model'))
+        data = json.loads(
+            model.objects.filter(
+                Node_ID = self.request.query_params.get('asset_id'), 
+                Data_DateTime__gte = self.request.query_params.get('start_date'), 
+                Data_DateTime__lte = self.request.query_params.get('end_date')
+            )
+            .order_by('-id')[:5000]
+            .to_dataframe(index='Data_DateTime')
+            .sort_index(ascending=True)
+            .resample('10Min')
+            .mean()
+            .fillna(method='backfill')
+            .to_json(orient="table")
+        )
+        return Response(data)
+
+    def get_queryset(self):
+        model = apps.get_model('data', self.request.query_params.get('model'))
+        return model.objects.all()
+
+    def get_serializer_class(self):
+        GeneralSerializer.Meta.model = apps.get_model('data', self.request.query_params.get('model'))
+        return GeneralSerializer
+
+################ DAQC ################
 
 ########################################################################
 

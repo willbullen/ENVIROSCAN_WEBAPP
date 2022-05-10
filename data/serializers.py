@@ -604,4 +604,34 @@ class Generator_Serializer(serializers.ModelSerializer):
             'Generator_Oil_Pressure',
             'Generator_Fuel_Level',
             'Generator_Running_Hours',
-        ]           
+        ]   
+
+############# DAQC
+from .models import DAQC_Fields, DAQC_Change_Log
+
+class DAQC_Fields_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = DAQC_Fields
+        fields = [
+            'id',
+            'Node',
+            'Field_ID',
+            'Field_Display_Name',
+        ] 
+
+class DAQC_Change_Log_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = DAQC_Change_Log
+        fields = [
+            'id',
+            'Field',
+            'Change_DateTime',
+            'Origional_Value',
+            'New_Value',
+        ]
+
+class GeneralSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = None
+        fields = '__all__'

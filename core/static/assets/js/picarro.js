@@ -97,9 +97,9 @@ function setCurrent(db_Data) {
 function setStatus(db_Data) {
     var StatusData = db_Data.Data.data.map(function(h){ return {id: h.id, asset: h.Node_Name, location: h.Location, status: h.Status.toString(), asset_status: h.Asset_Status, asset_status_description: h.Asset_Status_Description, node_status: h.Node_Status, node_status_description: h.Node_Status_Description, server_status: h.Server_Status, server_status_description: h.Server_Status_Description, coords: [h.Node_Lat, h.Node_Lng]};});
     // SET MAP VALUES
-    var mapObject = $('#networkStatusMap').vectorMap('get', 'mapObject'); 
-    mapObject.addMarkers(StatusData.map(function(h){ return {name: h.asset, latLng: h.coords, id: h.id};}), []);
-    mapObject.series.markers[0].setValues(StatusData.reduce(function(p, c, i){ p[i] = c.status; return p;},{}));
+    //var mapObject = $('#networkStatusMap').vectorMap('get', 'mapObject'); 
+    //mapObject.addMarkers(StatusData.map(function(h){ return {name: h.asset, latLng: h.coords, id: h.id};}), []);
+    //mapObject.series.markers[0].setValues(StatusData.reduce(function(p, c, i){ p[i] = c.status; return p;},{}));
     // SET MAP VALUES
     var tableObject = $('#networkStatusTable').DataTable();
     tableObject.clear();
@@ -342,54 +342,7 @@ function createSSC(params) {
     });
 }
 
-var renderTableData = function () {    
-    //-- GENERATE MAP
-    var networkStatusMap = $('#networkStatusMap').vectorMap({
-        map: '26counties',
-        normalizeFunction: 'polynomial',
-        hoverOpacity: 0.5,
-        hoverColor: false,
-        zoomOnScroll: false,
-        series: {
-            regions: [{
-                normalizeFunction: 'polynomial'
-            }],
-            markers: [{
-                attribute: 'fill',
-                scale: {
-                    '1': '#FF0000',
-                    '0': app.color.theme,
-                },
-                values: [],
-            }]
-        },
-        focusOn: {
-            x: 0.5,
-            y: 0.5,
-            scale: 1
-        },
-        regionStyle: {
-            initial: {
-                fill: app.color.white,
-                "fill-opacity": 0.35,
-                stroke: 'none',
-                "stroke-width": 0.4,
-                "stroke-opacity": 1
-            },
-            hover: {
-                "fill-opacity": 0.5
-            }
-        },
-        backgroundColor: 'transparent',
-        markers: [],
-        onRegionClick: function (event, code, isSelected,  selectedRegions) {            
-            $('#networkStatusMap').vectorMap('get','mapObject').setFocus({region: code});
-        },
-        onMarkerClick: function (event, index) {
-            setAssetNetValues(allStatusDataset[index].id);
-            //$('#networkStatusMap').vectorMap('get','mapObject').setFocus({marker: index});
-        },
-    });
+var renderTableData = function () {     
     //-- GENERATE TABLES
     var pageScrollPos = 0;
     var networkStatusTable = $('#networkStatusTable').DataTable({
@@ -462,10 +415,6 @@ var renderTableData = function () {
     }
 };
 
-var renderMaps = function () {
-
-
-};
 
 var renderCharts = function () {
 
@@ -814,6 +763,57 @@ var renderCharts = function () {
     //################################# SSC CHART  ###################################
 };
 
+// -- MAP
+var renderMaps = function () {
+    var siteMap = $('#networkStatusMap').dxMap({
+        center: [51.94011137604235, -10.244128704071045],
+        zoom: 14,
+        height: 380,
+        width: '100%',
+        provider: 'bing',
+        controls: true,
+        type: 'hybrid',
+        markers: markersData,
+    }).dxMap('instance');
+};
+// -- GET OVERALL STATUS 
+var markersData = [];
+var newMarker = {};
+var icon = '';
+var ajax_call = function() {
+    $.ajax({
+        type: 'GET',
+        url: '../nodes/node/',
+        headers: {
+            "Authorization": "Basic " + btoa("admin" + ":" + "will1977"),
+            'Accept' : 'application/json'
+        },
+        success: function(data) {
+            $.each(data.results, function(i, asset) {
+                
+                if (asset.Asset_Status == 1) {icon = '/static/assets/img/map/error_marker.png';} else {icon = '/static/assets/img/map/ok_marker.png';}
+                newMarker = {
+                    location: {
+                        lat: asset.Node_Lat, 
+                        lng: asset.Node_Lng
+                    },
+                    tooltip: {
+                        text: asset.Node_Name,
+                    },
+                    iconSrc: icon,
+                };
+                markersData.push(newMarker);
+            });
+            $("#networkStatusMap").dxMap({
+                markers: markersData
+            });
+        }
+    });
+};
+var interval_status = 60000; // 60 secs
+setInterval(ajax_call, interval_status);
+
+
 function initialSetup() {
     setStatus(Status_Data);
     setSetup(Setup_Data);
@@ -829,11 +829,13 @@ $(document).ready(function () {
     renderMaps();
     renderTableData();
     initialSetup();
+    ajax_call();
 
     $(document).on('theme-reload', function () {
         $('[data-render="apexchart"], #chart-server, #world-map').empty();
         renderCharts();
         renderMaps();
         renderTableData();
+        ajax_call();
     });
 });

@@ -1,22 +1,27 @@
 // SET UNIVERSAL VARIABLES
 
-function setHistory(db_Data) {
-    console.log(db_Data);
-    var date = new Date("2016-07-27T07:45:00Z");
-    $("#Main_Chart").dxChart("option", "dataSource", db_Data.Data.data);
-    $("#Main_Chart_Range_Selector").dxRangeSelector("option", "dataSource", db_Data.Data.data);
+function setHistory(db_Data) {    
+    $("#Main_Chart").dxChart("option", "dataSource", db_Data);
+    $("#Main_Chart_Range_Selector").dxRangeSelector("option", "dataSource", db_Data);
+}
+
+function reviver(key, value) {
+    if (key === 'Data_DateTime') {
+        return new Date(value);
+    }
+    return value;
 }
 
 var startWebSocket = function () {
     var autosondeSocket;
     var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
     var ws_path = ws_scheme + '://' + window.location.host + '/daqc/';
-    console.log(ws_path);
     autosondeSocket = new WebSocket(ws_path);
 
     autosondeSocket.onmessage = function (e) {
-        ws_Data = JSON.parse(e.data).message;
+        ws_Data = JSON.parse(e.data).message.Data.data;
         console.log(ws_Data);
+        //setHistory(ws_Data);
     };
 
     autosondeSocket.onclose = function (e) {
@@ -27,68 +32,6 @@ var startWebSocket = function () {
         console.error(err);
     };
 };
-
-function renderCharts() {
-    var series = [{
-        valueField: "Data_DryA",
-        argumentField: "Data_DateTime",
-        //argumentType: "datetime",
-    }, {
-        valueField: "Data_GrassA",
-        argumentField: "Data_DateTime",
-        //argumentType: "datetime",
-    }, {
-        valueField: 'Data_WindSpeed',
-        argumentField: "Data_DateTime",
-        //argumentType: "datetime",
-    }];
-
-    $('#Main_Chart_Range_Selector').dxRangeSelector({
-        argumentAxis: {
-            label: {
-                format: "yyyy-MMdd HH:mm:ss"
-            }
-        },
-        size: {
-            height: 120,
-        },
-        margin: {
-            left: 10,
-        },
-        scale: {
-            minorTickCount: 1,
-        },
-        chart: {
-            series: series,
-            palette: 'Harmony Light',
-        },
-        behavior: {
-            callValueChanged: 'onMoving',
-        },
-        onValueChanged(e) {
-            var Main_Chart = $('#Main_Chart').dxChart('instance');
-            Main_Chart.getArgumentAxis().visualRange(e.value);
-        },
-    });
-
-    $('#Main_Chart').dxChart({
-        palette: 'Harmony Light',
-        commonSeriesSettings: {
-            point: {
-                size: 7,
-            },
-        },
-        argumentAxis: {
-            label: {
-                format: "yyyy-MMdd HH:mm:ss"
-            }
-        },
-        series: series,
-        legend: {
-            visible: false,
-        },
-    });
-}
 
 function renderForms() {
     $('#range-selector').dxRangeSelector({
@@ -113,16 +56,16 @@ function renderForms() {
 function renderDataGrids() {
     var changeLogData = [{
         id: 1,
-        asset: 'PICARRO',
+        asset: 'PICARRiO',
         field: 'CO2',
-        date_altered: new Date(),
+        date_altered: new Date().getDate(),
         origional_value: 470.87,
         altered_value: 410.98,
     }, {
         id: 2,
         asset: 'PICARRO',
         field: 'CO',
-        date_altered: new Date(),
+        date_altered: new Date().getDate(),
         origional_value: 9.9,
         altered_value: 1.2,
     }];

@@ -24,6 +24,13 @@ router.register(r'sox_data', views.SOX_Data_ViewSet)
 router.register(r'nox_data', views.NOX_Data_ViewSet)
 router.register(r'clients', views.Clients_ViewSet)
 
+# DAQC
+routerDAQC = routers.DefaultRouter()
+routerDAQC.register(r'fields', views.DAQC_Fields_ViewSet)
+routerDAQC.register(r'fields_by_node', views.DAQC_Fields_By_Node_ViewSet)
+routerDAQC.register(r'get_data', views.DAQC_Get_Data_ViewSet, basename="get_daqc_data")
+# DAQC
+
 routerUPS = routers.DefaultRouter()
 routerUPS.register(r'ups_data', views.UPS_ViewSet)
 
@@ -62,4 +69,6 @@ urlpatterns = [
     path('ups/', include(routerUPS.urls)),
     path('generator/', include(routerGenerator.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+
+    path('daqc/', include(routerDAQC.urls)),
 ]

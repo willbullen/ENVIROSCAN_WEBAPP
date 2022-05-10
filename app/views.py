@@ -20,7 +20,8 @@ from data.models import (
     SOX_Data, 
     NOX_Data, 
     Picarro_Data, 
-    Tucson_Data
+    Tucson_Data,
+    DAQC_Fields
 )
 
 from django.core import serializers
@@ -45,7 +46,9 @@ def cmms(request):
         if 'id' in request.GET:
             Job_ID = request.GET['id']
     context = {
-        'open_jobs': get_jobs(),
+        'open_jobs': get_jobs(2),
+        'in_progress_jobs': get_jobs(1),
+        'closed_jobs': get_jobs(3),
     }
     html_template = loader.get_template('dashboard_cmms.html')
     return HttpResponse(html_template.render(context, request))
@@ -72,7 +75,9 @@ def cmms_edit(request, pk):
     context = {
         'job_form': job_form,
         'tasks_formset': tasks_formset,
-        'open_jobs': get_jobs(),
+        'open_jobs': get_jobs(2),
+        'in_progress_jobs': get_jobs(1),
+        'closed_jobs': get_jobs(3),
     }
     html_template = loader.get_template('dashboard_cmms_edit.html')
     return HttpResponse(html_template.render(context, request))
@@ -95,7 +100,9 @@ def cmms_add(request):
     context = {
         'job_form': job_form,
         'tasks_formset': tasks_formset,
-        'open_jobs': get_jobs(),
+        'open_jobs': get_jobs(2),
+        'in_progress_jobs': get_jobs(1),
+        'closed_jobs': get_jobs(3),
     }
     html_template = loader.get_template('dashboard_cmms_add.html')
     return HttpResponse(html_template.render(context, request))
@@ -110,7 +117,8 @@ def daqc(request):
     else:
         Node_ID = '0'
 
-    context['History_Data'] = get_test_data(Node_ID, SOX_Data) 
+    context['History_Data'] = get_test_data(Node_ID, SOX_Data)
+    context['Asset_List'] = Nodes.objects.all() 
 
     html_template = loader.get_template('dashboard_daqc.html')
     return HttpResponse(html_template.render(context, request))   
@@ -287,11 +295,11 @@ def pages(request):
 
 
 
-def get_jobs():
+def get_jobs(status):
     # -- JOBS
     jobs = []
     i = 0
-    for job in CMMS_Jobs.objects.all():
+    for job in CMMS_Jobs.objects.filter(Job_Status = status):
         tasks_total = CMMS_Job_Tasks.objects.filter(Job = job).count()
         task_completed = CMMS_Job_Tasks.objects.filter(Job = job, Job_Task_Status = True).count()
         task_completed_pecent = (tasks_total/task_completed)*100 if task_completed != 0 else 0

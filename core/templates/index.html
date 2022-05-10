@@ -10,8 +10,7 @@
 			<h1 class="page-header">
 				MET EIREANN 
 			</h1>			
-			<p>List widget is created by using existing Bootstrap <code>.list-group</code> component with
-				<code>.d-flex</code> and hud utilities css classes.</p>
+			<p>Welcome to Met Eireann, below you will se a list of imstruments and the associated nodes to monitor the instruments.</p>
 		</span>
 	</div>
 	<!-- END page-header -->
@@ -131,15 +130,19 @@
 						<div class="text-white text-opacity-50 small mb-2"><b>CAHERSIVEEN SITE</b></div>
 						<div class="list-group mb-3">							
 						{% for asset in asset_list %}
-							<!-- BEGIN ASSET -->							
 							{% if 'Cahersiveen' in asset.Location.Location_Name %}
+							<!-- BEGIN ASSET -->
+							<input type="hidden" id="hidden_Node_Status_{{ asset.Node_Device_ID }}" value="0">
+							<input type="hidden" id="hidden_Asset_Status_{{ asset.Node_Device_ID }}" value="0">
 							<div class="list-group-item d-flex align-items-center">
-								<div id="Status_{{ asset.Node_Device_ID }}" class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
-									{{ asset.Node_Name|make_list|first }}
-								</div>
+								<a href="#" class="text-white text-opacity-50" id="#go_map_{{ asset.Node_ID }}">
+									<div id="Status_{{ asset.Node_Device_ID }}" class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+										{{ asset.Node_Name|make_list|first }}
+									</div>
+								</a>
 								<div class="flex-fill px-3">
 									<div class="fw-bold">{{ asset.Node_Name }}</div>
-									<div class="small text-white text-opacity-50">Last Updated: 1 minute ago</div>
+									<div class="small text-white text-opacity-50">Last Updated: {{ asset.Last_Updated|timesince }}</div>
 								</div>
 								<div class="opacity-10 px-3">
 									<span id="Asset_Status_{{ asset.Node_Device_ID }}" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
@@ -357,7 +360,7 @@
 
 	// -- GET BALENA DATA 
 	var balena_ajax_call = function() {
-		auth_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTQ0NDM3LCJ1c2VybmFtZSI6ImdoX3dpbGxidWxsZW4iLCJlbWFpbCI6IndpbGxpYW1idWxsZW5AZ21haWwuY29tIiwiY3JlYXRlZF9hdCI6IjIwMjAtMDEtMjlUMTY6MjY6MjMuMTgwWiIsImp3dF9zZWNyZXQiOiJEMklEQlBRUVJEWFRKTVUyQlJTM0hBR1BMSk9SWTM2NyIsImhhc19kaXNhYmxlZF9uZXdzbGV0dGVyIjpmYWxzZSwiZmlyc3RfbmFtZSI6IldpbGxpYW0iLCJsYXN0X25hbWUiOiJCdWxsZW4iLCJhY2NvdW50X3R5cGUiOiJwZXJzb25hbCIsInNvY2lhbF9zZXJ2aWNlX2FjY291bnQiOlt7InByb3ZpZGVyIjoiZ2l0aHViIiwiZGlzcGxheV9uYW1lIjoid2lsbGJ1bGxlbiJ9XSwiY29tcGFueSI6IkVudmlyb3NjYW4gSW9UIiwiaGFzUGFzc3dvcmRTZXQiOnRydWUsIm5lZWRzUGFzc3dvcmRSZXNldCI6ZmFsc2UsInB1YmxpY19rZXkiOnRydWUsImZlYXR1cmVzIjpbXSwiaW50ZXJjb21Vc2VyTmFtZSI6ImdoX3dpbGxidWxsZW4iLCJpbnRlcmNvbVVzZXJIYXNoIjoiOTExZWRjMmVmOWNmZTY3ZDY5ZmRhMDg0YjkyN2UwZDVkNzQxODE3YWZiZjA0ODliYmU4ZTVmNjNiNGY1ZDQwMiIsInBlcm1pc3Npb25zIjpbXSwiYXV0aFRpbWUiOjE2NDk4NDQ2MTY2MDcsImlzX3ZlcmlmaWVkIjp0cnVlLCJtdXN0X2JlX3ZlcmlmaWVkIjpmYWxzZSwiYWN0b3IiOjQyNzU4NDUsImlhdCI6MTY1MDQ3NDUzOCwiZXhwIjoxNjUxMDc5MzM4fQ.ZRSJrQzNlcHM7YXOuH5hneEf7PDt4gJ7xIF8YGrXvPU'
+		auth_token = 'FOoYuJ6feiMDIzcRCgMSUuagFCWgAqvd'
 		balena_data = []
 		$.ajax({
 			type: 'GET',

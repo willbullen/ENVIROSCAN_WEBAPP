@@ -9,13 +9,13 @@ from . import views
 urlpatterns = [
 
     # cmms
-    path('cmms/', views.cmms, name='cmms'),
-    path('cmms/edit/<pk>', views.cmms_edit, name='cmms edit'),
-    path('cmms/add/', views.cmms_add, name='cmms add'),
+    path('cmms_dash/', views.cmms, name='cmms'),
+    path('cmms_dash/edit/<pk>', views.cmms_edit, name='cmms edit'),
+    path('cmms_dash/add/', views.cmms_add, name='cmms add'),
 
 
     # daqc
-    path('daqc/', views.daqc, name='daqc'),
+    path('daqc_dash/', views.daqc, name='daqc'),
 
     # picarro
     path('picarro_dash/', views.picarro, name='picarro'),

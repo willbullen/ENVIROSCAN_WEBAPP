@@ -188,6 +188,37 @@ class Nodes(models.Model):
 	class Meta:
 		ordering = ['Node_ID']
 
+#########        DAQC      ##########
+
+class DAQC_Fields(models.Model):
+	Node = models.ForeignKey(Nodes, on_delete=models.CASCADE)
+	Field_ID = models.CharField(max_length=200)
+	Field_Display_Name = models.CharField(max_length=200)
+
+	objects = DataFrameManager()
+
+	def __str__(self):
+		return self.Field_Display_Name
+
+	class Meta:
+		ordering = ['Node']
+
+class DAQC_Change_Log(models.Model):
+	Field = models.ForeignKey(DAQC_Fields, on_delete=models.CASCADE)
+	Change_DateTime = models.DateTimeField('date published')	
+	Origional_Value = models.FloatField()
+	New_Value = models.FloatField()
+
+	objects = DataFrameManager()
+
+	def __str__(self):
+		return self.New_Value
+
+	class Meta:
+		ordering = ['Field']
+
+#########        DAQC      ##########
+
 #########   PICARRO G2401  ##########
 class Picarro_Data(models.Model):
 	Node_ID = models.ForeignKey(Nodes, on_delete=models.CASCADE)

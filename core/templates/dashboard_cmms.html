@@ -11,7 +11,7 @@
 			</h1>
 		</div>
 		<div class="ms-auto">
-			<a href="/cmms/add/" class="btn btn-outline-theme"><i class="fa fa-plus-circle me-1"></i> Add Job</a>
+			<a href="/cmms_dash/add/" class="btn btn-outline-theme"><i class="fa fa-plus-circle me-1"></i> Add Job</a>
 		</div>
 	</div>
 
@@ -48,7 +48,7 @@
 			<div class="card mb-3">
 				<!-- BEGIN card-header -->
 				<div class="card-header d-flex align-items-center bg-white bg-opacity-15">
-					<span class="flex-grow-1 fw-400">Open Tasks ({{ open_jobs.count }})</span>
+					<span class="flex-grow-1 fw-400">Open Tasks</span>
 					<a href="#" class="text-white text-opacity-50 text-decoration-none me-3"><i
 							class="fa fa-fw fa-redo"></i></a>
 					<a href="#" class="text-white text-opacity-50 text-decoration-none"><i
@@ -58,14 +58,11 @@
 				<!-- BEGIN list-group -->
 				<div class="list-group list-group-flush">
 
-
-
-
 					{% for job in open_jobs %}
 					<!-- BEGIN list-group-item -->
 					<div class="list-group-item d-flex px-3">
 						<div class="me-3 pt-1">
-							<a class="contact" href="/cmms/edit/{{ job.job_id }}" title="Edit"><i class="fa fa-tools text-red fa-fw fa-lg"></i></a>
+							<a class="contact" href="/cmms_dash/edit/{{ job.job_id }}" title="Edit"><i class="fa fa-tools text-red fa-fw fa-lg"></i></a>
 						</div>
 						<div class="flex-fill">
 							<div class="fw-400">{{ job.job_title }}</div>
@@ -131,7 +128,7 @@
 			<div class="card mb-3">
 				<!-- BEGIN card-header -->
 				<div class="card-header d-flex align-items-center bg-white bg-opacity-15">
-					<span class="flex-grow-1 fw-400">In Progress (2)</span>
+					<span class="flex-grow-1 fw-400">In Progress</span>
 					<a href="#" class="text-white text-opacity-50 text-decoration-none me-3"><i
 							class="fa fa-fw fa-redo"></i></a>
 					<a href="#" class="text-white text-opacity-50 text-decoration-none"><i
@@ -140,90 +137,55 @@
 				<!-- END card-header -->
 				<!-- BEGIN list-group -->
 				<div class="list-group list-group-flush">
+					
+
+					{% for job in in_progress_jobs %}
 					<!-- BEGIN list-group-item -->
 					<div class="list-group-item d-flex px-3">
 						<div class="me-3 pt-1">
-							<i class="fa fa-tools text-white text-opacity-50 fa-fw fa-lg"></i>
+							<a class="contact" href="/cmms_dash/edit/{{ job.job_id }}" title="Edit"><i class="fa fa-tools text-red fa-fw fa-lg"></i></a>
 						</div>
 						<div class="flex-fill">
-							<div class="fw-400 lh-20">HTML5 flexbox old browser compatibility</div>
-							<div class="small text-white text-opacity-50 mb-2">#29982 handled by Sean</div>
-							<div class="mb-1">
-								<span class="badge border border-indigo text-indigo">enhancement</span>
+							<div class="fw-400">{{ job.job_title }}</div>
+							<div class="small text-white text-opacity-75">{{ job.job_description }}</div>
+							<div class="small text-white text-opacity-50 mb-2">#{{ job.job_id }} opened by
+								{{ job.job_author }} on {{ job.job_create_date }}</div>
+							<div>
+								<span class="badge border border-pink text-pink">doc</span>
+								<span class="badge border border-theme text-theme">att</span>
+								<span class="badge border border-indigo text-indigo">sop</span>
 							</div>
-							<hr class="mt-15px mb-15px" />
+							<hr class="my-3" />
 							<div class="d-flex align-items-center mb-2">
 								<div class="fw-400 me-2">
-									Task (1/2)
+									Task ({{ job.task_completed }}/{{ job.task_total }})
 								</div>
 								<div>
-									<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse"
-										data-bs-target="#inProgressBoard">
+									<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#todoBoard_{{ job.job_id }}">
 										<i class="fa fa-plus-circle"></i>
 									</a>
 								</div>
 								<div class="progress progress-xs w-100px me-2 ms-auto" style="height: 6px;">
-									<div class="progress-bar progress-bar-striped bg-warning" style="width: 50%;"></div>
+									<div id="pb_task_{{ job.job_id }}" class="progress-bar progress-bar-striped bg-theme" style="width: 66%;"></div>
 								</div>
-								<div class="fs-12px">50%</div>
+								<div class="fs-12px">{{ job.task_completed_pecent }}%</div>
 							</div>
-							<div class="form-group mb-1">
-								<div class="collapse show" id="inProgressBoard">
-									<div class="form-check mb-2px">
-										<input type="checkbox" class="form-check-input" id="customCheck4" checked />
-										<label class="form-check-label small" for="customCheck4">check all browser
-											compatibility for HTML5 flexbox</label>
+							<div class="form-group mb-0 small">
+								<div class="collapse show" id="todoBoard_{{ job.job_id }}">
+									{% for task in job.tasks %}
+									<div class="form-check">
+										<input type="checkbox" class="form-check-input" id="customCheck1" {% if task.task_status %} checked {% endif %} />
+										<label class="form-check-label" for="customCheck1">{{ task.task_title }}</label>
 									</div>
-									<div class="form-check mb-2px">
-										<input type="checkbox" class="form-check-input" id="customCheck5" />
-										<label class="form-check-label small" for="customCheck5">fallback integration by
-											using other display property</label>
-									</div>
+									{% endfor %}
 								</div>
 							</div>
 						</div>
 					</div>
 					<!-- END list-group-item -->
-					<!-- BEGIN list-group-item -->
-					<div class="list-group-item d-flex px-3">
-						<div class="me-3 pt-1">
-							<i class="fa fa-bug text-danger fa-fw fa-lg"></i>
-						</div>
-						<div class="flex-fill">
-							<div class="fw-400">Mobile app autoclose on iOS</div>
-							<div class="text-white text-opacity-50 mb-2">#29953 handled by Ken</div>
-							<div class="mb-1">
-								<span class="badge border border-gray-300 text-white text-opacity-50">issue</span>
-								<span class="badge border border-danger text-danger">bug</span>
-							</div>
-							<hr class="mt-15px mb-15px" />
-							<div class="d-flex align-items-center mb-2">
-								<div class="fw-400 me-2">
-									Task (0/1)
-								</div>
-								<div>
-									<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse"
-										data-bs-target="#inProgress2Board">
-										<i class="fa fa-plus-circle"></i>
-									</a>
-								</div>
-								<div class="progress progress-xs w-100px me-2 ms-auto" style="height: 6px;">
-									<div class="progress-bar progress-bar-striped bg-danger" style="width: 5%;"></div>
-								</div>
-								<div class="fs-12px">0%</div>
-							</div>
-							<div class="form-group mb-1">
-								<div class="collapse show" id="inProgress2Board">
-									<div class="form-check mb-2px">
-										<input type="checkbox" class="form-check-input" id="customCheck6" />
-										<label class="form-check-label small" for="customCheck6">debug and fix mobile
-											auto close while using GPS issue</label>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<!-- END list-group-item -->
+					{% endfor %}
+
+					
 				</div>
 				<!-- END list-group -->
 				<!-- BEGIN card-arrow -->
@@ -244,7 +206,7 @@
 			<div class="card mb-3">
 				<!-- BEGIN card-header -->
 				<div class="card-header d-flex align-items-center bg-white bg-opacity-15">
-					<span class="flex-grow-1 fw-400">Done (1)</span>
+					<span class="flex-grow-1 fw-400">Done</span>
 					<a href="#" class="text-white text-opacity-50 text-decoration-none me-3"><i
 							class="fa fa-fw fa-redo"></i></a>
 					<a href="#" class="text-white text-opacity-50 text-decoration-none"><i
@@ -253,58 +215,53 @@
 				<!-- END card-header -->
 				<!-- BEGIN list-group -->
 				<div class="list-group list-group-flush">
+					
+					{% for job in closed_jobs %}
 					<!-- BEGIN list-group-item -->
 					<div class="list-group-item d-flex px-3">
 						<div class="me-3 pt-1">
-							<i class="far fa-check-circle text-success fa-fw fa-lg"></i>
+							<a class="contact" href="/cmms_dash/edit/{{ job.job_id }}" title="Edit"><i class="fa fa-tools text-red fa-fw fa-lg"></i></a>
 						</div>
 						<div class="flex-fill">
-							<div class="fw-400">React version missing daterangepicker</div>
-							<div class="small text-white text-opacity-50 mb-2">#29930 closed yesterday by Sean</div>
-							<div class="mb-1">
-								<span class="badge border border-gray-300 text-gray-300">build</span>
-								<span class="badge border border-success text-success">feature</span>
+							<div class="fw-400">{{ job.job_title }}</div>
+							<div class="small text-white text-opacity-75">{{ job.job_description }}</div>
+							<div class="small text-white text-opacity-50 mb-2">#{{ job.job_id }} opened by
+								{{ job.job_author }} on {{ job.job_create_date }}</div>
+							<div>
+								<span class="badge border border-pink text-pink">doc</span>
+								<span class="badge border border-theme text-theme">att</span>
+								<span class="badge border border-indigo text-indigo">sop</span>
 							</div>
-
 							<hr class="my-3" />
 							<div class="d-flex align-items-center mb-2">
 								<div class="fw-400 me-2">
-									Task (3/3)
+									Task ({{ job.task_completed }}/{{ job.task_total }})
 								</div>
 								<div>
-									<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse"
-										data-bs-target="#completedBoard">
+									<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#todoBoard_{{ job.job_id }}">
 										<i class="fa fa-plus-circle"></i>
 									</a>
 								</div>
 								<div class="progress progress-xs w-100px me-2 ms-auto" style="height: 6px;">
-									<div class="progress-bar progress-bar-striped bg-success" style="width: 100%;">
-									</div>
+									<div id="pb_task_{{ job.job_id }}" class="progress-bar progress-bar-striped bg-theme" style="width: 66%;"></div>
 								</div>
-								<div class="fs-12px">100%</div>
+								<div class="fs-12px">{{ job.task_completed_pecent }}%</div>
 							</div>
-							<div class="form-group mb-1">
-								<div class="collapse show" id="completedBoard">
-									<div class="form-check mb-2px">
-										<input type="checkbox" class="form-check-input" id="customCheck7" checked />
-										<label class="form-check-label small" for="customCheck7">install
-											react-daterangepicker</label>
+							<div class="form-group mb-0 small">
+								<div class="collapse show" id="todoBoard_{{ job.job_id }}">
+									{% for task in job.tasks %}
+									<div class="form-check">
+										<input type="checkbox" class="form-check-input" id="customCheck1" {% if task.task_status %} checked {% endif %} />
+										<label class="form-check-label" for="customCheck1">{{ task.task_title }}</label>
 									</div>
-									<div class="form-check mb-2px">
-										<input type="checkbox" class="form-check-input" id="customCheck8" checked />
-										<label class="form-check-label small" for="customCheck8">customize ui with
-											scss</label>
-									</div>
-									<div class="form-check mb-2px">
-										<input type="checkbox" class="form-check-input" id="customCheck9" checked />
-										<label class="form-check-label small" for="customCheck9">backend integration for
-											data filter with daterange input</label>
-									</div>
+									{% endfor %}
 								</div>
 							</div>
 						</div>
 					</div>
 					<!-- END list-group-item -->
+					{% endfor %}
+
 				</div>
 				<!-- END list-group -->
 				<!-- BEGIN card-arrow -->
