@@ -4,16 +4,17 @@ from PIL import Image
 from django_pandas.managers import DataFrameManager
 
 class Organization(models.Model):
-	Organization_Name = models.CharField(max_length=50)
-	Organization_Description = models.CharField(max_length=200, blank=True, null=True)
+    Organization_Name = models.CharField(max_length=50)
+    Organization_Description = models.CharField(max_length=200, blank=True, null=True)
+    Organization_Navigation = models.CharField(max_length=50, blank=True, null=True)
 
-	objects = DataFrameManager()
+    objects = DataFrameManager()
 
-	def __str__(self):
-		return self.Organization_Name
+    def __str__(self):
+        return self.Organization_Name
 
-	class Meta:
-		ordering = ['Organization_Name']
+    class Meta:
+        ordering = ['Organization_Name']
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE) # Delete profile when user is deleted

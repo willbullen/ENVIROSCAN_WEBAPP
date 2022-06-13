@@ -1,0 +1,312 @@
+{% extends "app_water/layouts/base.html" %}
+
+
+{% block content %}
+<!-- BEGIN #content -->
+<div id="content" class="app-content">
+	<div class="d-flex align-items-center mb-md-3 mb-2">
+		<div class="flex-fill">
+			<h1 class="page-header mb-0">
+				Maintenance Management System
+			</h1>
+		</div>
+		<div class="ms-auto">
+			<a href="#" class="btn btn-outline-theme"><i class="fa fa-plus-circle me-1"></i> Add Job</a>
+			<!-- <a href="/app_water/cmms_dash/add/" class="btn btn-outline-theme"><i class="fa fa-plus-circle me-1"></i> Add Job</a> -->			
+		</div>
+	</div>
+
+	<div class="mb-md-4 mb-3 d-md-flex">
+		<div class="dropdown-toggle">
+			<a href="#" data-bs-toggle="dropdown" class="text-white text-opacity-75 text-decoration-none"><i
+					class="far fa-folder fa-fw fa-lg text-theme me-1"></i> All Meters</a>
+			<div class="dropdown-menu">
+			</div>
+		</div>
+		<div class="ms-md-4 mt-md-0 mt-2"><i class="fa fa-code-branch fa-fw fa-lg me-1 text-indigo"></i> 0 Open Tasks
+		</div>
+		<div class="ms-md-4 mt-md-0 mt-2"><i class="far fa-clock fa-fw fa-lg me-1 text-red"></i> 0 In Progress</div>
+		<div class="ms-md-4 mt-md-0 mt-2"><i class="fa fa-users-cog fa-fw fa-lg me-1 text-theme"></i> 0 Completed Tasks
+		</div>
+	</div>
+
+	<!-- BEGIN row -->
+	<div class="row">
+		<!-- BEGIN col-4 -->
+		<div class="col-xl-4 col-lg-6">
+			<!-- BEGIN card -->
+			<div class="card mb-3">
+				<!-- BEGIN card-header -->
+				<div class="card-header d-flex align-items-center bg-white bg-opacity-15">
+					<span class="flex-grow-1 fw-400">Open Tasks</span>
+					<a href="#" class="text-white text-opacity-50 text-decoration-none me-3"><i
+							class="fa fa-fw fa-redo"></i></a>
+					<a href="#" class="text-white text-opacity-50 text-decoration-none"><i
+							class="fa fa-fw fa-trash"></i></a>
+				</div>
+				<!-- END card-header -->
+				<!-- BEGIN list-group -->
+				<div class="list-group list-group-flush">
+
+					{% for job in open_jobs %}
+					<!-- BEGIN list-group-item -->
+					<div class="list-group-item d-flex px-3">
+						<div class="me-3 pt-1">
+							<a class="contact" href="/app_water/cmms_dash/edit/{{ job.job_id }}" title="Edit"><i class="fa fa-tools text-red fa-fw fa-lg"></i></a>
+						</div>
+						<div class="flex-fill">
+							<div class="fw-400">{{ job.job_title }}</div>
+							<div class="small text-white text-opacity-75">{{ job.job_description }}</div>
+							<div class="small text-white text-opacity-50 mb-2">#{{ job.job_id }} opened by
+								{{ job.job_author }} on {{ job.job_create_date }}</div>
+							<div>
+								<span class="badge border border-pink text-pink">doc</span>
+								<span class="badge border border-theme text-theme">att</span>
+								<span class="badge border border-indigo text-indigo">sop</span>
+							</div>
+							<hr class="my-3" />
+							<div class="d-flex align-items-center mb-2">
+								<div class="fw-400 me-2">
+									Task ({{ job.task_completed }}/{{ job.task_total }})
+								</div>
+								<div>
+									<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#todoBoard_{{ job.job_id }}">
+										<i class="fa fa-plus-circle"></i>
+									</a>
+								</div>
+								<div class="progress progress-xs w-100px me-2 ms-auto" style="height: 6px;">
+									<div id="pb_task_{{ job.job_id }}" class="progress-bar progress-bar-striped bg-theme" style="width: 66%;"></div>
+								</div>
+								<div class="fs-12px">{{ job.task_completed_pecent }}%</div>
+							</div>
+							<div class="form-group mb-0 small">
+								<div class="collapse show" id="todoBoard_{{ job.job_id }}">
+									{% for task in job.tasks %}
+									<div class="form-check">
+										<input type="checkbox" class="form-check-input" id="customCheck1" {% if task.task_status %} checked {% endif %} />
+										<label class="form-check-label" for="customCheck1">{{ task.task_title }}</label>
+									</div>
+									{% endfor %}
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- END list-group-item -->
+					{% endfor %}
+
+
+
+
+					
+				</div>
+				<!-- END list-group -->
+				<!-- BEGIN card-arrow -->
+				<div class="card-arrow">
+					<div class="card-arrow-top-left"></div>
+					<div class="card-arrow-top-right"></div>
+					<div class="card-arrow-bottom-left"></div>
+					<div class="card-arrow-bottom-right"></div>
+				</div>
+				<!-- END card-arrow -->
+			</div>
+			<!-- END card -->
+		</div>
+		<!-- END col-4 -->
+		<!-- BEGIN col-4 -->
+		<div class="col-xl-4 col-lg-6">
+			<!-- BEGIN card -->
+			<div class="card mb-3">
+				<!-- BEGIN card-header -->
+				<div class="card-header d-flex align-items-center bg-white bg-opacity-15">
+					<span class="flex-grow-1 fw-400">In Progress</span>
+					<a href="#" class="text-white text-opacity-50 text-decoration-none me-3"><i
+							class="fa fa-fw fa-redo"></i></a>
+					<a href="#" class="text-white text-opacity-50 text-decoration-none"><i
+							class="fa fa-fw fa-trash"></i></a>
+				</div>
+				<!-- END card-header -->
+				<!-- BEGIN list-group -->
+				<div class="list-group list-group-flush">
+					
+
+					{% for job in in_progress_jobs %}
+					<!-- BEGIN list-group-item -->
+					<div class="list-group-item d-flex px-3">
+						<div class="me-3 pt-1">
+							<a class="contact" href="/cmms_dash/edit/{{ job.job_id }}" title="Edit"><i class="fa fa-tools text-red fa-fw fa-lg"></i></a>
+						</div>
+						<div class="flex-fill">
+							<div class="fw-400">{{ job.job_title }}</div>
+							<div class="small text-white text-opacity-75">{{ job.job_description }}</div>
+							<div class="small text-white text-opacity-50 mb-2">#{{ job.job_id }} opened by
+								{{ job.job_author }} on {{ job.job_create_date }}</div>
+							<div>
+								<span class="badge border border-pink text-pink">doc</span>
+								<span class="badge border border-theme text-theme">att</span>
+								<span class="badge border border-indigo text-indigo">sop</span>
+							</div>
+							<hr class="my-3" />
+							<div class="d-flex align-items-center mb-2">
+								<div class="fw-400 me-2">
+									Task ({{ job.task_completed }}/{{ job.task_total }})
+								</div>
+								<div>
+									<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#todoBoard_{{ job.job_id }}">
+										<i class="fa fa-plus-circle"></i>
+									</a>
+								</div>
+								<div class="progress progress-xs w-100px me-2 ms-auto" style="height: 6px;">
+									<div id="pb_task_{{ job.job_id }}" class="progress-bar progress-bar-striped bg-theme" style="width: 66%;"></div>
+								</div>
+								<div class="fs-12px">{{ job.task_completed_pecent }}%</div>
+							</div>
+							<div class="form-group mb-0 small">
+								<div class="collapse show" id="todoBoard_{{ job.job_id }}">
+									{% for task in job.tasks %}
+									<div class="form-check">
+										<input type="checkbox" class="form-check-input" id="customCheck1" {% if task.task_status %} checked {% endif %} />
+										<label class="form-check-label" for="customCheck1">{{ task.task_title }}</label>
+									</div>
+									{% endfor %}
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- END list-group-item -->
+					{% endfor %}
+
+					
+				</div>
+				<!-- END list-group -->
+				<!-- BEGIN card-arrow -->
+				<div class="card-arrow">
+					<div class="card-arrow-top-left"></div>
+					<div class="card-arrow-top-right"></div>
+					<div class="card-arrow-bottom-left"></div>
+					<div class="card-arrow-bottom-right"></div>
+				</div>
+				<!-- END card-arrow -->
+			</div>
+			<!-- END card -->
+		</div>
+		<!-- END col-4 -->
+		<!-- BEGIN col-4 -->
+		<div class="col-xl-4 col-lg-6">
+			<!-- BEGIN card -->
+			<div class="card mb-3">
+				<!-- BEGIN card-header -->
+				<div class="card-header d-flex align-items-center bg-white bg-opacity-15">
+					<span class="flex-grow-1 fw-400">Done</span>
+					<a href="#" class="text-white text-opacity-50 text-decoration-none me-3"><i
+							class="fa fa-fw fa-redo"></i></a>
+					<a href="#" class="text-white text-opacity-50 text-decoration-none"><i
+							class="fa fa-fw fa-trash"></i></a>
+				</div>
+				<!-- END card-header -->
+				<!-- BEGIN list-group -->
+				<div class="list-group list-group-flush">
+					
+					{% for job in closed_jobs %}
+					<!-- BEGIN list-group-item -->
+					<div class="list-group-item d-flex px-3">
+						<div class="me-3 pt-1">
+							<a class="contact" href="/cmms_dash/edit/{{ job.job_id }}" title="Edit"><i class="fa fa-tools text-red fa-fw fa-lg"></i></a>
+						</div>
+						<div class="flex-fill">
+							<div class="fw-400">{{ job.job_title }}</div>
+							<div class="small text-white text-opacity-75">{{ job.job_description }}</div>
+							<div class="small text-white text-opacity-50 mb-2">#{{ job.job_id }} opened by
+								{{ job.job_author }} on {{ job.job_create_date }}</div>
+							<div>
+								<span class="badge border border-pink text-pink">doc</span>
+								<span class="badge border border-theme text-theme">att</span>
+								<span class="badge border border-indigo text-indigo">sop</span>
+							</div>
+							<hr class="my-3" />
+							<div class="d-flex align-items-center mb-2">
+								<div class="fw-400 me-2">
+									Task ({{ job.task_completed }}/{{ job.task_total }})
+								</div>
+								<div>
+									<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#todoBoard_{{ job.job_id }}">
+										<i class="fa fa-plus-circle"></i>
+									</a>
+								</div>
+								<div class="progress progress-xs w-100px me-2 ms-auto" style="height: 6px;">
+									<div id="pb_task_{{ job.job_id }}" class="progress-bar progress-bar-striped bg-theme" style="width: 66%;"></div>
+								</div>
+								<div class="fs-12px">{{ job.task_completed_pecent }}%</div>
+							</div>
+							<div class="form-group mb-0 small">
+								<div class="collapse show" id="todoBoard_{{ job.job_id }}">
+									{% for task in job.tasks %}
+									<div class="form-check">
+										<input type="checkbox" class="form-check-input" id="customCheck1" {% if task.task_status %} checked {% endif %} />
+										<label class="form-check-label" for="customCheck1">{{ task.task_title }}</label>
+									</div>
+									{% endfor %}
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- END list-group-item -->
+					{% endfor %}
+
+				</div>
+				<!-- END list-group -->
+				<!-- BEGIN card-arrow -->
+				<div class="card-arrow">
+					<div class="card-arrow-top-left"></div>
+					<div class="card-arrow-top-right"></div>
+					<div class="card-arrow-bottom-left"></div>
+					<div class="card-arrow-bottom-right"></div>
+				</div>
+				<!-- END card-arrow -->
+			</div>
+			<!-- END card -->
+		</div>
+		<!-- END col-4 -->
+		<!-- BEGIN col-4 -->
+	</div>
+	<!-- END row -->
+</div>
+<!-- END #content -->
+
+<!-- BEGIN MODAL -->
+<div class="modal fade" tabindex="-1" role="dialog" id="modal">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content"></div>
+	</div>
+</div>
+<!-- END MODAL -->
+
+{% endblock content %}
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script type="text/javascript">
+	const modal = new bootstrap.Modal(document.getElementById("modal"))
+    // Create Item Modal Form
+    $(function () {
+        $(".create_item").each(function () {
+            $(this).modalForm({formURL: $(this).data('id')});
+        });
+    });
+    // Update Item Modal Form
+    $(function () {
+        $(".update_item").each(function () {
+            $(this).modalForm({formURL: $(this).data('id')});
+        });
+    });
+</script>
+
+<script type="text/javascript">
+	'{% for job in open_jobs %}'
+	$('#pb_task_{{ job.job_id }}').attr('style', 'width: {{ job.task_completed_pecent }}%');
+	'{% endfor %}'
+
+	$('#datepicker').datepicker({
+		autoclose: true
+	});
+</script>
+{% endblock javascripts %}

@@ -1,0 +1,186 @@
+{% extends "app_water/layouts/base.html" %}
+
+{% block content %}
+<!-- BEGIN #content -->
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div id="content" class="app-content">
+        <!-- BEGIN container -->
+        <div class="container">
+            <!-- BEGIN row -->
+            <div class="row justify-content-center">
+                <!-- BEGIN col-10 -->
+                <div class="col-xl-10">
+                    <!-- BEGIN row -->
+                    <div class="row">
+                        <!-- BEGIN col-9 -->
+                        <div class="col-xl-9">
+                            <h1 class="page-header">
+                                Edit 'Job Title Here' <small>The job description here</small>
+                            </h1>
+
+                            <hr class="mb-4" />
+
+                            <!-- BEGIN #step1 -->
+                            <div id="step1" class="mb-5">
+                                <h4>Edit Job Details</h4>
+                                <p>Wizard layout include the number of step and text. Please do note that all the wizard
+                                    is for uxui ONLY but do not include any javascript or backend logic.</p>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Asset</label>
+                                                {{job_form.Node_ID}}
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Title</label>
+                                                {{job_form.Job_Title}}
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label">Description</label>
+                                                {{job_form.Job_Description}}
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label">Job Status</label>
+                                                {{job_form.Job_Status}}
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Start Date</label>
+                                                <div class="input-group">
+                                                    {{job_form.Job_Start_Date}}
+                                                    <label class="input-group-text" for="start-date">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">End Date</label>
+                                                <div class="input-group">
+                                                    {{job_form.Job_End_Date}}
+                                                    <label class="input-group-text" for="datepicker-default">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Type</label>
+                                                {{job_form.Job_Type}}
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Priority</label>
+                                                {{job_form.Job_Priority}}
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Schedule Type</label>
+                                                {{job_form.Job_Schedule_Type}}
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Period</label>
+                                                {{job_form.Job_Schedule_Period}}
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Value</label>
+                                                {{job_form.Job_Schedule_Period_Value}}
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label">Completed Date</label>
+                                                <div class="input-group">
+                                                    {{job_form.Job_Completed_Date}}
+                                                    <label class="input-group-text" for="datepicker-default">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label">Completed Comments</label>
+                                                {{job_form.Job_Completed_Comments}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-arrow">
+                                        <div class="card-arrow-top-left"></div>
+                                        <div class="card-arrow-top-right"></div>
+                                        <div class="card-arrow-bottom-left"></div>
+                                        <div class="card-arrow-bottom-right"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- END #step1 -->
+
+                            <!-- BEGIN #step2 -->
+                            <div id="step2" class="mb-5">
+                                <h4>Edit or Add Tasks</h4>
+                                <p>Wizard layout include the number of step and text. Please do note that all the wizard
+                                    is for uxui ONLY but do not include any javascript or backend logic.</p>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="nav-wizards-container">
+                                            {{ tasks_formset.non_form_errors }}
+                                            {{ tasks_formset.management_form }}
+                                            {% for task in tasks_formset %}
+                                                {% for hidden in task.hidden_fields %}
+                                                    {{ hidden }}
+                                                {% endfor %}
+                                            <div class="mb-3">
+                                                <label class="form-label">Task</label>
+                                                <div class="input-group">
+                                                    {{task.Job_Task_Title}}
+                                                    <label class="input-group-text">
+                                                        <i class="fa fa-plus-square add-form-row"></i>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div class="card-arrow">
+                                        <div class="card-arrow-top-left"></div>
+                                        <div class="card-arrow-top-right"></div>
+                                        <div class="card-arrow-bottom-left"></div>
+                                        <div class="card-arrow-bottom-right"></div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <!-- END #step2 -->
+
+                            <!-- BEGIN #submit -->
+                            <div id="submit" class="mb-5">
+                                <a href="#" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</a>
+                                <button type="submit" class="btn btn-outline-theme">Update</button>
+                            </div>
+                            <!-- END #submit -->
+
+                        </div>
+                        <!-- END col-9-->
+                        <!-- BEGIN col-3 -->
+                        <div class="col-xl-3">
+                            <!-- BEGIN #sidebar-bootstrap -->
+                            <nav id="sidebar-bootstrap" class="navbar navbar-sticky d-none d-xl-block">
+                                <nav class="nav">
+                                    <a class="nav-link" href="#step1" data-toggle="scroll-to">Step 1</a>
+                                    <a class="nav-link" href="#step2" data-toggle="scroll-to">Step 2</a>
+                                </nav>
+                            </nav>
+                            <!-- END #sidebar-bootstrap -->
+                        </div>
+                        <!-- END col-3 -->
+                    </div>
+                    <!-- END row -->
+                </div>
+                <!-- END col-10 -->
+            </div>
+            <!-- END row -->
+        </div>
+        <!-- END container -->
+    </div>
+</form>
+<!-- END #content -->
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+{% endblock javascripts %}

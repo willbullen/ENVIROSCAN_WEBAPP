@@ -6387,7 +6387,7 @@
 .dx-datebox-wrapper .dx-popup-title {
   min-height: 10px;
   border-bottom: none;
-  background: 0 0;
+  background-color: rgba(0, 0, 0, 0);
 }
 .dx-datebox-wrapper .dx-item {
   border: none;
@@ -6482,7 +6482,7 @@
 .dx-datebox-wrapper-list .dx-popup-content {
   padding: 0;
 }
-.dx-datebox input[type=date] {
+.background-color: rgba(0, 0, 0, 0); input[type=date] {
   line-height: normal;
 }
 .dx-datebox.dx-auto-width .dx-texteditor-input,
@@ -7302,7 +7302,7 @@
   box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 .dx-selectbox-popup-wrapper .dx-list {
-  background-color: #2a2a2a;
+  background-color: rgba(0, 0, 0, 0);
 }
 .dx-toolbar .dx-button-content::after {
   display: none;

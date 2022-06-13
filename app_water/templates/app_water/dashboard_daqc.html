@@ -1,0 +1,351 @@
+{% extends "app_water/layouts/base.html" %}
+
+
+{% block content %}
+<!-- BEGIN #content -->
+<div id="content" class="app-content">
+	<!-- BEGIN page-header -->
+	<div class="d-flex fw-bold small">
+		<span class="flex-grow-1">
+			<h1 class="page-header">
+				Data Analytics and QC <small> Analyse data from all Meters and quality control.</small>
+			</h1>			
+			<p>
+				Below you will be able to select the asset for data analysis and quality control, once your selection is made the chart will be produced, you can then select data points and modify them.
+			</p>
+		</span>
+	</div>
+	<!-- END page-header -->
+
+	<!-- BEGIN daterangepicker -->
+	<div class="d-flex align-items-center mb-3">
+
+	</div>
+	<!-- END daterangepicker -->
+
+	<!-- BEGIN row -->
+	<div class="row">
+
+		<!-- BEGIN ASSET SELECTION -->
+		<div id="formGrid" class="col-xl-3 mb-3">
+			<div class="card">
+				<div class="card-body h-600px">
+					<!-- BEGIN title -->
+					<div class="fw-bold small mb-3">
+						<h5 class="card-title">Meter Selection</h5>
+						<h6 class="card-subtitle mb-3 text-white text-opacity-50">Make your selection</h6>
+						<p>Please select the meter you want to analyse, the data field selection will automaticaly populate with the multiple selectable items.</p>
+					</div>
+					<!-- END title -->
+					<div class="mb-3 row">
+						<label for="inputAsset" class="form-label">Meter</label>
+						<div>
+							<select class="form-select" id="assetList">
+								<option value="0">Please select an Meter.</option>
+								{% for asset in Asset_List %}
+								<option value='{{ asset.id }}'>{{ asset.Node_Name }}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+					<div class="mb-3 row">
+						<label for="inputField" class="form-label">Field</label>
+						<div>
+							<select class="form-select" id="fieldList" multiple="multiple">
+								<option value="0">Please select Meter above.</option>
+							</select>
+						</div>
+					</div>
+					<div class="mb-3 row">
+						<label for="inputField" class="form-label">Date Range</label>
+						<div>
+							<div class="input-group" id="daterange">
+								<input type="text" name="daterange" class="form-control" value="" placeholder="click to select the date range" />
+								<label class="input-group-text"><i class="fa fa-calendar"></i></label>
+							</div>
+						</div>
+					</div>
+					<div class="mb-3 row">
+						<div class="col-sm-12 offset-sm-12">
+							<button type="submit" class="btn btn-outline-theme float-end" id='submitButton'>GO</button>
+						</div>
+					</div>
+				</div>
+				<div class="card-arrow">
+					<div class="card-arrow-top-left"></div>
+					<div class="card-arrow-top-right"></div>
+					<div class="card-arrow-bottom-left"></div>
+					<div class="card-arrow-bottom-right"></div>
+				</div>
+			</div>
+		</div>
+		<!-- END ASSET SELECTION -->
+
+<!-- 		
+		<div id="formGrid" class="col-xl-6 mb-3">
+			<div class="card">
+				
+				<div class="card-body">
+					
+					<div class="d-flex fw-bold small mb-3">
+						<span class="flex-grow-1">CHANGE LOGS</span>
+						<a href="#" data-toggle="card-expand" class="text-white text-opacity-50 text-decoration-none"><i class="bi bi-fullscreen"></i></a>
+					</div>
+					
+					<div class="col-lg-12 mb-3 mb-lg-0">
+						<table id="changeLogsTable" class="w-100 table-striped small mb-0 text-truncate text-white text-opacity-60"></table>
+					</div>
+					
+				</div>
+				
+				<div class="card-arrow">
+					<div class="card-arrow-top-left"></div>
+					<div class="card-arrow-top-right"></div>
+					<div class="card-arrow-bottom-left"></div>
+					<div class="card-arrow-bottom-right"></div>
+				</div>
+				
+			</div>
+		</div>
+		
+-->
+
+		<!-- BEGIN CHART -->
+		<div class="col-xl-9 col-lg-9">
+			<!-- BEGIN card -->
+			<div class="card mb-3">
+				<!-- BEGIN card-body -->
+				<div class="card-body h-600px">
+					<!-- BEGIN title -->
+					<div class="fw-bold small">
+						<h5 class="card-title">Chart</h5>
+						<h6 class="card-subtitle mb-3 text-white text-opacity-50">Chart based on your selection.</h6>
+					</div>
+					<!-- END title -->
+					<!-- BEGIN stat-lg -->
+					<div class="row align-items-center">
+						<div class="col-12">
+							<div id="Main_Chart"></div>
+							<div id="Main_Chart_Range_Selector"></div>
+						</div>
+					</div>
+					<!-- END stat-lg -->
+				</div>
+				<!-- END card-body -->
+				<!-- BEGIN card-arrow -->
+				<div class="card-arrow">
+					<div class="card-arrow-top-left"></div>
+					<div class="card-arrow-top-right"></div>
+					<div class="card-arrow-bottom-left"></div>
+					<div class="card-arrow-bottom-right"></div>
+				</div>
+				<!-- END card-arrow -->
+			</div>
+			<!-- END card -->
+		</div>
+		<!-- END CHART -->
+
+	</div>
+	<!-- END row -->
+</div>
+<!-- END #content -->
+{% endblock content %}
+
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script>
+	
+
+	//var History_Data = JSON.parse('{{History_Data|escapejs}}', reviver).Data.data;
+	//var Asset_Fields_List = JSON.parse('{{Asset_Fields_List|escapejs}}', reviver);
+
+	var start_date = '0';
+	var end_date = '0';
+
+	$(function () {
+		$('input[name="daterange"]').daterangepicker({
+			opens: 'left'
+		}, function (start, end, label) {
+			console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end
+				.format('YYYY-MM-DD'));
+			start_date = start.format('YYYY-MM-DD');
+			end_date = end.format('YYYY-MM-DD');
+		});
+	});
+
+	$("#assetList").change(function () {
+		let field_dropdown = $('#fieldList');
+		var asset_id = $(this).val();
+
+		$.ajax({
+			type: 'GET',
+			url: '../water/meters/list/' + asset_id + '/',
+			headers: {
+				"Authorization": "Basic " + btoa("admin" + ":" + "will1977"),
+				'Accept': 'application/json'
+			},
+			success: function (data) {
+				field_dropdown.empty();
+				field_dropdown.append($('<option></option>').attr('value', '0').text('Please select from below.'));
+				var obj = jQuery.parseJSON(data);
+				$.each(data['Data'], function(i, meter) {
+					field_dropdown.append($('<option></option>').attr({'value': meter.id, 'name': meter.Name}).text(meter.Name));
+				});
+			},
+			error: function (data) {
+				alert("some Error");
+			}
+		});
+	});
+
+	function reviver(key, value) {
+		if (key === 'Data_DateTime') {
+			return new Date(value);
+		}
+		return value;
+	}
+
+	$("#submitButton").click(function () {
+		var fields = $("#fieldList").val();
+		var fields_text = $('#fieldList option:selected').toArray().map(item => item.text).join().split(',');
+		var data_base = $("#assetList option:selected").text().slice(0, $("#assetList option:selected").text().indexOf(' ')) + '_Data';
+		$.ajax({
+			type: "GET",
+			url: '../daqc/get_data/?model=' + data_base + '&asset_id=' + $("#assetList").val() + '&start_date=' + start_date + '&end_date=' + end_date,
+			headers: {
+				"Authorization": "Basic " + btoa("admin" + ":" + "will1977"),
+				'Accept': 'application/json'
+			},
+			success: function (data) {
+				data = JSON.parse(JSON.stringify(data.data), reviver);				
+				var new_series = [];
+				console.log(fields_text);
+				$.each( fields, function( index, value ){
+					var field = {
+						valueField: value,
+						argumentField: "Data_DateTime",
+						argumentType: "datetime",
+						name: fields_text[index],
+					}
+					new_series.push(field);
+				});
+				
+				$("#Main_Chart").dxChart("option", "series", new_series);
+				$("#Main_Chart").dxChart("option", "dataSource", data);
+				
+				$("#Main_Chart_Range_Selector").dxRangeSelector("option", "dataSource", data);
+				$("#Main_Chart_Range_Selector").dxRangeSelector("option", "chart.series", new_series);
+			},
+			error: function (data) {
+				alert("some Error");
+			}
+		});
+	});
+
+	function renderCharts() {
+
+		var series = [{
+			valueField: 'Data_WindSpeed',
+			argumentField: "Data_DateTime",
+			argumentType: "datetime",
+		}];		
+
+		var chart = $('#Main_Chart').dxChart({
+			palette: 'red',
+			commonSeriesSettings: {
+				argumentField: "Data_DateTime",
+				argumentType: "datetime",
+				label: {
+					format: "shortTime"
+				},
+				point: {
+					visible: false
+				},
+			},
+			loadingIndicator: {
+				enabled: true
+			},
+			argumentAxis: {
+				argumentType: "datetime",
+				label: {
+					format: "shortTime"
+				},
+				valueMarginsEnabled: false,
+				discreteAxisDivisionMode: 'crossLabels',
+				grid: {
+					visible: true,
+				},
+			},
+			series: series,
+			tooltip: {
+				enabled: true,
+			},
+			legend: {
+				verticalAlignment: 'top',
+				horizontalAlignment: 'center',
+				hoverMode: 'excludePoints',
+			},
+			crosshair: {
+				enabled: true,
+				color: '#949494',
+				width: 2,
+				dashStyle: 'dot',
+				label: {
+					visible: true,
+					backgroundColor: '#949494',
+					font: {
+					color: '#fff',
+					size: 12,
+					},
+				},
+			},
+			export: {
+				enabled: true,
+			},
+			onPointClick: function (e) {
+				var point = e.target;
+				console.log(point);
+				if (point.isSelected()) {
+					point.clearSelection();
+				} else {
+					point.select();					
+				}
+			}
+		});
+
+		var chart_range = $('#Main_Chart_Range_Selector').dxRangeSelector({
+			argumentAxis: {
+				argumentType: "datetime",
+				label: {
+					format: "shortTime"
+				}
+			},
+			size: {
+				height: 120,
+			},
+			margin: {
+				left: 10,
+			},
+			scale: {
+				minorTickCount: 1,
+			},
+			chart: {
+				series: series,
+				palette: 'red',
+			},
+			behavior: {
+				callValueChanged: 'onMoving',
+			},
+			onValueChanged(e) {
+				var Main_Chart = $('#Main_Chart').dxChart('instance');
+				Main_Chart.getArgumentAxis().visualRange(e.value);
+			},
+		});
+	}
+</script>
+
+<script src="/static/assets/js/daqc.js"></script>
+
+{% endblock javascripts %}

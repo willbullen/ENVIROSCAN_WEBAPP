@@ -1,0 +1,226 @@
+{% extends "app_water/layouts/base.html" %}
+
+		{% block content %}
+
+		{% load crispy_forms_tags %}
+		<!-- BEGIN #content -->
+		<div id="content" class="app-content">
+			<div class="card">
+				<div class="card-body p-0">
+					<!-- BEGIN profile -->
+					<div class="profile">
+						<!-- BEGIN profile-container -->
+						<div class="profile-container">
+							<!-- BEGIN profile-sidebar -->
+							<div class="profile-sidebar">
+								<div class="desktop-sticky-top">
+									<div class="profile-img">
+										<img src="{{ user.profile.image.url }}" alt="" />
+									</div>
+									<!-- FORM HERE -->
+									<form method="POST" action="/profile/" enctype="multipart/form-data">
+										{% csrf_token %}
+										<div class="mb-3">
+											<label class="form-label">Profile Picture <span class="text-danger">*</span></label>
+											<input id="id_image" name="image" type="file" class="form-control form-control-lg bg-white bg-opacity-5" />
+										</div>
+										<div class="mb-3">
+											<button class="btn btn-outline-info" type="submit">Update</button>
+										</div>										
+									</form>
+									<!-- profile info -->
+									<h5>{{ user.first_name }} {{ user.last_name }}</h5>
+									<div class="mb-3 text-white text-opacity-50 fw-bold mt-n2">{{ user.email }}</div>
+									<p>
+										Profile detail....
+									</p>
+									<div class="mb-1">
+										<i class="fa fa-map-marker-alt fa-fw text-white text-opacity-50"></i> Location
+									</div>
+							
+									<hr class="mt-4 mb-4" />
+							
+									
+								</div>
+							</div>
+							<!-- END profile-sidebar -->
+					
+							<!-- BEGIN profile-content -->
+							<div class="profile-content">
+								<ul class="profile-tab nav nav-tabs nav-tabs-v2">
+									<li class="nav-item">
+										<a href="#profile-post" class="nav-link active" data-bs-toggle="tab">
+											<div class="nav-field">Posts</div>
+											<div class="nav-value">1</div>
+										</a>
+									</li>
+									<li class="nav-item">
+										<a href="#profile-followers" class="nav-link" data-bs-toggle="tab">
+											<div class="nav-field">Followers</div>
+											<div class="nav-value">1</div>
+										</a>
+									</li>
+									<li class="nav-item">
+										<a href="#profile-followers" class="nav-link" data-bs-toggle="tab">
+											<div class="nav-field">Following</div>
+											<div class="nav-value">1</div>
+										</a>
+									</li>
+								</ul>
+								<div class="profile-content-container">
+									<div class="row gx-4">
+										<div class="col-xl-8">
+											<div class="tab-content p-0">
+												<!-- BEGIN tab-pane -->
+												<div class="tab-pane fade show active" id="profile-post">
+													<div class="card mb-3">
+														<div class="card-body">
+															<!-- post header -->
+															<div class="d-flex align-items-center mb-3">
+																<a href="#"><img src="{{ user.profile.image.url }}" alt="" width="50" class="rounded-circle" /></a>
+																<div class="flex-fill ps-2">
+																	<div class="fw-bold"><a href="#" class="text-decoration-none">{{ user.first_name}}</a> at <a href="#" class="text-decoration-none">Location</a></div>
+																	<div class="small text-white text-opacity-50">Date</div>
+																</div>
+															</div>
+								
+															<!-- post content -->
+															<p>Post Template...</p>
+															
+															<hr class="mb-1" />
+										
+															<!-- post action -->
+															<div class="row text-center fw-bold">
+																<div class="col">
+																	<a href="#" class="text-white text-opacity-50 text-decoration-none d-block p-2">
+																		<i class="far fa-thumbs-up me-1 d-block d-sm-inline"></i> Likes
+																	</a>
+																</div>
+																<div class="col">
+																	<a href="#" class="text-white text-opacity-50 text-decoration-none d-block p-2">
+																		<i class="far fa-comment me-1 d-block d-sm-inline"></i> Comment
+																	</a>
+																</div>
+																<div class="col">
+																	<a href="#" class="text-white text-opacity-50 text-decoration-none d-block p-2">
+																		<i class="fa fa-share me-1 d-block d-sm-inline"></i> Share
+																	</a>
+																</div>
+															</div>
+															
+															<hr class="mb-3 mt-1" />
+															<div class="d-flex align-items-center">
+																<img src="{{ user.profile.image.url }}" alt="" width="35" class="rounded-circle" />
+																<div class="flex-fill ps-2">
+																	<div class="position-relative d-flex align-items-center">
+																		<input type="text" class="form-control rounded-pill bg-white bg-opacity-15" style="padding-right: 120px;" placeholder="Write a comment..." />
+																		<div class="position-absolute end-0 text-center">
+																			<a href="#" class="text-white text-opacity-50 me-2"><i class="fa fa-smile"></i></a>
+																			<a href="#" class="text-white text-opacity-50 me-2"><i class="fa fa-camera"></i></a>
+																			<a href="#" class="text-white text-opacity-50 me-2"><i class="fa fa-video"></i></a>
+																			<a href="#" class="text-white text-opacity-50 me-3"><i class="fa fa-paw"></i></a>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+														<div class="card-arrow">
+															<div class="card-arrow-top-left"></div>
+															<div class="card-arrow-top-right"></div>
+															<div class="card-arrow-bottom-left"></div>
+															<div class="card-arrow-bottom-right"></div>
+														</div>
+													</div>													
+												</div>
+												<!-- END tab-pane -->
+									
+												<!-- BEGIN tab-pane -->
+												<div class="tab-pane fade" id="profile-followers">
+													<div class="list-group">
+														<div class="list-group-item d-flex align-items-center">
+															<img src="{{ user.profile.image.url }}" alt="" width="50" class="rounded-sm ms-n2" />
+															<div class="flex-fill px-3">
+																<div><a href="#" class="text-white fw-bold text-decoration-none">Himself</a></div>
+																<div class="text-white text-opacity-50 fs-13px">Location</div>
+															</div>
+															<a href="#" class="btn btn-outline-theme">Follow</a>
+														</div>														
+													</div>
+													<div class="text-center p-3"><a href="#" class="text-white text-decoration-none">Show more <b class="caret"></b></a></div>
+												</div>
+												<!-- END tab-pane -->									
+												
+											</div>
+										</div>
+										<div class="col-xl-4">
+											<div class="desktop-sticky-top d-none d-lg-block">
+												<div class="card mb-3">
+													<div class="list-group list-group-flush">
+														<div class="list-group-item fw-bold px-3 d-flex">
+															<span class="flex-fill">Information</span> 
+															<a href="#" class="text-white text-opacity-50"><i class="fa fa-cog"></i></a>
+														</div>
+														<div class="list-group-item px-3">
+															<div class="text-white text-opacity-50"><small><strong>Template</strong></small></div>
+															<div class="fw-bold mb-2">#Template</div>
+															<a href="#" class="card text-white text-decoration-none mb-1">
+																<div class="card-body">
+																	<div class="row no-gutters">
+																		<div class="col-md-8">
+																			<div class="small text-white text-opacity-50 mb-1 mt-n1">Template</div>
+																			<div class="h-40px fs-13px overflow-hidden mb-n1">Text.....</div>
+																		</div>
+																		<div class="col-md-4 d-flex">
+																			<div class="h-100 w-100" style="background: url(/static/assets/img/gallery/news-1.jpg) center; background-size: cover;"></div>
+																		</div>
+																	</div>
+																</div>
+																<div class="card-arrow">
+																	<div class="card-arrow-top-left"></div>
+																	<div class="card-arrow-top-right"></div>
+																	<div class="card-arrow-bottom-left"></div>
+																	<div class="card-arrow-bottom-right"></div>
+																</div>
+															</a>
+															<div><small class="text-white text-opacity-50">1 share</small></div>
+														</div>
+														
+														<a href="#" class="list-group-item list-group-action text-center">
+															Show more
+														</a>
+														
+													</div>
+													<div class="card-arrow">
+														<div class="card-arrow-top-left"></div>
+														<div class="card-arrow-top-right"></div>
+														<div class="card-arrow-bottom-left"></div>
+														<div class="card-arrow-bottom-right"></div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- END profile-content -->
+						</div>
+						<!-- END profile-container -->
+					</div>
+					<!-- END profile -->
+				</div>
+				<div class="card-arrow">
+					<div class="card-arrow-top-left"></div>
+					<div class="card-arrow-top-right"></div>
+					<div class="card-arrow-bottom-left"></div>
+					<div class="card-arrow-bottom-right"></div>
+				</div>
+			</div>
+		</div>
+		<!-- END #content -->
+		{% endblock content %}
+
+
+		<!-- Specific Page JS goes HERE  -->
+		{% block javascripts %}
+		
+		{% endblock javascripts %}

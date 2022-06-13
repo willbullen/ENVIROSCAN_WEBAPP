@@ -1,0 +1,43 @@
+.scrollbar-1,
+.scrollbar-2 {
+  float: left;
+  margin-right: 2em;
+  width: 10em;
+  height: 5em;
+  overflow: auto;
+}
+
+/* Element specific scrollbar styling */
+
+.scrollbar-1::-webkit-scrollbar {
+    background: gray;
+}
+ 
+.scrollbar-1::-webkit-scrollbar-thumb {
+  background: red; 
+}
+
+.scrollbar-2::-webkit-scrollbar {
+  background: yellow;
+}
+ 
+.scrollbar-2::-webkit-scrollbar-thumb {
+  background: blue; 
+}
+
+/* Common styling for all scrollbars */
+
+::-webkit-scrollbar {
+  width: 12px;
+  border-radius: 12px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 12px;
+  box-shadow: inset 0 0 6px rgba(0,0,0,.5); 
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0,0,0,.5); 
+  border-radius: 12px;
+}
