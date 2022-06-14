@@ -29,6 +29,10 @@ python manage.py createsuperuser
 
 Python manage.py collectstatic
 
+python -m pip install --upgrade pip
+
+sudo apt-get install unixodbc unixodbc-dev
+
 pip3 install -r requirements.txt 
 
 python manage.py makemigrations
@@ -68,3 +72,35 @@ celery -A core beat -l info --scheduler django_celery_beat.schedulers:DatabaseSc
 
 # SERVER RUN
 python manage.py runserver
+
+
+
+
+
+
+
+
+######################################################################
+sudo apt-get install unixodbc unixodbc-dev
+######################################################################
+if ! [[ "16.04 18.04 20.04 21.04 21.10" == *"$(lsb_release -rs)"* ]];
+then
+    echo "Ubuntu $(lsb_release -rs) is not currently supported.";
+    exit;
+fi
+
+sudo su
+curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+
+curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list > /etc/apt/sources.list.d/mssql-release.list
+
+exit
+sudo apt-get update
+sudo ACCEPT_EULA=Y apt-get install -y msodbcsql17
+# optional: for bcp and sqlcmd
+sudo ACCEPT_EULA=Y apt-get install -y mssql-tools
+echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
+source ~/.bashrc
+# optional: for unixODBC development headers
+sudo apt-get install -y unixodbc-dev
+#####################################################################
