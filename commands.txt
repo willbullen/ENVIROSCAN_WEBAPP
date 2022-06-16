@@ -80,20 +80,43 @@ python manage.py runserver
 
 
 
-######################################################################
-sudo apt-get install unixodbc unixodbc-dev
-######################################################################
+#####################################################################
+REFFERENCES:
+https://techtutorguro.com/how-to-install-django-3-2-lts-on-ubuntu-20-04/
+https://realpython.com/django-nginx-gunicorn/
+https://cloudinfrastructureservices.co.uk/how-to-setup-django-server-on-azure-aws-gcp/
+https://azuremarketplace.microsoft.com/en-us/marketplace/apps/cloud-infrastructure-services.django-ubuntu
+#####################################################################
+CREATE VM
+#####################################################################
+# 1. Updating the system
+sudo apt update -y && apt upgrade -y
+#####################################################################
+# 2. Installing pip and Virtual Environment
+sudo apt install python3-pip python3-venv
+#####################################################################
+# 3. Clone Project Directory from Github
+cd /var/www/
+git clone https://github.com/willbullen/ENVIROSCAN_WEBAPP.git
+#####################################################################
+# 4. Create Virtual Environment
+mkdir /ENVIROSCAN_WEBAPP/enviroscan_venv
+#####################################################################
+# 5. Activate the virtual environment.
+source /var/www/ENVIROSCAN_WEBAPP/enviroscan_venv/bin/activate
+#####################################################################
+# 6. Upgrade pip
+sudo python3 -m pip install --upgrade pip
+#####################################################################
+# 7. Install SQL Drivers
 if ! [[ "16.04 18.04 20.04 21.04 21.10" == *"$(lsb_release -rs)"* ]];
 then
     echo "Ubuntu $(lsb_release -rs) is not currently supported.";
     exit;
 fi
-
 sudo su
 curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-
 curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list > /etc/apt/sources.list.d/mssql-release.list
-
 exit
 sudo apt-get update
 sudo ACCEPT_EULA=Y apt-get install -y msodbcsql17
@@ -103,4 +126,52 @@ echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
 source ~/.bashrc
 # optional: for unixODBC development headers
 sudo apt-get install -y unixodbc-dev
+#####################################################################
+# 8. Install from requirements.txt
+sudo pip3 install -r requirements.txt
+#####################################################################
+# 9. Run and Test http://IPaddress:8000
+sudo python3 manage.py runserver 0.0.0.0:8000
+#####################################################################
+# 10. Setting up the production with Apache and WSGI
+deactivate #deactivate virtual connection
+sudo apt-get install apache2 libapache2-mod-wsgi-py3
+#####################################################################
+# 11. Create a virtual host
+sudo nano /etc/apache2/sites-available/enviroscan.conf
+# PASTE START
+<VirtualHost *:80>
+    ServerName enviroscan.com
+    ServerAlias www.enviroscan.com
+    DocumentRoot /var/www/ENVIROSCAN_WEBAPP
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    Alias /static/ /var/www/ENVIROSCAN_WEBAPP/core/static/
+    <Directory /var/www/ENVIROSCAN_WEBAPP/core/static>
+            Require all granted
+    </Directory>
+
+    Alias /media/ /var/www/ENVIROSCAN_WEBAPP/core/media/
+    <Directory /var/www/ENVIROSCAN_WEBAPP/core/media>
+            Require all granted
+    </Directory>
+
+    <Directory /var/www/ENVIROSCAN_WEBAPP/core>
+            <Files wsgi.py>
+                    Require all granted
+            </Files>
+    </Directory>
+
+    WSGIDaemonProcess enviroscan python-path=/var/www/ENVIROSCAN_WEBAPP python-home=/var/www/ENVIROSCAN_WEBAPP/enviroscan_venv
+    WSGIProcessGroup enviroscan
+    WSGIScriptAlias / /var/www/ENVIROSCAN_WEBAPP/core/wsgi.py
+</VirtualHost>
+# PASTE END
+#####################################################################
+# 12. Activate virtual host
+sudo a2ensite django.conf
+#####################################################################
+# 13. Restart the Apache webserver
+sudo systemctl restart apache2
 #####################################################################
