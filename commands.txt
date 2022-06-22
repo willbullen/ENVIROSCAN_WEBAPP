@@ -81,7 +81,18 @@ python manage.py runserver
 
 
 #####################################################################
+USEFULL COMMANDS:
+tail -f /var/log/apache2/error.log  # View Apache Logs
+tail -f /var/log/nginx/error.log  # View NGINX Logs
+sudo apt list                       # List all available apps
+sudo apt list | grep nginx          # List all available apps sorted by nginx
+sudo apt list --installed           # List all installed apps
+sudo apt list apache2               # List all apps associated with apache2
+sudo apt list --upgradeable         # List of all upgradeable packages
+dpkg --list                         # List all installed packages
+#####################################################################
 REFFERENCES:
+https://azureossd.github.io/2022/04/16/SSL-TLS-certificates-for-Apache-and-NGINX-on-Azure-VMs/index.html
 https://techtutorguro.com/how-to-install-django-3-2-lts-on-ubuntu-20-04/
 https://realpython.com/django-nginx-gunicorn/
 https://cloudinfrastructureservices.co.uk/how-to-setup-django-server-on-azure-aws-gcp/
@@ -96,17 +107,17 @@ sudo apt update -y && apt upgrade -y
 sudo apt install python3-pip python3-venv
 #####################################################################
 # 3. Clone Project Directory from Github
-cd /var/www/
 git clone https://github.com/willbullen/ENVIROSCAN_WEBAPP.git
 #####################################################################
 # 4. Create Virtual Environment
-mkdir /ENVIROSCAN_WEBAPP/enviroscan_venv
+cd ENVIROSCAN_WEBAPP
+python3 -m venv enviroscan_venv
 #####################################################################
 # 5. Activate the virtual environment.
-source /var/www/ENVIROSCAN_WEBAPP/enviroscan_venv/bin/activate
+source enviroscan_venv/bin/activate
 #####################################################################
 # 6. Upgrade pip
-sudo python3 -m pip install --upgrade pip
+python3 -m pip install --upgrade pip
 #####################################################################
 # 7. Install SQL Drivers
 if ! [[ "16.04 18.04 20.04 21.04 21.10" == *"$(lsb_release -rs)"* ]];
@@ -125,53 +136,342 @@ sudo ACCEPT_EULA=Y apt-get install -y mssql-tools
 echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
 source ~/.bashrc
 # optional: for unixODBC development headers
-sudo apt-get install -y unixodbc-dev
+sudo apt-get install -y unixodbc unixodbc-dev
 #####################################################################
 # 8. Install from requirements.txt
-sudo pip3 install -r requirements.txt
+pip3 install -r requirements.txt
 #####################################################################
 # 9. Run and Test http://IPaddress:8000
-sudo python3 manage.py runserver 0.0.0.0:8000
+python3 manage.py runserver 0.0.0.0:8000
 #####################################################################
 # 10. Setting up the production with Apache and WSGI
-deactivate #deactivate virtual connection
+deactivate # deactivate virtual connection
 sudo apt-get install apache2 libapache2-mod-wsgi-py3
 #####################################################################
 # 11. Create a virtual host
 sudo nano /etc/apache2/sites-available/enviroscan.conf
 # PASTE START
 <VirtualHost *:80>
-    ServerName enviroscan.com
-    ServerAlias www.enviroscan.com
-    DocumentRoot /var/www/ENVIROSCAN_WEBAPP
+
+    ServerName enviroscan
+    ServerAlias www.enviroscan.io
+    DocumentRoot /home/willbullen/ENVIROSCAN_WEBAPP
     ErrorLog ${APACHE_LOG_DIR}/error.log
     CustomLog ${APACHE_LOG_DIR}/access.log combined
 
-    Alias /static/ /var/www/ENVIROSCAN_WEBAPP/core/static/
-    <Directory /var/www/ENVIROSCAN_WEBAPP/core/static>
+    Alias /static/ /home/willbullen/ENVIROSCAN_WEBAPP/core/static/
+    <Directory /home/willbullen/ENVIROSCAN_WEBAPP/core/static>
+        Require all granted
+    </Directory>
+
+    Alias /media/ /home/willbullen/ENVIROSCAN_WEBAPP/core/media/
+    <Directory /home/willbullen/ENVIROSCAN_WEBAPP/core/media>
+        Require all granted
+    </Directory>
+
+    <Directory /home/willbullen/ENVIROSCAN_WEBAPP/core>
+        <Files wsgi.py>
             Require all granted
+        </Files>
     </Directory>
 
-    Alias /media/ /var/www/ENVIROSCAN_WEBAPP/core/media/
-    <Directory /var/www/ENVIROSCAN_WEBAPP/core/media>
-            Require all granted
-    </Directory>
+    WSGIDaemonProcess mydjangoproject python-path=/home/willbullen/ENVIROSCAN_WEBAPP python-home=/home/willbullen/ENVIROSCAN_WEBAPP/enviroscan_venv
+    WSGIProcessGroup mydjangoproject
+    WSGIScriptAlias / /home/willbullen/ENVIROSCAN_WEBAPP/core/wsgi.py
 
-    <Directory /var/www/ENVIROSCAN_WEBAPP/core>
-            <Files wsgi.py>
-                    Require all granted
-            </Files>
-    </Directory>
-
-    WSGIDaemonProcess enviroscan python-path=/var/www/ENVIROSCAN_WEBAPP python-home=/var/www/ENVIROSCAN_WEBAPP/enviroscan_venv
-    WSGIProcessGroup enviroscan
-    WSGIScriptAlias / /var/www/ENVIROSCAN_WEBAPP/core/wsgi.py
 </VirtualHost>
 # PASTE END
 #####################################################################
 # 12. Activate virtual host
-sudo a2ensite django.conf
+sudo a2ensite enviroscan.conf
 #####################################################################
 # 13. Restart the Apache webserver
 sudo systemctl restart apache2
+#####################################################################
+# 14. Installing Certbot
+sudo apt install certbot python3-certbot-apache
+#####################################################################
+# 15. Test Virtual Host Configuration
+sudo apache2ctl configtest
+#####################################################################
+# 16. Obtaining an SSL Certificate
+sudo certbot --apache
+#####################################################################
+# 17. Extracting the key (.key) and certificate (.pem) - *NIX terminals
+openssl pkcs12 -in enviroscan-enviroscan3d99d0a5-a0aa-44aa-84ff-15371ac9ea30-20220617.pfx -nocerts -out enviroscan-enviroscan3d99d0a5-a0aa-44aa-84ff-15371ac9ea30-20220617.pem
+openssl rsa -in enviroscan-enviroscan3d99d0a5-a0aa-44aa-84ff-15371ac9ea30-20220617.pem -out enviroscan-enviroscan3d99d0a5-a0aa-44aa-84ff-15371ac9ea30-20220617.key
+openssl pkcs12 -in enviroscan-enviroscan3d99d0a5-a0aa-44aa-84ff-15371ac9ea30-20220617.pfx -clcerts -nokeys -out enviroscan-enviroscan3d99d0a5-a0aa-44aa-84ff-15371ac9ea30-20220617.pem
+#####################################################################
+# 18. Uploading the files to the Virtual Machine
+scp enviroscan-enviroscan3d99d0a5-a0aa-44aa-84ff-15371ac9ea30-20220617.key enviroscan-enviroscan3d99d0a5-a0aa-44aa-84ff-15371ac9ea30-20220617.pem willbullen@20.229.97.149:~
+#####################################################################
+# 19. Enable SSL/TLS
+cd /etc/apache2/sites-available
+#####################################################################
+# 20. 
+Change the following lines:
+/home/willbullen/enviroscan-enviroscan3d99d0a5-a0aa-44aa-84ff-15371ac9ea30-20220617.pem
+/home/willbullen/enviroscan-enviroscan3d99d0a5-a0aa-44aa-84ff-15371ac9ea30-20220617.key
+# PASTE START
+<IfModule mod_ssl.c>
+    <VirtualHost _default_:443>
+
+        ServerAdmin info@enviroscanmedia.com
+        ServerName enviroscan
+        ServerAlias www.enviroscan.io
+
+        DocumentRoot /home/willbullen/ENVIROSCAN_WEBAPP
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+        Alias /static/ /home/willbullen/ENVIROSCAN_WEBAPP/core/static/
+        <Directory /home/willbullen/ENVIROSCAN_WEBAPP/core/static>
+            Require all granted
+        </Directory>
+
+        Alias /media/ /home/willbullen/ENVIROSCAN_WEBAPP/core/media/
+        <Directory /home/willbullen/ENVIROSCAN_WEBAPP/core/media>
+            Require all granted
+        </Directory>
+
+        <Directory /home/willbullen/ENVIROSCAN_WEBAPP/core>
+            <Files wsgi.py>
+                Require all granted
+            </Files>
+        </Directory>
+
+        WSGIDaemonProcess enviroscanproject python-path=/home/willbullen/ENVIROSCAN_WEBAPP python-home=/>                
+        WSGIProcessGroup enviroscanproject                
+        WSGIScriptAlias / /home/willbullen/ENVIROSCAN_WEBAPP/core/wsgi.py
+
+        SSLEngine on
+        SSLCertificateFile /home/willbullen/enviroscan-enviroscan3d99d0a5-a0aa-44aa-84ff-15371ac9ea30-20220617.pem                
+        SSLCertificateKeyFile /home/willbullen/enviroscan-enviroscan3d99d0a5-a0aa-44aa-84ff-15371ac9ea30-20220617.key
+
+        <FilesMatch "\.(cgi|shtml|phtml|php)$">
+            SSLOptions +StdEnvVars
+        </FilesMatch>
+        <Directory /usr/lib/cgi-bin>
+            SSLOptions +StdEnvVars
+        </Directory>
+
+    </VirtualHost>
+</IfModule>
+# PASTE END
+#####################################################################
+# 21. Activate the Virtual Host:
+sudo a2ensite default-ssl.conf
+#####################################################################
+# 22. Enable the SSL module:
+sudo a2enmod ssl
+#####################################################################
+# 23. Config test:
+sudo apache2ctl configtest
+#####################################################################
+# 24. Restart the Apache webserver
+sudo systemctl restart apache2
+#####################################################################
+# 25. Websockets
+
+sudo a2enmod proxy
+sudo a2enmod proxy_http
+sudo a2enmod proxy_ajp
+sudo a2enmod rewrite
+sudo a2enmod deflate
+sudo a2enmod headers
+sudo a2enmod proxy_balancer
+sudo a2enmod proxy_connect
+sudo a2enmod proxy_html
+
+#####################################################################
+# 26. NGINX
+# FROM THE VIRUAL MACHINE
+sudo apt-get update
+sudo apt-get install nginx
+cd /etc/nginx/sites-available
+sudo nano enviroscan.conf
+# PASTE START
+
+server { 
+    listen 80; 
+    server_name enviroscan.io;                             
+    access_log off; 
+    return 301 https://$server_name$request_uri; 
+}
+
+server {
+    server_name enviroscan.io; 
+    listen 443 ssl;
+    root /home/willbullen/ENVIROSCAN_WEBAPP;
+
+    ssl_certificate /home/willbullen/enviroscan-enviroscan3d99d0a5-a0aa-44aa-84ff-15371ac9ea30-20220617.pem;
+    ssl_certificate_key /home/willbullen/enviroscan-enviroscan3d99d0a5-a0aa-44aa-84ff-15371ac9ea30-20220617.key;
+
+    location /static/ {
+        alias /home/willbullen/ENVIROSCAN_WEBAPP/core/static/;                   
+    }
+
+    location /media/ {
+        alias /home/willbullen/ENVIROSCAN_WEBAPP/core/media/;                   
+    }
+
+    location / {
+    	include proxy_params;
+    	proxy_pass http://unix:/run/gunicorn.sock;
+	}
+}
+
+# PASTE END
+sudo ln -s /etc/nginx/sites-available/enviroscan.conf /etc/nginx/sites-enabled
+sudo nginx -t
+sudo systemctl restart nginx
+pip install gunicorn
+gunicorn --bind 0.0.0.0:8000 core.wsgi
+cd /etc/systemd/system/
+sudo nano gunicorn.socket
+# PASTE START
+[Unit]
+Description=gunicorn socket
+
+[Socket]
+ListenStream=/run/gunicorn.sock
+
+[Install]
+WantedBy=sockets.target
+# PASTE END
+sudo nano gunicorn.service
+# PASTE START
+[Unit]
+Description=gunicorn daemon
+Requires=gunicorn.socket
+After=network.target
+
+[Service]
+User=willbullen
+Group=www-data
+WorkingDirectory=/home/willbullen/ENVIROSCAN_WEBAPP
+ExecStart=/home/willbullen/ENVIROSCAN_WEBAPP/enviroscan_venv/bin/gunicorn --workers 3 --bind unix:/run/gunicorn.sock core.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
+# PASTE END
+sudo systemctl start gunicorn.socket
+sudo systemctl enable gunicorn.socket
+sudo systemctl status gunicorn.socket
+sudo reboot
+
+pip install daphne
+cd /etc/systemd/system/
+sudo nano daphne.service
+# PASTE START
+[Unit]
+Description=daphne service
+After=network.target
+
+[Service]
+Type=simple
+User=willbullen
+Group=www-data
+WorkingDirectory=/home/willbullen/ENVIROSCAN_WEBAPP
+ExecStart=/home/willbullen/ENVIROSCAN_WEBAPP/enviroscan_venv/bin/daphne -p 9001 core.asgi:application
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+# PASTE END
+sudo systemctl daemon-reload
+sudo systemctl start daphne.service
+sudo systemctl status daphne.service
+sudo reboot
+
+sudo apt install redis-server
+sudo nano /etc/redis/redis.conf
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#####################################################################
+USEFULL COMMANDS:
+apt-get update                          # This command will update your package lists. Remember, this will not update software. Run Command #2 or #3 followed by this command. Note that apt-get require root permission. You should add sudo before apt-get.
+apt-get upgrade                         # This command will download and update installed software. But it will not install or remove extra packages.
+apt-get dist-upgrade                    # To upgrade all the packages on your system, and, if needed for a package upgrade, installing extra packages or removing packages
+apt-get install <package-name>          # You may download and install new packages or software named <package-name> using above commands. E.g. run sudo apt-get install gimp in your terminal to install Gimp image manipulation software. Notice the sudo before apt-get.
+apt-get -f install                      # Sometimes while installing a software it fails. This might happen due to failure in downloading software itself or dependency. To fix broken installation run the above command.
+apt-get remove <package-name>           # If you don’t like a software you can get rid of that by simply running above command. Don’t forget to change <package-name> with real one. This will uninstall the software but not the dependent packages.
+apt-get purge <package-name>            # To completely remove a software and it’s dependent packages run the apt-get purge command.
+apt-get autoclean                       # This command will remove all Debian (.deb) files that are no longer installed. You may find this files in /var/cache/apt/archives
+apt-get clean                           # This will empty whole cache files. A lot of space could be freed if you frequently install and uninstall softwares.
+apt-get automove                        # It will remove old dependent files and footprints installed by previous applications.
+dpkg –configure -a                      # configure installed package
+sudo nano /etc/apt/sources.list         # display repository source list in nano editor
+sudo apt-get download <package-name>    # download but not install package
+Ctrl + c                                # It kills process with a signal SIGINT. Don’t confuse with Ctrl+C in Windows or Ctrl+Z. Ctrl+Z is used to suspend a process while In Windows Ctrl+C is copy command.
+Ctrl + Shift + c                        # This is a copy command.
+Ctrl + Shift + v                        # This is paste command like Ctrl+v in Windows.
+nano <filename>                         # nano is command line text editor. In terminal by running the above command you could edit file named <filename>.
+sudo nano <filename>                    # This is same command as we mentioned earlier except it will edit file with privilege of super user.
+gedit <filename>                        # gedit is GUI text editor like notepad in Windows. It will start editing file named <filename> in gedit window.
+sudo gedit <filename>                   # This is again same as above except it will edit files with SU privilege. It is worth to mention this command because many beginners starts editing a file and later they realize they forget to get proper privilege.
+sudo poweroff                           # This will shut down the system as the name suggest.
+sudo halt                               # Halt is supposed to be same as poweroff by many beginners. But it’s not unless you explicitly mention to poweroff using either -p or–poweroff.So if you want to poweroff your system then use sudo halt –p or sudo halt –poweroff.
+sudo reboot                             # This will simply reboot your system.
+Ctrl + Alt + t                          # Open Ubuntu Terminal Window, the command line interface. This is a preinstalled software comes with every standard Ubuntu.
+pwd                                     # print work directory: e.g. if you are at your home directory then it will print something like /home/<username>
+ls                                      # list directory: This command will list the items of a directory. If you don’t specify a directory then it will list work directory, the place where you currently are.
+cd                                      # change directory. It will change your work directly as you specify. You will have to specify a directory.g. cd /home will change your work directory to /home regardless where you are.
+cd ..                                   # change directory one level up.
+cd ~                                    # change to home directory. Suppose if your username is tom then cd ~ will change your work directory to /home/tom.
+cp                                      # Copy Command. It will copy a file or directory. It is similar to Copy-Paste in GUI.
+mv                                      # Move or rename files. It is like renaming a file or cut-paste in GUI.
+rm                                      # remove file or directory.
+rmdir                                   # remove empty directory. This will not remove content of the directory but it will delete a directory if it is empty.
+mkdir                                   # make directory. It will create a new directory. We will need to specify a name.
+man                                     # Ubuntu will help you instantly and has a built in manual. Simply apend any command with man or type executes man. e.g. man mkdir
+sudo                                    # sudo basically allow a standard user to execute a command with root or superuser privilege.
+adduser <username>                      # As the name suggest it will add another user. You may also use useradd, which is a little bit different from the adduser.
+passwd <username>                       # This command will change password for an user named <username>. Root privilege will be require while change other user’s password.
+time                                    # time command in Ubuntu will not actually show you current date or time. It will actually run and show the summary system resources usages.Tip: run time gedit in terminal. You will see a new gedit window. After a few seconds close the window and see what appears in the terminal. It will be something like:real     112s
+user                                    0m0.560s
+sys                                     0m0.050sCheck this wikipedia article.
+date                                    # This command will show you the current date and time of your system (including timezone).
+cal                                     # This will show calender in the terminal.
+wget                                    # You can use wget command to download things from Internet or other connected networks.
+ping                                    # You may ping websites and other devices with ping command. This is a part of iputils package. Pinging is something like saying hello to someone and that person reply you back. Which means you are connected and the remote person (or system) is replying you back. Try
+ping -c 4 ubuntubeginner.com            # When you execute this command your system will say ubuntubeginner.com‘s server ‘hi’ 4 times. -c 4 stands for 4 times.
+ftp                                     # ftp (file transfer protocol) is used to transfer files for one system to another system.
+ssh                                     # ssh (secure shell) is used to log into remote system or server. By default Ubuntu comes with SSH program preinstalled.
+fdisk                                   # fdisk command is used to manipulate (add, remove, delete, change) partition of your system. NOTE: Don’t use this command unless you are sure about the consequences.
+df                                      # df is a very handy command which show the storage used/free on your the storage drives connected to your system.
+chmod                                   # chmod is very useful command for beginners. It is used to change file permission. chmod stands for change mode in Linux.
+chown                                   # chown is used to change owner of a file or directory (or further more). Beware about using chown or chmod commands
+sudo su                                 # superuser in Ubuntu Desktop is disabled by default. But if you want to act as a superuser (or root) then use this command. You will be asked for password. sudo su will allow the terminal session to run all commands and activity with superuser privilege.Don’t forget to close the root session by using exit command.
+                    WARNING: Acting as su or root could be dangerous. Beginners should consider using sudo.
+clear                                   # Clear Screen: Use clear command to clear the terminal screen.
+exit                                    # exit from terminal.
 #####################################################################

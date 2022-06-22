@@ -25,7 +25,7 @@ SECRET_KEY = 'a$c49ry*otht1cc+4qx9#5fh$r2i(p^84u0wg8c7(tnnmi5$e8'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['13.81.113.80', 'localhost', 'enviroscan.azurewebsites.net', 'www.enviroscan.io', 'www.enviroscan-iot.com', '127.0.0.1']
+ALLOWED_HOSTS = ['20.229.97.149', 'localhost', 'enviroscan.azurewebsites.net', 'www.enviroscan.io', 'www.enviroscan-iot.com', '127.0.0.1']
 
 # Application definition
 
