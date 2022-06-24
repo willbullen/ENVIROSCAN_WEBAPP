@@ -8,9 +8,9 @@
 	<div class="d-flex fw-bold small">
 		<span class="flex-grow-1">
 			<h1 class="page-header">
-				CORK UNIVERSITY HOSPITAL
+				<i class="bi bi-water"></i> Cork University Hospital
 			</h1>
-			<p>Welcome to CUH Water Management System, below you will se a list of meters and readings.</p>
+			<div class="text-white small mb-2"><b>CUH Water Management System, below you will se a list of meters and readings.</b></div>
 		</span>
 	</div>
 	<!-- END page-header -->
@@ -26,19 +26,21 @@
 						<!-- BEGIN SUPPLY -->
 						<div class="text-white small mb-2"><b>SUPPLY</b></div>
 						<div class="list-group mb-3">							
-							{% for meter in meter_list_supply %}
+						{% for meter in meter_list_supply %}
 							<!-- BEGIN METER -->
 							<input type="hidden" id="hidden_Node_Status_{{ meter.id }}" value="0">
 							<input type="hidden" id="hidden_Meter_Status_{{ meter.id }}" value="0">
 							<div class="list-group-item d-flex align-items-center">
-								<a href="#" class="text-white text-opacity-50" id="#go_map_{{ meter.id }}">
+								<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}" id="#go_map_{{ meter.id }}">
 									<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
 										{{ meter.Name|make_list|first }}
 									</div>
 								</a>
-								<div class="flex-fill px-3">
-									<div class="fw-bold">{{ meter.Name }}</div>
-								</div>
+								<div class="flex-fill px-3">									
+									<a href="#" class="text-white" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}">							
+										<div class="fw-bold">{{ meter.Name }}</div>
+									</a>
+								</div>								
 
 								<!-- <div class="flex-fill px-3">
 									<div class="small text-white text-opacity-50">Last Updated: {{ meter.Last_Updated|timesince }}</div>
@@ -51,11 +53,6 @@
 								<div class="opacity-10 px-3">
 									<span id="Meter_Status_{{ meter.id }}" class="badge bg-theme" data-bs-toggle="tooltip">M</span>
 									<span id="Node_Status_{{ meter.id }}" class="badge bg-theme" data-bs-toggle="tooltip">N</span>
-								</div>
-								<div class="fs-12px ms-auto">
-									<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}">
-										<i class="fa fa-plus-circle"></i>
-									</a>
 								</div>
 							</div>
 							<!-- END METER -->
@@ -279,7 +276,7 @@
 									<div class="tab-pane fade" id="logs_{{ meter.id }}">
 										<!-- BEGIN DATATABLE -->
 										<div class="pt-2 align-items-center">
-											<table id="log_{{ meter.id }}" class="table-striped small mb-0 text-truncate text-white text-opacity-60"></table>
+											<table id="log2_{{ meter.id }}"></table>
 										</div>
 										<!-- END DATATABLE -->
 									</div>
@@ -359,7 +356,7 @@
 								
 							</div>
 							<!-- END METER DETAILS -->
-							{% endfor %}
+						{% endfor %}
 						</div>
 						<!-- END SUPPLY -->
 
@@ -368,19 +365,21 @@
 						<!-- BEGIN consumer -->
 						<div class="text-white small mb-2"><b>CONSUMERS</b></div>
 						<div class="list-group mb-3">							
-							{% for meter in meter_list_consumer %}
+						{% for meter in meter_list_consumer %}
 							<!-- BEGIN METER -->
 							<input type="hidden" id="hidden_Node_Status_{{ meter.id }}" value="0">
 							<input type="hidden" id="hidden_Meter_Status_{{ meter.id }}" value="0">
 							<div class="list-group-item d-flex align-items-center">
-								<a href="#" class="text-white text-opacity-50" id="#go_map_{{ meter.id }}">
+								<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}" id="#go_map_{{ meter.id }}">
 									<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
 										{{ meter.Name|make_list|first }}
 									</div>
 								</a>
-								<div class="flex-fill px-3">
-									<div class="fw-bold">{{ meter.Name }}</div>
-								</div>
+								<div class="flex-fill px-3">									
+									<a href="#" class="text-white" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}">							
+										<div class="fw-bold">{{ meter.Name }}</div>
+									</a>
+								</div>								
 
 								<!-- <div class="flex-fill px-3">
 									<div class="small text-white text-opacity-50">Last Updated: {{ meter.Last_Updated|timesince }}</div>
@@ -393,11 +392,6 @@
 								<div class="opacity-10 px-3">
 									<span id="Meter_Status_{{ meter.id }}" class="badge bg-theme" data-bs-toggle="tooltip">M</span>
 									<span id="Node_Status_{{ meter.id }}" class="badge bg-theme" data-bs-toggle="tooltip">N</span>
-								</div>
-								<div class="fs-12px ms-auto">
-									<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}">
-										<i class="fa fa-plus-circle"></i>
-									</a>
 								</div>
 							</div>
 							<!-- END METER -->
@@ -621,7 +615,7 @@
 									<div class="tab-pane fade" id="logs_{{ meter.id }}">
 										<!-- BEGIN DATATABLE -->
 										<div class="pt-2 align-items-center">
-											<table id="log_{{ meter.id }}" class="table-striped small mb-0 text-truncate text-white text-opacity-60"></table>
+											<table id="log2_{{ meter.id }}"></table>
 										</div>
 										<!-- END DATATABLE -->
 									</div>
@@ -701,7 +695,7 @@
 								
 							</div>
 							<!-- END METER DETAILS -->
-							{% endfor %}
+						{% endfor %}
 						</div>
 						<!-- END consumer -->
 
@@ -712,19 +706,21 @@
 						<!-- BEGIN waste -->
 						<div class="text-white small mb-2"><b>WASTEWATER</b></div>
 						<div class="list-group mb-3">							
-							{% for meter in meter_list_waste %}
+						{% for meter in meter_list_waste %}
 							<!-- BEGIN METER -->
 							<input type="hidden" id="hidden_Node_Status_{{ meter.id }}" value="0">
 							<input type="hidden" id="hidden_Meter_Status_{{ meter.id }}" value="0">
 							<div class="list-group-item d-flex align-items-center">
-								<a href="#" class="text-white text-opacity-50" id="#go_map_{{ meter.id }}">
+								<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}" id="#go_map_{{ meter.id }}">
 									<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
 										{{ meter.Name|make_list|first }}
 									</div>
 								</a>
-								<div class="flex-fill px-3">
-									<div class="fw-bold">{{ meter.Name }}</div>
-								</div>
+								<div class="flex-fill px-3">									
+									<a href="#" class="text-white" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}">							
+										<div class="fw-bold">{{ meter.Name }}</div>
+									</a>
+								</div>								
 
 								<!-- <div class="flex-fill px-3">
 									<div class="small text-white text-opacity-50">Last Updated: {{ meter.Last_Updated|timesince }}</div>
@@ -737,11 +733,6 @@
 								<div class="opacity-10 px-3">
 									<span id="Meter_Status_{{ meter.id }}" class="badge bg-theme" data-bs-toggle="tooltip">M</span>
 									<span id="Node_Status_{{ meter.id }}" class="badge bg-theme" data-bs-toggle="tooltip">N</span>
-								</div>
-								<div class="fs-12px ms-auto">
-									<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}">
-										<i class="fa fa-plus-circle"></i>
-									</a>
 								</div>
 							</div>
 							<!-- END METER -->
@@ -965,7 +956,7 @@
 									<div class="tab-pane fade" id="logs_{{ meter.id }}">
 										<!-- BEGIN DATATABLE -->
 										<div class="pt-2 align-items-center">
-											<table id="log_{{ meter.id }}" class="table-striped small mb-0 text-truncate text-white text-opacity-60"></table>
+											<table id="log2_{{ meter.id }}"></table>
 										</div>
 										<!-- END DATATABLE -->
 									</div>
@@ -1045,7 +1036,7 @@
 								
 							</div>
 							<!-- END METER DETAILS -->
-							{% endfor %}
+						{% endfor %}
 						</div>
 						<!-- END waste -->
 
@@ -1061,53 +1052,63 @@
 
 						<!-- BEGIN NAV-TABS -->
 						<ul class="nav nav-tabs nav-tabs">
-							<li class="nav-item me-3"><a href="#map" class="nav-link active" data-bs-toggle="tab">Map</a></li>
-							<li class="nav-item me-3"><a href="#schematics" class="nav-link" data-bs-toggle="tab">Schematics</a></li>
+							<li class="nav-item me-3"><a href="#reporting" class="nav-link active" data-bs-toggle="tab">Reporting</a></li>
 							<li class="nav-item me-3"><a href="#data_analysis" class="nav-link" data-bs-toggle="tab">Data Analysis</a></li>
-							<li class="nav-item me-3"><a href="#reporting" class="nav-link" data-bs-toggle="tab">Reporting</a></li>
+							<li class="nav-item me-3"><a href="#map" class="nav-link" data-bs-toggle="tab">Map</a></li>
+							<!-- <li class="nav-item me-3"><a href="#schematics" class="nav-link" data-bs-toggle="tab">Schematics</a></li> -->							
 						</ul>
 						<!-- END NAV-TABS -->
 
 						<!-- BEGIN tab-content -->
 						<div class="tab-content">
 							<!-- BEGIN TAB-PANE -->
-							<div class="tab-pane fade show active" id="map">
+							<div class="tab-pane fade" id="map">
 								<!-- BEGIN TOOLBAR -->
-								<div id="map_toolbar"></div>
+								<div class="pt-1 mb-1" id="map_toolbar"></div>
 								<!-- END TOOLBAR -->
 								<!-- BEGIN MAP -->
-								<div id="siteMap"></div>
+								<div class="pt-1 mb-1" id="siteMap"></div>
 								<!-- END MAP -->
 							</div>
 							<!-- END TAB-PANE -->
 
-							<!-- BEGIN TAB-PANE -->
+							<!-- BEGIN TAB-PANE
 							<div class="tab-pane fade" id="schematics">
-								<!-- BEGIN TOOLBAR -->
 								<div id="schematics_toolbar"></div>
-								<!-- END TOOLBAR -->
 							</div>
-							<!-- END TAB-PANE -->
+							END TAB-PANE -->
 
 							<!-- BEGIN TAB-PANE -->
 							<div class="tab-pane fade" id="data_analysis">
 								<!-- BEGIN TOOLBAR -->
-								<div id="da_toolbar"></div>
+								<div class="pt-1 mb-1" id="da_toolbar"></div>
 								<!-- END TOOLBAR -->
 								<!-- BEGIN CHART -->
-								<div id="da_chart"></div>
+								<div class="pt-1 mb-1" id="da_chart"></div>
 								<!-- END CHART -->
 								<!-- BEGIN RANGE -->
-								<div id="da_range"></div>
+								<div class="pt-1 mb-1" id="da_range"></div>
 								<!-- END RANGE -->
 							</div>
 							<!-- END TAB-PANE -->
 
 							<!-- BEGIN TAB-PANE -->
-							<div class="tab-pane fade" id="reporting">
+							<div class="tab-pane fade show active" id="reporting">
 								<!-- BEGIN TOOLBAR -->
-								<div id="reporting_toolbar"></div>
+								<div class="pt-1 mb-1" id="reporting_toolbar"></div>
 								<!-- END TOOLBAR -->
+								<!-- BEGIN PIE -->
+								<div class="pt-1 mb-1" id="reporting_pie"></div>
+								<!-- END PIE -->
+								<!-- BEGIN PIE -->
+								<div class="pt-1 mb-1" id="reporting_bar"></div>
+								<!-- END PIE -->
+								<!-- BEGIN GAUGE -->
+								<div class="pt-1 mb-1" id="reporting_gauge"></div>
+								<!-- END GAUGE -->
+								<!-- BEGIN PIE -->
+								<div class="pt-1 mb-1" id="reporting_ledger"></div>
+								<!-- END PIE -->
 							</div>
 							<!-- END TAB-PANE -->
 						</div>
@@ -1207,7 +1208,7 @@
 		// SET PULSE VOLUME FACTOR
 		var pulse_volume_factor = 1;
 		if (Pulse_Unit_Measurement == 'liters') {
-			pulse_volume_factor = 0.001;
+			pulse_volume_factor = Pulse_Unit_Value/100000;
 		}
 		// LOOP DA LOOP
 		$.each(readings, function(i, reading) {
@@ -1248,42 +1249,43 @@
 	}
 
 	function create_log_datatable(id) {
-		//-- GENERATE TABLES
-		var pageScrollPos = 0;
-		var log_table = $('#log_' + id).DataTable({
-			searching: false,
-			ordering: true,
-			info: false,
-			lengthChange: false,
-			paging: false,
-			scrollY: "250px",
-			scrollX: false,
-			scrollCollapse: false,
-			autoWidth: false,
-			data: [],
-			columns: [{
+		
+		// LOG		
+		var dataGrid = $('#log2_' + id).dxDataGrid({
+			//dataSource: data,
+			keyExpr: 'ID',
+			showColumnLines: false,
+			showRowLines: true,
+			rowAlternationEnabled: false,
+			showBorders: true,
+			paging: {
+				pageSize: 8,
+			},
+			pager: {
+				visible: true,
+				allowedPageSizes: [5, 10, 'all'],
+				showPageSizeSelector: true,
+				showInfo: true,
+				showNavigationButtons: true,
+			},
+			columns: [
+				{
 					title: "DATE TIME",
-					width: "60%"
-				},
-				{
+					dataField: 'Data_DateTime',
+				}, {
 					title: "PULSES",
-					width: "10%"
-				},
-				{
+					dataField: 'Pulses',
+					width: 100,
+				}, {
 					title: "WATER",
-					width: "10%"
-				},
-				{
+					dataField: 'Water',
+					width: 100,
+				}, {
 					title: "BATT LEVEL",
-					width: "10%"
+					dataField: 'Battery_Level',
+					width: 100,
 				},
 			],
-			preDrawCallback: function (settings) {
-				pageScrollPos = $('body').scrollTop();
-			},
-			drawCallback: function (settings) {
-				$('body').scrollTop(pageScrollPos);
-			},
 		});
 	}
 	
@@ -1538,42 +1540,6 @@
 						},
 					},
 				}, {
-					location: 'before',
-					widget: 'dxSelectBox',
-					locateInMenu: 'auto',
-					options: {
-						width: 140,
-						items: [
-							{
-								id: 1,
-								text: 'Locate',
-							}, {
-								id: 2,
-								text: 'Video Players',
-							}, {
-								id: 3,
-								text: 'Televisions',
-							}, {
-								id: 4,
-								text: 'Monitors',
-							}, {
-								id: 5,
-								text: 'Projectors',
-							}
-						],
-						valueExpr: 'id',
-						displayExpr: 'text',
-						value: 1,
-						onValueChanged(args) {
-							if (args.value > 1) {
-								productsStore.filter('type', '=', args.value);
-							} else {
-								productsStore.filter(null);
-							}
-							productsStore.load();
-						},
-					},
-				}, {
 					location: 'after',
 					widget: 'dxButton',
 					locateInMenu: 'auto',
@@ -1628,42 +1594,6 @@
 					},
 				}, {
 					location: 'after',
-					widget: 'dxSelectBox',
-					locateInMenu: 'auto',
-					options: {
-						width: 140,
-						items: [
-							{
-								id: 1,
-								text: 'Meters',
-							}, {
-								id: 2,
-								text: 'Video Players',
-							}, {
-								id: 3,
-								text: 'Televisions',
-							}, {
-								id: 4,
-								text: 'Monitors',
-							}, {
-								id: 5,
-								text: 'Projectors',
-							}
-						],
-						valueExpr: 'id',
-						displayExpr: 'text',
-						value: 1,
-						onValueChanged(args) {
-							if (args.value > 1) {
-								productsStore.filter('type', '=', args.value);
-							} else {
-								productsStore.filter(null);
-							}
-							productsStore.load();
-						},
-					},
-				}, {
-					location: 'after',
 					widget: 'dxButton',
 					locateInMenu: 'auto',
 					options: {
@@ -1702,184 +1632,7 @@
 				},
 			],
 		});
-		// CREATE REPORTING TOOL BARS
-		var toolbar = $('#reporting_toolbar').dxToolbar({
-			items: [
-			{
-					location: 'before',
-					widget: 'dxButton',
-					locateInMenu: 'auto',
-					options: {
-						icon: 'refresh',
-						onClick() {
-							DevExpress.ui.notify('Refresh button has been clicked!');
-						},
-					},
-				}, {
-					location: 'after',
-					widget: 'dxSelectBox',
-					locateInMenu: 'auto',
-					options: {
-						width: 140,
-						items: [
-							{
-								id: 1,
-								text: 'Meters',
-							}, {
-								id: 2,
-								text: 'Video Players',
-							}, {
-								id: 3,
-								text: 'Televisions',
-							}, {
-								id: 4,
-								text: 'Monitors',
-							}, {
-								id: 5,
-								text: 'Projectors',
-							}
-						],
-						valueExpr: 'id',
-						displayExpr: 'text',
-						value: 1,
-						onValueChanged(args) {
-							if (args.value > 1) {
-								productsStore.filter('type', '=', args.value);
-							} else {
-								productsStore.filter(null);
-							}
-							productsStore.load();
-						},
-					},
-				}, {
-					location: 'after',
-					widget: 'dxButton',
-					locateInMenu: 'auto',
-					options: {
-						icon: 'plus',
-						onClick() {
-							DevExpress.ui.notify('Add button has been clicked!');
-						},
-					},
-				}, {
-					locateInMenu: 'always',
-					widget: 'dxButton',
-					options: {
-						text: 'Save',
-						onClick() {
-							DevExpress.ui.notify('Save option has been clicked!');
-						},
-					},
-				}, {
-					locateInMenu: 'always',
-					widget: 'dxButton',
-					options: {
-						text: 'Print',
-						onClick() {
-							DevExpress.ui.notify('Print option has been clicked!');
-						},
-					},
-				}, {
-					locateInMenu: 'always',
-					widget: 'dxButton',
-					options: {
-						text: 'Settings',
-						onClick() {
-							DevExpress.ui.notify('Settings option has been clicked!');
-						},
-					},
-				},
-			],
-		});
-		// CREATE DA TOOL BARS
-		var toolbar = $('#da_toolbar').dxToolbar({
-			items: [
-				{
-					location: 'before',
-					widget: 'dxButton',
-					locateInMenu: 'auto',
-					options: {
-						icon: 'refresh',
-						onClick() {
-							DevExpress.ui.notify('Refresh button has been clicked!');
-						},
-					},
-				}, {
-					location: 'after',
-					widget: 'dxSelectBox',
-					locateInMenu: 'auto',
-					options: {
-						width: 140,
-						items: [
-							{
-								id: 1,
-								text: 'Meters',
-							}, {
-								id: 2,
-								text: 'Video Players',
-							}, {
-								id: 3,
-								text: 'Televisions',
-							}, {
-								id: 4,
-								text: 'Monitors',
-							}, {
-								id: 5,
-								text: 'Projectors',
-							}
-						],
-						valueExpr: 'id',
-						displayExpr: 'text',
-						value: 1,
-						onValueChanged(args) {
-							if (args.value > 1) {
-								productsStore.filter('type', '=', args.value);
-							} else {
-								productsStore.filter(null);
-							}
-							productsStore.load();
-						},
-					},
-				}, {
-					location: 'after',
-					widget: 'dxButton',
-					locateInMenu: 'auto',
-					options: {
-						icon: 'plus',
-						onClick() {
-							DevExpress.ui.notify('Add button has been clicked!');
-						},
-					},
-				}, {
-					locateInMenu: 'always',
-					widget: 'dxButton',
-					options: {
-						text: 'Save',
-						onClick() {
-							DevExpress.ui.notify('Save option has been clicked!');
-						},
-					},
-				}, {
-					locateInMenu: 'always',
-					widget: 'dxButton',
-					options: {
-						text: 'Print',
-						onClick() {
-							DevExpress.ui.notify('Print option has been clicked!');
-						},
-					},
-				}, {
-					locateInMenu: 'always',
-					widget: 'dxButton',
-					options: {
-						text: 'Settings',
-						onClick() {
-							DevExpress.ui.notify('Settings option has been clicked!');
-						},
-					},
-				},
-			]
-		});
+				
 	}
 
 	// CREATE MAPS
@@ -1964,7 +1717,7 @@
 						},
 					},
 				}, {
-					location: 'before',
+					location: 'center',
 					widget: 'dxDateBox',
 					locateInMenu: 'auto',
 					options: {
@@ -1978,7 +1731,7 @@
 						},
 					},
 				}, {
-					location: 'before',
+					location: 'center',
 					widget: 'dxDropDownButton',
 					locateInMenu: 'auto',
 					options: {
@@ -2003,18 +1756,18 @@
 					widget: 'dxButton',
 					locateInMenu: 'auto',
 					options: {
-						icon: 'plus',
+						text: 'Find',
 						onClick() {
-							DevExpress.ui.notify('Add button has been clicked!');
+							DevExpress.ui.notify('Find button has been clicked!');
 						},
 					},
 				}, {
 					locateInMenu: 'always',
 					widget: 'dxButton',
 					options: {
-						text: 'Save',
+						text: 'Print',
 						onClick() {
-							DevExpress.ui.notify('Save option has been clicked!');
+							DevExpress.ui.notify('Print option has been clicked!');
 						},
 					},
 				}, {
@@ -2070,7 +1823,7 @@
 				
 				// SET PULSE VOLUME FACTOR				
 				if (meter.Pulse_Unit_Measurement == 'liters') {
-					pulse_volume_factor = 0.001;
+					pulse_volume_factor = meter.Pulse_Unit_Value/100000;
 				}
 
 				// SET BAR CHART DATA
@@ -2095,7 +1848,7 @@
 			// SET PULSE VOLUME FACTOR
 			var pulse_volume_factor = 1;
 			if (meter.Pulse_Unit_Measurement == 'liters') {
-				pulse_volume_factor = 0.001;
+				pulse_volume_factor = meter.Pulse_Unit_Value/100000;
 			}
 
 			// SET PULSE UNIT VALUE
@@ -2128,11 +1881,9 @@
 			$("#meter_chart_polar_" + meter.id).dxPolarChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor, 'Baseline': element.Baseline*meter.Pulse_Unit_Value*pulse_volume_factor};}));
 			$("#meter_chart_polar_" + meter.id).dxPolarChart('instance').refresh();
 			
-			// SET LOG VALUES			
-			var tableObject = $('#log_' + meter.id).DataTable();
-			tableObject.clear();
-			tableObject.rows.add(meter.readings.map(function(element){ return [element.Data_DateTime.toLocaleString(), element.Pulses, element.Pulses*Pulse_Unit_Value, element.Battery_Level];}));
-			tableObject.draw();
+			// SET LOG VALUES
+			$("#log2_" + meter.id).dxDataGrid("option", "dataSource", readings.map(function(element) {return {'ID': element.id, 'Data_DateTime': element.Data_DateTime, 'Pulses': element.Pulses, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor, 'Battery_Level': element.Battery_Level};}));
+			$("#log2_" + meter.id).dxDataGrid('instance').refresh();
 
 			// SET VALUES
 			set_text(meter.id, meter.Pulse_Unit_Measurement, meter.Pulse_Unit_Value, readings)
@@ -2220,14 +1971,320 @@
 		}
 	}
 
+
+	//////////////////////////////////////////////////////////////////////////
+	// DATA ANALYSIS
+	//////////////////////////////////////////////////////////////////////////
+	var renderDataAnalysis = function () {
+		// RANGE
+		var range = $('#data_analysis_range').dxRangeSelector({			
+			scale: {
+				startValue: new Date(2022, 1, 1),
+				endValue: new Date(),
+				minorTickInterval: 'day',
+				tickInterval: 'week',
+				minRange: 'week',
+				maxRange: 'month',
+				minorTick: {
+					visible: false,
+				},
+			},
+			sliderMarker: {
+				format: 'monthAndDay',
+			},
+			value: [new Date(2011, 1, 5), new Date(2011, 2, 5)],
+		});
+	};
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// REPORTS
+	//////////////////////////////////////////////////////////////////////////
+
+	// GET REPORT DATA BY DATE RANGE
+	function reportData(from, to) {
+		//console.log(meter_list_data);
+		var data = [];		
+		$.each(meter_list_data, function(i, meter) {
+			// SET PULSE VOLUME FACTOR
+			var pulse_volume_factor = 1;
+			if (meter.Pulse_Unit_Measurement == 'liters') {
+				pulse_volume_factor = meter.Pulse_Unit_Value/100000;
+			};			
+			var meter_pulses = 0
+			$.each(meter.report, function(i, report) {
+				if (dateCheck(from,to,report.Data_DateTime)) {
+					meter_pulses += report.Pulses;
+					console.log(report.Pulses);
+				}				
+			});
+			if (meter.Category == 'Supply') {
+				var supply = (meter_pulses*pulse_volume_factor).toFixed(3);
+			} else if (meter.Category == 'Waste') {
+				var waste = (meter_pulses*pulse_volume_factor).toFixed(3);
+			} else if (meter.Category == 'Consumer') {
+				var consumer = (meter_pulses*pulse_volume_factor).toFixed(3);
+			}
+			// PUSH
+			data.push({
+				ID: meter.id, 
+				Meter: meter.Name, 
+				Water: (meter_pulses*pulse_volume_factor).toFixed(3),
+				Supply: supply,
+				Waste: waste,
+				Consumer: consumer, 
+			})
+		});
+		return data;
+	}
+
+	function dateCheck(from, to, check) {
+		if((check <= to && check >= from)) {
+			return true;
+		}
+		return false;
+	}
+
+	var renderReport = function () {
+
+		// PIE CHART
+		var date = new Date();
+		const data = reportData(date.setDate(date.getDate() - 1), new Date());
+
+		var piechart = $('#reporting_pie').dxPieChart({
+			palette: 'red',
+			dataSource: data,
+			legend: {
+				horizontalAlignment: 'center',
+				verticalAlignment: 'bottom',
+			},
+			series: [{
+				argumentField: 'Meter',
+				valueField: 'Water',
+				label: {
+					visible: true,
+					connector: {
+						visible: true,
+						width: 0.5,
+					},
+					format: 'fixedPoint',
+					customizeText(point) {
+						return `${point.argumentText}: ${point.valueText}%`;
+					},
+				},
+			}],
+		});
+
+		// BAR CHART
+		var barChart = $('#reporting_bar').dxChart({
+			dataSource: data,
+			palette: 'red',
+			commonSeriesSettings: {
+				type: 'bar',
+				valueField: 'Water',
+				argumentField: 'Meter',
+				ignoreEmptyPoints: true,
+			},
+			rotated: true,
+			seriesTemplate: {
+				nameField: 'Meter',
+			},
+		});
+
+		// LEDGER		
+		var dataGrid = $('#reporting_ledger').dxDataGrid({
+			dataSource: data,
+			keyExpr: 'ID',
+			showColumnLines: false,
+			showRowLines: true,
+			rowAlternationEnabled: false,
+			showBorders: true,
+			columns: [
+				{
+					dataField: 'Meter',
+				}, {
+					dataField: 'Supply',
+					width: 100,
+				}, {
+					dataField: 'Consumer',
+					width: 100,
+				}, {
+					dataField: 'Waste',
+					width: 100,
+				},
+			],
+			summary: {
+				totalItems: [
+					{
+						summaryType: 'sum',
+						displayFormat: '{0}',
+						column: 'Supply',
+					}, {
+						summaryType: 'sum',
+						displayFormat: '{0}',
+						column: 'Consumer',
+					}, {
+						summaryType: 'sum',
+						displayFormat: '{0}',
+						column: 'Waste',
+					}
+				],
+			},
+		});
+									
+		// TOOL BAR
+		var toolbar = $('#reporting_toolbar').dxToolbar({
+			items: [
+			{
+					location: 'before',
+					widget: 'dxButton',
+					locateInMenu: 'auto',
+					options: {
+						icon: 'refresh',
+						onClick() {
+							DevExpress.ui.notify('Refresh button has been clicked!');
+						},
+					},
+				}, {
+					location: 'center',
+					locateInMenu: 'never',
+					template() {
+						return $("<div class='toolbar-label'><b>Start Date: </b></div>");
+					},
+				}, {
+					location: 'center',
+					widget: 'dxDateBox',
+					locateInMenu: 'auto',
+					options: {
+						applyValueMode: 'useButtons',
+						width: 100,
+						value: new Date(),
+						max: new Date(),
+						min: new Date(2000, 0, 1),
+						onValueChanged(data) {
+							change_reporting_data(new Date(data.value));
+						},
+					},
+				}, {
+					location: 'center',
+					locateInMenu: 'never',
+					template() {
+						return $("<div class='toolbar-label'><b>End Date: </b></div>");
+					},
+				}, {
+					location: 'center',
+					widget: 'dxDateBox',
+					locateInMenu: 'auto',
+					options: {
+						applyValueMode: 'useButtons',
+						width: 100,
+						value: new Date(),
+						max: new Date(),
+						min: new Date(2000, 0, 1),
+						onValueChanged(data) {
+							change_reporting_data(new Date(data.value));
+						},
+					},
+				}, {
+					location: 'center',
+					widget: 'dxDropDownButton',
+					locateInMenu: 'auto',
+					options: {
+						icon: 'chart',
+						dropDownOptions: {
+							width: 100,
+						},
+						onItemClick(e) {
+							change_reporting_chart_type(e.itemData);
+						},
+						items: [
+							{id: 1, name: 'Bar', icon: 'chart' },
+							{id: 2, name: 'Pie', icon: 'pie-chart'},
+						],
+						displayExpr: 'name',
+						keyExpr: 'id',
+					},
+				}, {
+					locateInMenu: 'always',
+					widget: 'dxButton',
+					options: {
+						text: 'Save',
+						onClick() {
+							DevExpress.ui.notify('Save option has been clicked!');
+						},
+					},
+				}, {
+					locateInMenu: 'always',
+					widget: 'dxButton',
+					options: {
+						text: 'Print',
+						onClick() {
+							DevExpress.ui.notify('Print option has been clicked!');
+						},
+					},
+				}, {
+					locateInMenu: 'always',
+					widget: 'dxButton',
+					options: {
+						text: 'Settings',
+						onClick() {
+							DevExpress.ui.notify('Settings option has been clicked!');
+						},
+					},
+				},
+			],
+		});
+
+		function change_reporting_chart_type(item) {
+			if (item.name == 'Bar') {
+				$("#reporting_pie").hide();
+				$("#reporting_bar").show();
+			} else if (item.name == 'Pie') {
+				$("#reporting_pie").show();
+				$("#reporting_bar").hide();
+			}
+		};
+
+		$("#reporting_pie").show();
+		$("#reporting_bar").hide();
+
+	};
+	//////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	/* Controller
 	------------------------------------------------ */
 	$(document).ready(function () {
 				
 		page_setup();		
 		//ajax_call();
+		renderReport();
 		data_setup();
-
+		
 		//var interval_status = 60000; // 60 secs
 		//setInterval(ajax_call, interval_status);
 

@@ -92,11 +92,13 @@ sudo apt list --upgradeable         # List of all upgradeable packages
 dpkg --list                         # List all installed packages
 #####################################################################
 REFFERENCES:
+https://github.com/mitchtabian/HOWTO-django-channels-daphne
 https://azureossd.github.io/2022/04/16/SSL-TLS-certificates-for-Apache-and-NGINX-on-Azure-VMs/index.html
 https://techtutorguro.com/how-to-install-django-3-2-lts-on-ubuntu-20-04/
 https://realpython.com/django-nginx-gunicorn/
 https://cloudinfrastructureservices.co.uk/how-to-setup-django-server-on-azure-aws-gcp/
 https://azuremarketplace.microsoft.com/en-us/marketplace/apps/cloud-infrastructure-services.django-ubuntu
+https://saurabhgujjar.medium.com/django-channels-with-daphne-gunicorn-and-nginx-on-digitalocean-all-in-one-guide-28625eead962
 #####################################################################
 CREATE VM
 #####################################################################
@@ -114,7 +116,7 @@ cd ENVIROSCAN_WEBAPP
 python3 -m venv enviroscan_venv
 #####################################################################
 # 5. Activate the virtual environment.
-source enviroscan_venv/bin/activate
+source ENVIROSCAN_WEBAPP/enviroscan_venv/bin/activate
 #####################################################################
 # 6. Upgrade pip
 python3 -m pip install --upgrade pip
@@ -284,30 +286,111 @@ sudo a2enmod proxy_balancer
 sudo a2enmod proxy_connect
 sudo a2enmod proxy_html
 
+
+
+
+
+
+
+
+
 #####################################################################
-# 26. NGINX
-# FROM THE VIRUAL MACHINE
+#                           GUNICORM
+#####################################################################
+# Install gunicorn in virual env:
+pip install gunicorn
+# Load the project’s WSGI module:
+gunicorn --bind 0.0.0.0:8000 core.wsgi
+# Deactivate virtual env:
+deactivate
+# Creating systemd Socket and Service Files for Gunicorn:
+sudo nano /etc/systemd/system/gunicorn.socket
+######################### PASTE START ###############################
+[Unit]
+Description=gunicorn socket
+
+[Socket]
+ListenStream=/run/gunicorn.sock
+
+[Install]
+WantedBy=sockets.target
+#########################  PASTE END  ###############################
+# Create and open a systemd service file for Gunicorn in nano text editor:
+sudo nano /etc/systemd/system/gunicorn.service
+######################### PASTE START ###############################
+[Unit]
+Description=gunicorn daemon
+Requires=gunicorn.socket
+After=network.target
+
+[Service]
+User=willbullen
+Group=www-data
+WorkingDirectory=/home/willbullen/ENVIROSCAN_WEBAPP
+ExecStart=/home/willbullen/ENVIROSCAN_WEBAPP/enviroscan_venv/bin/gunicorn --access-logfile -  --workers 3 --bind unix:/run/gunicorn.sock core.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
+#########################  PASTE END  ###############################
+# Start the Gunicorn socket
+sudo systemctl start gunicorn.socket
+# Enable it so that when a connection is made to that socket, systemd will automatically start the gunicorn.service to handle it:
+sudo systemctl enable gunicorn.socket
+# Checking for the Gunicorn Socket File:
+sudo systemctl status gunicorn.socket
+# Check for the existence of the gunicorn.sock file within the /run directory:
+file /run/gunicorn.sock
+# Testing Socket Activation:
+sudo systemctl status gunicorn
+# Test the socket activation mechanism:
+curl --unix-socket /run/gunicorn.sock localhost
+# This confirms that Gunicorn was started and able to serve your Django application:
+sudo systemctl status gunicorn
+# If error check the logs for additional details:
+sudo journalctl -u gunicorn
+# Reload the daemon to reread the service definition:
+sudo systemctl daemon-reload
+# Then restart the Gunicorn process:
+sudo systemctl restart gunicorn
+# Reboot
+sudo reboot
+
+
+
+
+#####################################################################
+#                               NGINX
+#####################################################################
+# Install nginx in virual env:
 sudo apt-get update
 sudo apt-get install nginx
-cd /etc/nginx/sites-available
-sudo nano enviroscan.conf
-# PASTE START
+# Deactivate virtual env:
+deactivate
+# Creating systemd Socket and Service Files for NGINX:
+sudo nano /etc/nginx/sites-available/enviroscan.conf
+######################### PASTE START ###############################
+upstream ws_server {
+    server localhost:8000;
+}
 
 server { 
     listen 80; 
-    server_name enviroscan.io;                             
-    access_log off; 
+    server_name enviroscan.io;
     return 301 https://$server_name$request_uri; 
 }
 
 server {
-    server_name enviroscan.io; 
+    server_name enviroscan.io www.enviroscan.io; 
     listen 443 ssl;
     root /home/willbullen/ENVIROSCAN_WEBAPP;
+    
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
 
     ssl_certificate /home/willbullen/enviroscan-enviroscan3d99d0a5-a0aa-44aa-84ff-15371ac9ea30-20220617.pem;
     ssl_certificate_key /home/willbullen/enviroscan-enviroscan3d99d0a5-a0aa-44aa-84ff-15371ac9ea30-20220617.key;
 
+    location = /favicon.ico { access_log off; log_not_found off; }
     location /static/ {
         alias /home/willbullen/ENVIROSCAN_WEBAPP/core/static/;                   
     }
@@ -320,51 +403,40 @@ server {
     	include proxy_params;
     	proxy_pass http://unix:/run/gunicorn.sock;
 	}
+
+    location /ws/ {
+        proxy_pass http://0.0.0.0:8001;
+        proxy_http_version 1.1;
+
+        proxy_read_timeout 86400;
+        proxy_redirect     off;
+
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Host $server_name;
+    }
 }
-
-# PASTE END
+#########################  PASTE END  ###############################
+# Enable the file by linking it to the sites-enabled directory:
 sudo ln -s /etc/nginx/sites-available/enviroscan.conf /etc/nginx/sites-enabled
+# Test your Nginx configuration for syntax errors:
 sudo nginx -t
+# If no errors are reported, go ahead and restart Nginx:
 sudo systemctl restart nginx
-pip install gunicorn
-gunicorn --bind 0.0.0.0:8000 core.wsgi
-cd /etc/systemd/system/
-sudo nano gunicorn.socket
-# PASTE START
-[Unit]
-Description=gunicorn socket
 
-[Socket]
-ListenStream=/run/gunicorn.sock
 
-[Install]
-WantedBy=sockets.target
-# PASTE END
-sudo nano gunicorn.service
-# PASTE START
-[Unit]
-Description=gunicorn daemon
-Requires=gunicorn.socket
-After=network.target
 
-[Service]
-User=willbullen
-Group=www-data
-WorkingDirectory=/home/willbullen/ENVIROSCAN_WEBAPP
-ExecStart=/home/willbullen/ENVIROSCAN_WEBAPP/enviroscan_venv/bin/gunicorn --workers 3 --bind unix:/run/gunicorn.sock core.wsgi:application
 
-[Install]
-WantedBy=multi-user.target
-# PASTE END
-sudo systemctl start gunicorn.socket
-sudo systemctl enable gunicorn.socket
-sudo systemctl status gunicorn.socket
-sudo reboot
 
+#####################################################################
+#                           DAPHNE
+#####################################################################
 pip install daphne
-cd /etc/systemd/system/
-sudo nano daphne.service
-# PASTE START
+sudo nano /etc/systemd/system/daphne.service
+######################### PASTE START ###############################
 [Unit]
 Description=daphne service
 After=network.target
@@ -374,17 +446,20 @@ Type=simple
 User=willbullen
 Group=www-data
 WorkingDirectory=/home/willbullen/ENVIROSCAN_WEBAPP
-ExecStart=/home/willbullen/ENVIROSCAN_WEBAPP/enviroscan_venv/bin/daphne -p 9001 core.asgi:application
+ExecStart=/home/willbullen/ENVIROSCAN_WEBAPP/enviroscan_venv/bin/python /home/willbullen/ENVIROSCAN_WEBAPP/enviroscan_venv/bin/daphne -b 0.0.0.0 -p 8001 core.asgi:application
 Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
-# PASTE END
+#########################  PASTE END  ###############################
 sudo systemctl daemon-reload
 sudo systemctl start daphne.service
 sudo systemctl status daphne.service
 sudo reboot
 
+#####################################################################
+#                           REDIS
+#####################################################################
 sudo apt install redis-server
 sudo nano /etc/redis/redis.conf
 
@@ -395,11 +470,30 @@ sudo nano /etc/redis/redis.conf
 
 
 
+#####################################################
+################### SYSTEM CKECK ####################
+sudo systemctl status gunicorn.socket
+sudo systemctl status daphne.service
+sudo journalctl -u gunicorn
 
+sudo nginx -t
 
+The following logs may be helpful:
 
+sudo journalctl -u nginx            # Check the Nginx process logs:
+tail -f /var/log/nginx/access.log   # Check the Nginx access logs: 
+tail -f /var/log/nginx/error.log    # Check the Nginx error logs: 
+sudo journalctl -u gunicorn         # Check the Gunicorn application logs: 
+sudo journalctl -u gunicorn.socket  # Check the Gunicorn socket logs: 
 
-
+# If you update your Django application, you can restart the Gunicorn process to pick up the changes by running the following:
+sudo systemctl restart gunicorn
+# If you change Gunicorn socket or service files, reload the daemon and restart the process by running the following:
+sudo systemctl daemon-reload
+sudo systemctl restart gunicorn.socket gunicorn.service
+# If you change the Nginx server block configuration, test the configuration and then Nginx by running the following:
+sudo nginx -t && sudo systemctl restart nginx
+#####################################################
 
 
 

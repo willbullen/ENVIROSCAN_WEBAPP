@@ -39,7 +39,7 @@ def index(request):
 
     context = {}
 
-    context['meter_list_data'] = get_meters()    
+    context['meter_list_data'] = get_meters()
     context['meter_list_supply'] = Meter_List.objects.filter(Category = 1)
     context['meter_list_consumer'] = Meter_List.objects.filter(Category = 2)
     context['meter_list_waste'] = Meter_List.objects.filter(Category = 3)
@@ -76,11 +76,19 @@ def get_meters():
         meters['Data'] = json.loads(Meter_List.objects.all().order_by('Category').to_dataframe().to_json(orient="table"))['data']
         for meter in meters['Data']:
             meter.update(get_readings(meter['id']))
-            #meter.update(get_logs(meter['id']))
+            meter.update(get_report(meter['id']))
             meter.update(get_baseline(meter['id']))
     except Exception as e:
         print('{!r}; Get Meters failed - '.format(e))
     return json.dumps(meters)
+
+def get_report(meter_id):
+    try:
+        report = {'report': json.loads(Water_Meter.objects.filter(Meter = meter_id).order_by('-id').to_dataframe(index='Data_DateTime').sort_index(ascending=True).resample('1D').sum().fillna(method='backfill').to_json(orient="table"))['data']}
+    except Exception as e:
+        print('{!r}; Get Report failed - '.format(e))
+        return {'report': []}
+    return report
 
 def get_readings(meter_id):    
     try:
