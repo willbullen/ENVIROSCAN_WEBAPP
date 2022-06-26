@@ -327,7 +327,7 @@ After=network.target
 User=willbullen
 Group=www-data
 WorkingDirectory=/home/willbullen/ENVIROSCAN_WEBAPP
-ExecStart=/home/willbullen/ENVIROSCAN_WEBAPP/enviroscan_venv/bin/gunicorn --access-logfile -  --workers 3 --bind unix:/run/gunicorn.sock core.wsgi:application
+ExecStart=/home/willbullen/ENVIROSCAN_WEBAPP/enviroscan_venv/bin/gunicorn --access-logfile -  --workers 3 --bind unix:/home/willbullen/gunicorn.sock core.wsgi:application
 
 [Install]
 WantedBy=multi-user.target
@@ -369,55 +369,52 @@ deactivate
 # Creating systemd Socket and Service Files for NGINX:
 sudo nano /etc/nginx/sites-available/enviroscan.conf
 ######################### PASTE START ###############################
-upstream ws_server {
-    server localhost:8000;
-}
-
-server { 
-    listen 80; 
-    server_name enviroscan.io;
-    return 301 https://$server_name$request_uri; 
+upstream channels-backend {
+    server localhost:8001;
 }
 
 server {
-    server_name enviroscan.io www.enviroscan.io; 
+    listen 80;
+    server_name enviroscan.io;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    server_name enviroscan.io www.enviroscan.io;
     listen 443 ssl;
     root /home/willbullen/ENVIROSCAN_WEBAPP;
-    
+
     access_log /var/log/nginx/access.log;
     error_log /var/log/nginx/error.log;
 
-    ssl_certificate /home/willbullen/enviroscan-enviroscan3d99d0a5-a0aa-44aa-84ff-15371ac9ea30-20220617.pem;
-    ssl_certificate_key /home/willbullen/enviroscan-enviroscan3d99d0a5-a0aa-44aa-84ff-15371ac9ea30-20220617.key;
+    ssl_certificate /etc/letsencrypt/live/enviroscan.io/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/enviroscan.io/privkey.pem; # managed by Certbot
+
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
 
     location = /favicon.ico { access_log off; log_not_found off; }
     location /static/ {
-        alias /home/willbullen/ENVIROSCAN_WEBAPP/core/static/;                   
+        alias /home/willbullen/ENVIROSCAN_WEBAPP/core/static/;
     }
 
     location /media/ {
-        alias /home/willbullen/ENVIROSCAN_WEBAPP/core/media/;                   
+        alias /home/willbullen/ENVIROSCAN_WEBAPP/core/media/;
     }
 
     location / {
-    	include proxy_params;
-    	proxy_pass http://unix:/run/gunicorn.sock;
-	}
+        include proxy_params;
+        proxy_pass http://unix:/run/gunicorn.sock;
+        }
 
     location /ws/ {
-        proxy_pass http://0.0.0.0:8001;
         proxy_http_version 1.1;
-
-        proxy_read_timeout 86400;
-        proxy_redirect     off;
-
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Host $server_name;
+        proxy_redirect off;
+        proxy_pass http://127.0.0.1:8001;
     }
+
+
 }
 #########################  PASTE END  ###############################
 # Enable the file by linking it to the sites-enabled directory:
@@ -427,6 +424,12 @@ sudo nginx -t
 # If no errors are reported, go ahead and restart Nginx:
 sudo systemctl restart nginx
 
+
+
+
+/etc/letsencrypt/live/enviroscan.io/fullchain.pem
+/etc/letsencrypt/live/enviroscan.io/privkey.pem
+-e ssl:8001:privateKey=/etc/letsencrypt/live/enviroscan.io/privkey.pem:certKey=/etc/letsencrypt/live/enviroscan.io/fullchain.pem
 
 
 
@@ -446,7 +449,7 @@ Type=simple
 User=willbullen
 Group=www-data
 WorkingDirectory=/home/willbullen/ENVIROSCAN_WEBAPP
-ExecStart=/home/willbullen/ENVIROSCAN_WEBAPP/enviroscan_venv/bin/python /home/willbullen/ENVIROSCAN_WEBAPP/enviroscan_venv/bin/daphne -b 0.0.0.0 -p 8001 core.asgi:application
+ExecStart=/home/willbullen/ENVIROSCAN_WEBAPP/enviroscan_venv/bin/python /home/willbullen/ENVIROSCAN_WEBAPP/enviroscan_venv/bin/daphne -e ssl:8001:privateKey=/etc/letsencrypt/live/enviroscan.io/privkey.pem:certKey=/etc/letsencrypt/live/enviroscan.io/fullchain.pem core.asgi:application
 Restart=on-failure
 
 [Install]
@@ -462,6 +465,31 @@ sudo reboot
 #####################################################################
 sudo apt install redis-server
 sudo nano /etc/redis/redis.conf
+
+sudo apt install redis-server
+
+Navigate to /etc/redis/
+
+open redis.conf
+
+CTRL+F to find 'supervised no'
+
+change 'supervised no' to 'supervised systemd'
+
+SAVE
+
+sudo systemctl restart redis.service
+
+sudo systemctl status redis
+CTRL+C to exit.
+
+sudo apt install net-tools
+
+Confirm Redis is running at 127.0.0.1. Port should be 6379 by default.
+
+sudo netstat -lnp | grep redis
+
+sudo systemctl restart redis.service
 
 
 
@@ -485,6 +513,14 @@ tail -f /var/log/nginx/access.log   # Check the Nginx access logs:
 tail -f /var/log/nginx/error.log    # Check the Nginx error logs: 
 sudo journalctl -u gunicorn         # Check the Gunicorn application logs: 
 sudo journalctl -u gunicorn.socket  # Check the Gunicorn socket logs: 
+
+sudo journalctl                         is where all the logs are consolidated to. That's usually where I check.
+sudo tail -F /var/log/nginx/error.log   View the last entries in the error log
+sudo journalctl -u nginx                Nginx process logs
+sudo less /var/log/nginx/access.log     Nginx access logs
+sudo less /var/log/nginx/error.log      Nginx error logs
+sudo journalctl -u gunicorn             gunicorn application logs
+sudo journalctl -u gunicorn.socket      check gunicorn socket logs
 
 # If you update your Django application, you can restart the Gunicorn process to pick up the changes by running the following:
 sudo systemctl restart gunicorn
@@ -569,3 +605,95 @@ sudo su                                 # superuser in Ubuntu Desktop is disable
 clear                                   # Clear Screen: Use clear command to clear the terminal screen.
 exit                                    # exit from terminal.
 #####################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+willbullen@enviroscan:/etc/nginx/sites-available$ sudo certbot --nginx -d enviroscan.io -d www.enviroscan.io
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Plugins selected: Authenticator nginx, Installer nginx
+/usr/local/lib/python3.8/dist-packages/cryptography/hazmat/backends/openssl/x509.py:15: CryptographyDeprecationWarning: This version of cryptography contains a temporary pyOpenSSL fallback path. Upgrade pyOpenSSL now.
+  warnings.warn(
+Obtaining a new certificate
+Performing the following challenges:
+http-01 challenge for enviroscan.io
+Waiting for verification...
+Cleaning up challenges
+Deploying Certificate to VirtualHost /etc/nginx/sites-enabled/enviroscan.conf
+Deploying Certificate to VirtualHost /etc/nginx/sites-enabled/enviroscan.conf
+
+Please choose whether or not to redirect HTTP traffic to HTTPS, removing HTTP access.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+1: No redirect - Make no further changes to the webserver configuration.
+2: Redirect - Make all requests redirect to secure HTTPS access. Choose this for
+new sites, or if you're confident your site works on HTTPS. You can undo this
+change by editing your web server's configuration.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Select the appropriate number [1-2] then [enter] (press 'c' to cancel): 2
+Redirecting all traffic on port 80 to ssl in /etc/nginx/sites-enabled/enviroscan.conf
+No matching insecure server blocks listening on port 80 found.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Congratulations! You have successfully enabled https://enviroscan.io and
+https://www.enviroscan.io
+
+You should test your configuration at:
+https://www.ssllabs.com/ssltest/analyze.html?d=enviroscan.io
+https://www.ssllabs.com/ssltest/analyze.html?d=www.enviroscan.io
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+IMPORTANT NOTES:
+ - Congratulations! Your certificate and chain have been saved at:
+   /etc/letsencrypt/live/enviroscan.io/fullchain.pem
+   Your key file has been saved at:
+   /etc/letsencrypt/live/enviroscan.io/privkey.pem
+   Your cert will expire on 2022-09-23. To obtain a new or tweaked
+   version of this certificate in the future, simply run certbot again
+   with the "certonly" option. To non-interactively renew *all* of
+   your certificates, run "certbot renew"
+ - If you like Certbot, please consider supporting our work by:
+
+   Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
+   Donating to EFF:                    https://eff.org/donate-le

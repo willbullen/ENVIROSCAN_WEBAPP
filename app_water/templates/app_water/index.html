@@ -1051,7 +1051,7 @@
 					<div class="col-xl-6">
 
 						<!-- BEGIN NAV-TABS -->
-						<ul class="nav nav-tabs nav-tabs">
+						<ul id="tabs" class="nav nav-tabs nav-tabs">
 							<li class="nav-item me-3"><a href="#reporting" class="nav-link active" data-bs-toggle="tab">Reporting</a></li>
 							<li class="nav-item me-3"><a href="#data_analysis" class="nav-link" data-bs-toggle="tab">Data Analysis</a></li>
 							<li class="nav-item me-3"><a href="#map" class="nav-link" data-bs-toggle="tab">Map</a></li>
@@ -1808,6 +1808,10 @@
 			$("#log2_" + meter.id).dxDataGrid("option", "dataSource", readings.map(function(element) {return {'ID': element.id, 'Data_DateTime': element.Data_DateTime, 'Pulses': element.Pulses, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor, 'Battery_Level': element.Battery_Level};}));
 			$("#log2_" + meter.id).dxDataGrid('instance').refresh();
 
+			// SET CHART DATA
+			$("#data_analysis_chart").dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor, 'Baseline': element.Baseline*meter.Pulse_Unit_Value*pulse_volume_factor};}));
+			$("#data_analysis_chart").dxChart('instance').refresh();
+
 			// SET VALUES
 			set_text(meter.id, meter.Pulse_Unit_Measurement, meter.Pulse_Unit_Value, readings)
 
@@ -1898,6 +1902,17 @@
 	//////////////////////////////////////////////////////////////////////////
 	// DATA ANALYSIS
 	//////////////////////////////////////////////////////////////////////////
+
+	// SET CHART DATA
+	//$("#data_analysis_chart").dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor, 'Baseline': element.Baseline*meter.Pulse_Unit_Value*pulse_volume_factor};}));
+	//$("#data_analysis_chart").dxChart('instance').refresh();
+
+	
+	$(".nav-link").click(function (event) {
+		console.log('CCCCCCCCCCCCCCCCC');
+		$("#data_analysis_chart").dxChart('instance').refresh();
+	});
+
 	var renderDataAnalysis = function () {
 		// RANGE
 		var range = $('#data_analysis_range').dxRangeSelector({			
@@ -1920,18 +1935,12 @@
 		// CREATE SERIES
 		var series = [
 			{
-				type: 'bar',
+				type: 'spline',
 				name: 'Consumption',
 				valueField: 'Water',
 				argumentField: "Data_DateTime",
 				argumentType: "datetime",
-			},{
-				type: 'spline',
-				name: 'Baseline',
-				valueField: 'Baseline',
-				argumentField: "Data_DateTime",
-				argumentType: "datetime",
-			}
+			},
 		];
 		// CHART
 		var chart = $('#data_analysis_chart').dxChart({
