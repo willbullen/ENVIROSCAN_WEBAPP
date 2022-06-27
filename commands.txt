@@ -327,7 +327,7 @@ After=network.target
 User=willbullen
 Group=www-data
 WorkingDirectory=/home/willbullen/ENVIROSCAN_WEBAPP
-ExecStart=/home/willbullen/ENVIROSCAN_WEBAPP/enviroscan_venv/bin/gunicorn --access-logfile -  --workers 3 --bind unix:/home/willbullen/gunicorn.sock core.wsgi:application
+ExecStart=/home/willbullen/ENVIROSCAN_WEBAPP/enviroscan_venv/bin/gunicorn --access-logfile -  --workers 3 --bind unix:/run/gunicorn.sock core.wsgi:application
 
 [Install]
 WantedBy=multi-user.target
@@ -369,7 +369,7 @@ deactivate
 # Creating systemd Socket and Service Files for NGINX:
 sudo nano /etc/nginx/sites-available/enviroscan.conf
 ######################### PASTE START ###############################
-upstream channels-backend {
+upstream proxy_params {
     server localhost:8001;
 }
 
@@ -407,10 +407,18 @@ server {
         }
 
     location /ws/ {
+        proxy_set_header Host               $http_host;
+        proxy_set_header X-Real-IP          $remote_addr;
+        proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Host   $server_name;
+        proxy_set_header X-Forwarded-Proto  $scheme;
+        proxy_set_header X-Url-Scheme       $scheme;
+        proxy_redirect off;
+
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-        proxy_redirect off;
+        proxy_set_header Connection $connection_upgrade;
+
         proxy_pass http://127.0.0.1:8001;
     }
 
@@ -446,7 +454,7 @@ After=network.target
 
 [Service]
 Type=simple
-User=willbullen
+User=root
 Group=www-data
 WorkingDirectory=/home/willbullen/ENVIROSCAN_WEBAPP
 ExecStart=/home/willbullen/ENVIROSCAN_WEBAPP/enviroscan_venv/bin/python /home/willbullen/ENVIROSCAN_WEBAPP/enviroscan_venv/bin/daphne -e ssl:8001:privateKey=/etc/letsencrypt/live/enviroscan.io/privkey.pem:certKey=/etc/letsencrypt/live/enviroscan.io/fullchain.pem core.asgi:application
@@ -508,13 +516,13 @@ sudo nginx -t
 
 The following logs may be helpful:
 
-sudo journalctl -u nginx            # Check the Nginx process logs:
+sudo journalctl -u nginx -f         # Check the Nginx process logs:
 tail -f /var/log/nginx/access.log   # Check the Nginx access logs: 
 tail -f /var/log/nginx/error.log    # Check the Nginx error logs: 
 sudo journalctl -u gunicorn         # Check the Gunicorn application logs: 
 sudo journalctl -u gunicorn.socket  # Check the Gunicorn socket logs: 
 
-sudo journalctl                         is where all the logs are consolidated to. That's usually where I check.
+sudo journalctl -f                        is where all the logs are consolidated to. That's usually where I check.
 sudo tail -F /var/log/nginx/error.log   View the last entries in the error log
 sudo journalctl -u nginx                Nginx process logs
 sudo less /var/log/nginx/access.log     Nginx access logs
@@ -697,3 +705,28 @@ IMPORTANT NOTES:
 
    Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
    Donating to EFF:                    https://eff.org/donate-le
+
+
+
+
+   Invalid user admin from 173.171.104.217 port 59068
+Jun 26 21:30:04 enviroscan sshd[2849]: Failed none for invalid user admin from 173.171.104.217 port 59068 ssh2
+Jun 26 21:30:04 enviroscan sshd[2849]: pam_unix(sshd:auth): check pass; user unknown
+Jun 26 21:30:04 enviroscan sshd[2849]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=173.171.104.217
+Jun 26 21:30:06 enviroscan sshd[2849]: Failed password for invalid user admin from 173.171.104.217 port 59068 ssh2
+Jun 26 21:30:07 enviroscan sshd[2849]: pam_unix(sshd:auth): check pass; user unknown
+Jun 26 21:30:09 enviroscan sshd[2849]: Failed password for invalid user admin from 173.171.104.217 port 59068 ssh2
+Jun 26 21:30:11 enviroscan sshd[2849]: pam_unix(sshd:auth): check pass; user unknown
+Jun 26 21:30:13 enviroscan sshd[2849]: Failed password for invalid user admin from 173.171.104.217 port 59068 ssh2
+Jun 26 21:30:15 enviroscan sshd[2849]: pam_unix(sshd:auth): check pass; user unknown
+Jun 26 21:30:18 enviroscan sshd[2849]: Failed password for invalid user admin from 173.171.104.217 port 59068 ssh2
+Jun 26 21:30:19 enviroscan sshd[2849]: pam_unix(sshd:auth): check pass; user unknown
+Jun 26 21:30:21 enviroscan sshd[2849]: Failed password for invalid user admin from 173.171.104.217 port 59068 ssh2
+Jun 26 21:30:23 enviroscan sshd[2849]: error: maximum authentication attempts exceeded for invalid user admin from 173.171.104.217 port 59068 ssh2 [preauth]
+Jun 26 21:30:23 enviroscan sshd[2849]: Disconnecting invalid user admin 173.171.104.217 port 59068: Too many authentication failures [preauth]
+Jun 26 21:30:23 enviroscan sshd[2849]: PAM 4 more authentication failures; logname= uid=0 euid=0 tty=ssh ruser= rhost=173.171.104.217
+Jun 26 21:30:23 enviroscan sshd[2849]: PAM service(sshd) ignoring max retries; 5 > 3
+Jun 26 21:30:25 enviroscan sshd[2853]: Invalid user admin from 173.171.104.217 port 37333
+Jun 26 21:30:25 enviroscan sshd[2853]: Failed none for invalid user admin from 173.171.104.217 port 37333 ssh2
+Jun 26 21:30:25 enviroscan sshd[2853]: Connection closed by invalid user admin 173.171.104.217 port 37333 [preauth]
+Jun 26 21:30:30 enviroscan gunicorn[1874]:  - - [26/Jun/2022:21:30:30 +0000] "GET /picarro/ HTTP/1.0" 200 1319 "-" "-"
