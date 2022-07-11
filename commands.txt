@@ -297,6 +297,8 @@ sudo a2enmod proxy_html
 #####################################################################
 #                           GUNICORM
 #####################################################################
+# https://github.com/mitchtabian/HOWTO-django-channels-daphne#Deploying-Django-Channels-with-Daphne-&-Systemd
+#####################################################################
 # Install gunicorn in virual env:
 pip install gunicorn
 # Load the project’s WSGI module:
@@ -361,6 +363,8 @@ sudo reboot
 #####################################################################
 #                               NGINX
 #####################################################################
+# https://github.com/mitchtabian/HOWTO-django-channels-daphne#Deploying-Django-Channels-with-Daphne-&-Systemd
+#####################################################################
 # Install nginx in virual env:
 sudo apt-get update
 sudo apt-get install nginx
@@ -369,9 +373,6 @@ deactivate
 # Creating systemd Socket and Service Files for NGINX:
 sudo nano /etc/nginx/sites-available/enviroscan.conf
 ######################### PASTE START ###############################
-upstream proxy_params {
-    server localhost:8001;
-}
 
 server {
     listen 80;
@@ -389,8 +390,6 @@ server {
 
     ssl_certificate /etc/letsencrypt/live/enviroscan.io/fullchain.pem; # managed by Certbot
     ssl_certificate_key /etc/letsencrypt/live/enviroscan.io/privkey.pem; # managed by Certbot
-
-    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
 
     location = /favicon.ico { access_log off; log_not_found off; }
     location /static/ {
@@ -433,17 +432,35 @@ sudo nginx -t
 sudo systemctl restart nginx
 
 
+#####################################################################
+#                           HTTPS CERTBOT
+#####################################################################
+# https://github.com/mitchtabian/HOWTO-django-channels-daphne#Deploying-Django-Channels-with-Daphne-&-Systemd
+#####################################################################
+# Install certbot
+sudo apt install certbot python3-certbot-nginx
+sudo systemctl reload nginx
+# Make sure nginx configuration is still good.
+sudo nginx -t
+# Obtain SSL certificate
+sudo certbot --nginx -d <your-domain.whatever> -d www.<your-domain.whatever>
+# Verifying Certbot Auto-Renewal
+sudo systemctl status certbot.timer
+# Test renewal process
+sudo certbot renew --dry-run
 
 
-/etc/letsencrypt/live/enviroscan.io/fullchain.pem
-/etc/letsencrypt/live/enviroscan.io/privkey.pem
--e ssl:8001:privateKey=/etc/letsencrypt/live/enviroscan.io/privkey.pem:certKey=/etc/letsencrypt/live/enviroscan.io/fullchain.pem
-
-
+#####################################################################
+#                   HTTPS USING AZURE CERT
+#####################################################################
+# https://azureossd.github.io/2022/04/16/SSL-TLS-certificates-for-Apache-and-NGINX-on-Azure-VMs/index.html
+#####################################################################
 
 
 #####################################################################
 #                           DAPHNE
+#####################################################################
+# https://github.com/mitchtabian/HOWTO-django-channels-daphne#Deploying-Django-Channels-with-Daphne-&-Systemd
 #####################################################################
 pip install daphne
 sudo nano /etc/systemd/system/daphne.service
@@ -468,46 +485,111 @@ sudo systemctl start daphne.service
 sudo systemctl status daphne.service
 sudo reboot
 
+
 #####################################################################
 #                           REDIS
 #####################################################################
+# https://github.com/mitchtabian/HOWTO-django-channels-daphne#Deploying-Django-Channels-with-Daphne-&-Systemd
+#####################################################################
+# Install redis:
 sudo apt install redis-server
+# Edit config
 sudo nano /etc/redis/redis.conf
-
-sudo apt install redis-server
-
-Navigate to /etc/redis/
-
-open redis.conf
-
-CTRL+F to find 'supervised no'
-
-change 'supervised no' to 'supervised systemd'
-
-SAVE
-
+# change 'supervised no' to 'supervised systemd'
+# Restart service.
 sudo systemctl restart redis.service
-
+# Check status
 sudo systemctl status redis
-CTRL+C to exit.
-
+# Install nettools 
 sudo apt install net-tools
-
-Confirm Redis is running at 127.0.0.1. Port should be 6379 by default.
-
+# Confirm Redis is running at 127.0.0.1. Port should be 6379 by default.
 sudo netstat -lnp | grep redis
-
+# Restart service
 sudo systemctl restart redis.service
 
 
+#####################################################################
+#                        MOSQUITTO MQTT
+#####################################################################
+# https://www.howtoforge.com/how-to-install-and-secure-the-mosquitto-mqtt-messaging-broker-on-ubuntu-20-04/
+# https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-the-mosquitto-mqtt-messaging-broker-on-ubuntu-18-04-quickstart
+#####################################################################
+# Install the Mosquitto server and the client.
+sudo apt install mosquitto mosquitto-clients
+# Check the status of the server.
+sudo systemctl status mosquitto
+# Run the following command to generate an encrypted password file at /etc/mosquitto/passwd for the username willbullen.
+sudo mosquitto_passwd -c /etc/mosquitto/passwd willbullen
+# Next, create a default.conf file under the /etc/mosquitto/conf.d directory and open it for editing.
+sudo nano /etc/mosquitto/conf.d/default.conf
+# PASTE START
+allow_anonymous false
+password_file /etc/mosquitto/passwd
+# PASTE END
+# Restart the Mosquitto server to implement the change.
+sudo systemctl restart mosquitto
+# Enable Mosquitto
+sudo systemctl enable mosquitto
+# Check the status of the server.
+sudo systemctl status mosquitto
+# Test Mosquitto Client
+# Subscribe to home/lights/kitchen topic, run the following command.
+mosquitto_sub -h localhost -u willbullen -P will1977 -t /home/sensors/temp/kitchen 
+# Don't close the existing window. Open a new terminal window to publish a message to the home/lights/kitchen topic using the following command.
+mosquitto_pub -h localhost -u willbullen -P will1977 -t /home/sensors/temp/kitchen -m "Kitchen Temperature: 26°C"
+# SSL certificates
+sudo nano /etc/mosquitto/conf.d/default.conf
+# PAST START
+allow_anonymous false
+password_file /etc/mosquitto/passwd
+
+listener 1883 localhost
+
+listener 8883
+certfile /etc/letsencrypt/live/enviroscan.io/cert.pem
+cafile /etc/letsencrypt/live/enviroscan.io/chain.pem
+keyfile /etc/letsencrypt/live/enviroscan.io/privkey.pem
+
+listener 8083
+protocol websockets
+certfile /etc/letsencrypt/live/enviroscan.io/cert.pem
+cafile /etc/letsencrypt/live/enviroscan.io/chain.pem
+keyfile /etc/letsencrypt/live/enviroscan.io/privkey.pem
+# PAST END
+# Restart Mosquitto to pick up the configuration changes:
+sudo systemctl restart mosquitto
+# Check to make sure the service is running again:
+sudo systemctl status mosquitto
+# Mosquitto’s log file:
+sudo tail /var/log/mosquitto/mosquitto.log
+# Open ports 8083 and 8883
+# Open the Certbot renewal configuration file for your domain name:
+sudo nano /etc/letsencrypt/renewal/enviroscan.io.conf
+# Add the following renew_hook option on the last line:
+renew_hook = systemctl restart mosquitto
+# Save and close the file, then run a Certbot dry run to make sure the syntax is ok:
+sudo certbot renew --dry-run
+# Testing Mosquitto
+# To subscribe using the secured listener on port 8883, do the following:
+mosquitto_sub -h enviroscan.io -t test -p 8883 --capath /etc/ssl/certs/ -u "willbullen" -P "will1977"
+# And this is how you publish to the secured listener:
+mosquitto_pub -h enviroscan.io -t test -m "hello world" -p 8883 --capath /etc/ssl/certs/ -u "willbullen" -P "will1977"
+# To test the websocket functionality, http://www.hivemq.com/demos/websocket-client/:
 
 
+#####################################################################
+#                     DJANGO CHANNELS MQTT
+#####################################################################
+# https://pypi.org/project/chanmqttproxy/
+# https://github.com/nilmonto/mqtt-django-bridge/tree/master/examples/sample_project
+#####################################################################
 
 
 
 
 #####################################################
 ################### SYSTEM CKECK ####################
+#####################################################
 sudo systemctl status gunicorn.socket
 sudo systemctl status daphne.service
 sudo journalctl -u gunicorn
@@ -515,6 +597,8 @@ sudo journalctl -u gunicorn
 sudo nginx -t
 
 The following logs may be helpful:
+
+sudo tail /var/log/mosquitto/mosquitto.log  # Mosquitto logs
 
 sudo journalctl -u nginx -f         # Check the Nginx process logs:
 tail -f /var/log/nginx/access.log   # Check the Nginx access logs: 
@@ -537,6 +621,8 @@ sudo systemctl daemon-reload
 sudo systemctl restart gunicorn.socket gunicorn.service
 # If you change the Nginx server block configuration, test the configuration and then Nginx by running the following:
 sudo nginx -t && sudo systemctl restart nginx
+
+ip addr show                            # Show ip
 #####################################################
 
 

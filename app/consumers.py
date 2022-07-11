@@ -8,11 +8,10 @@ import datetime
 from django.core import serializers
 from channels.layers import get_channel_layer
 
-
 class StatusConsumer(WebsocketConsumer):
 
     group_name = 'status'
-
+    
     def async_send(self, channel_name, jsonData):
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(channel_name, {"type": "stream.message", 'message': jsonData})

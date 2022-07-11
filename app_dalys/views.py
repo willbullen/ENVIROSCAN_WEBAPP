@@ -5,7 +5,6 @@ from django.http import HttpResponse
 from django import template
 import json
 
-
 @login_required(login_url="/login/")
 def index(request):
     context = {}

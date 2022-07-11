@@ -9,17 +9,30 @@ from channels.routing import ProtocolTypeRouter, URLRouter, ChannelNameRouter
 from django.core.asgi import get_asgi_application
 import app.routing
 
-#from app.consumers import GetStatusConsumer
+from django.urls import re_path
 
-application = ProtocolTypeRouter({
+from app.consumers import StatusConsumer, HomeConsumer, PicarroConsumer, SOXConsumer, NOXConsumer, AutosondeConsumer, TucsonConsumer, AethalometerConsumer, UPSConsumer, GeneratorConsumer, DAQCConsumer
+
+from app_dalys.consumers import DalysConsumer
+
+application = ProtocolTypeRouter({    
     "http": get_asgi_application(),
+    #"mqtt": consumers.MqttConsumer.as_asgi(),
     "websocket": AuthMiddlewareStack(
-        URLRouter(
-            app.routing.websocket_urlpatterns
-        )
-    ),
-    #'channel': ChannelNameRouter({
-    #    "get-status": GetStatusConsumer(),
-    #    #"mqtt.pub": MqttConsumer()
-    #})
+        URLRouter([
+            # app.routing.websocket_urlpatterns,
+            re_path(r'^status/$', StatusConsumer.as_asgi()),
+            re_path(r'^home/$',  HomeConsumer.as_asgi()),
+            re_path(r'^picarro/$', PicarroConsumer.as_asgi()),
+            re_path(r'^sox/$', SOXConsumer.as_asgi()),
+            re_path(r'^nox/$', NOXConsumer.as_asgi()),
+            re_path(r'^autosonde/$', AutosondeConsumer.as_asgi()),
+            re_path(r'^tucson/$', TucsonConsumer.as_asgi()),
+            re_path(r'^aethalometer/$', AethalometerConsumer.as_asgi()),
+            re_path(r'^ups/$', UPSConsumer.as_asgi()),
+            re_path(r'^generator/$', GeneratorConsumer.as_asgi()),
+            re_path(r'^daqc/$', DAQCConsumer.as_asgi()),
+            re_path(r'^dalys/$', DalysConsumer.as_asgi()),
+        ])
+    ),    
 })

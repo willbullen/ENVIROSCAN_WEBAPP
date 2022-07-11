@@ -26,6 +26,9 @@ django-pandas==0.6.6
 # ---- DJANGO ---- #
 Django==3.2.11
 
+# ---- MQTT ---- #
+paho-mqtt==1.6.1
+
 # ---- REDIS ---- #
 redis==4.0.1
 asgi-redis==1.1.0
