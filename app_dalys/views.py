@@ -6,18 +6,28 @@ from django import template
 import json
 
 from rest_framework import viewsets
+from rest_framework.response import Response
 
 from .models import (
     Node_Power,
+    Node_List,
 )
 
 from .serializers import (
     Power_Serializer,
+    Node_List_Serializer,
 )
 
 class Node_Power_ViewSet(viewsets.ModelViewSet):
     queryset = Node_Power.objects.all().order_by('Data_DateTime')
     serializer_class = Power_Serializer
+
+class Node_List_ViewSet(viewsets.ModelViewSet):
+    queryset = Node_List.objects.all()
+    serializer_class = Node_List_Serializer
+    def list(self, request):
+        data = json.loads(get_nodes())
+        return Response(data)
 
 @login_required(login_url="/login/")
 def index(request):
@@ -62,3 +72,40 @@ def pages(request):
         print('{!r} - Load Template Failed!'.format(e))
         html_template = loader.get_template('page_404_error.html')
         return HttpResponse(html_template.render(context, request))
+
+def get_nodes():
+    nodes = {}
+    try:
+        nodes['Data'] = json.loads(Node_List.objects.all().order_by('Category').to_dataframe().to_json(orient="table"))['data']
+        for node in nodes['Data']:
+            node.update(get_power(node['id']))
+            node.update(get_report(node['id']))
+            node.update(get_baseline(node['id']))
+    except Exception as e:
+        print('{!r}; Get Nodes failed - '.format(e))
+    return json.dumps(nodes)
+
+def get_report(node_id):
+    try:
+        report = {'report': json.loads(Node_Power.objects.filter(Node = node_id).order_by('-id').to_dataframe(index='Data_DateTime').sort_index(ascending=True).resample('1D').sum().fillna(method='backfill').to_json(orient="table"))['data']}
+    except Exception as e:
+        print('{!r}; Get Report failed - '.format(e))
+        return {'report': []}
+    return report
+
+def get_power(node_id):    
+    try:
+        readings = {'readings': json.loads(Node_Power.objects.filter(Node = node_id).order_by('-id')[:5000].to_dataframe(index='Data_DateTime').sort_index(ascending=True).resample('60Min').sum().fillna(method='backfill').to_json(orient="table"))['data']}
+    except Exception as e:
+        print('{!r}; Get Readings failed - '.format(e))
+        return {'readings': []}
+    return readings
+
+def get_baseline(node_id):    
+    try:
+        df = Node_Power.objects.filter(Node = node_id).order_by('-id').to_dataframe(index='Data_DateTime').rename_axis('Hour')        
+        baseline = {'baseline': json.loads(df.groupby(df.index.hour).mean().to_json(orient="table"))['data']}
+    except Exception as e:
+        print('{!r}; Get baseline failed - '.format(e))
+        return {'baseline': []}
+    return baseline

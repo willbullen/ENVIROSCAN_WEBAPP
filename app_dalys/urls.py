@@ -5,9 +5,13 @@ from . import views
 routerNodePower = routers.DefaultRouter()
 routerNodePower.register(r'data', views.Node_Power_ViewSet)
 
+routerNodes = routers.DefaultRouter()
+routerNodes.register(r'list', views.Node_List_ViewSet)
+
 urlpatterns = [
 
     path('node_power/', include(routerNodePower.urls)),
+    path('node/', include(routerNodes.urls)),
 
     # The home page
     path('', views.index, name='home'),
