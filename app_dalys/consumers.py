@@ -3,7 +3,7 @@ import os
 from balena import Balena
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import AsyncWebsocketConsumer, SyncConsumer, WebsocketConsumer, JsonWebsocketConsumer
-from data.models import Picarro_Data, Nodes
+from .models import Node_Power
 from channels.layers import get_channel_layer
 
 class DalysConsumer(WebsocketConsumer):
@@ -32,7 +32,7 @@ class DalysConsumer(WebsocketConsumer):
             # GET NODE DETAILS
             Node_ID = jsonData['Node_ID']
             # GET SEND DATA
-            #self.async_send(self.group_name, Get_Data.get_History_Data(Picarro_Data, Node_ID))
+            self.async_send(self.group_name, Get_Data.get_History_Data(Node_Power, Node_ID))
 
     def stream_message(self, event):
         message = event['message']
