@@ -43,7 +43,7 @@ class Get_Data:
     def get_History_Data(object, node_id):
         Ground_Station = {}
         try:            
-            Ground_Station['Data'] = json.loads(object.objects.filter(Node_ID = node_id).order_by('-id')[:1440].to_dataframe(index='Data_DateTime').sort_index(ascending=True).resample('10Min').mean().fillna(method='backfill').tail(140).to_json(orient="table"))
+            Ground_Station['Data'] = json.loads(object.objects.filter(Node = node_id).order_by('-id')[:1440].to_dataframe(index='Data_DateTime').sort_index(ascending=True).resample('10Min').mean().fillna(method='backfill').tail(140).to_json(orient="table"))
             Ground_Station['Data_Type'] = "History_Data"
             Ground_Station['Node_ID'] = node_id            
         except Exception as e:

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'app_crypto',
     'app_dalys',
     'app_water',
+    'app_front',
     #'beatserver',
     #'django_celery_beat',
 ]
