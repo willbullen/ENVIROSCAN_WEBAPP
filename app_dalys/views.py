@@ -5,6 +5,20 @@ from django.http import HttpResponse
 from django import template
 import json
 
+from rest_framework import viewsets
+
+from .models import (
+    Node_Power,
+)
+
+from .serializers import (
+    Power_Serializer,
+)
+
+class Node_Power_ViewSet(viewsets.ModelViewSet):
+    queryset = Node_Power.objects.all().order_by('Data_DateTime')
+    serializer_class = Power_Serializer
+
 @login_required(login_url="/login/")
 def index(request):
     context = {}
