@@ -180,7 +180,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_ROOT = os.path.normpath(os.path.join(CORE_DIR, 'staticfiles'))
-STATIC_URL = '/static/'
+STATIC_URL = '/staticfiles/'
 
 #print(STATIC_ROOT)
 
