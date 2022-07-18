@@ -1,75 +1,2432 @@
-{% extends "layouts/base.html" %}
+{% extends "app_water/layouts/base.html" %}
 
 
-		{% block content %}
-		<!-- BEGIN #content -->
-		<div id="content" class="app-content">
-			<!-- BEGIN page-header -->			
-			<div class="d-flex fw-bold small">
-				<span class="flex-grow-1">
-					<h1 class="page-header">
-						DALYS INDEX PAGE <small>just the begining of everythings.</small>
-					</h1>
-				</span>
+{% block content %}
+<!-- BEGIN #content -->
+<div id="content" class="app-content">
+	<!-- BEGIN page-header -->
+	<div class="d-flex fw-bold small">
+		<span class="flex-grow-1">
+			<h1 class="page-header">
+				<i class="bi bi-water"></i> Cork University Hospital
+			</h1>
+			<div class="text-white small mb-2"><b>CUH Water Management System, below you will se a list of meters and readings.</b></div>
+		</span>
+	</div>
+	<!-- END page-header -->
+
+	<!-- BEGIN -->
+	<!-- BEGIN #listWidget -->
+	<div id="listWidget" class="mb-5">
+		<div class="card">
+			<div class="card-body">
+				<div class="row">
+					<div class="col-xl-6">
+
+						<!-- BEGIN SUPPLY -->
+						<div class="text-white small mb-2"><b>SUPPLY</b></div>
+						<div class="list-group mb-3">							
+						{% for meter in meter_list_supply %}
+							<!-- BEGIN METER -->
+							<input type="hidden" id="hidden_Node_Status_{{ meter.id }}" value="0">
+							<input type="hidden" id="hidden_Meter_Status_{{ meter.id }}" value="0">
+							<div class="list-group-item d-flex align-items-center">
+								<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}" id="#go_map_{{ meter.id }}">
+									<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+										{{ meter.Name|make_list|first }}
+									</div>
+								</a>
+								<div class="flex-fill px-3">									
+									<a href="#" class="text-white" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}">							
+										<div class="fw-bold">{{ meter.Name }}</div>
+									</a>
+								</div>								
+
+								<!-- <div class="flex-fill px-3">
+									<div class="small text-white text-opacity-50">Last Updated: {{ meter.Last_Updated|timesince }}</div>
+								</div> -->
+
+								<div class="opacity-10 px-3">
+									<div class="fw-bold"><span id="value_main_{{ meter.id }}">0</span> m³</div>
+								</div>
+
+								<div class="opacity-10 px-3">
+									<span id="Meter_Status_{{ meter.id }}" class="badge bg-theme" data-bs-toggle="tooltip">M</span>
+									<span id="Node_Status_{{ meter.id }}" class="badge bg-theme" data-bs-toggle="tooltip">N</span>
+								</div>
+							</div>
+							<!-- END METER -->
+
+							<!-- BEGIN METER DETAILS -->
+							<div class="collapse list-group-item" id="collapse_{{ meter.id }}">
+
+								<!-- BEGIN nav-tabs -->
+								<ul class="nav nav-tabs nav-tabs">
+									<li class="nav-item me-3"><a href="#home_{{ meter.id }}" class="nav-link active" data-bs-toggle="tab">Data</a></li>
+									<li class="nav-item me-3"><a href="#details_{{ meter.id }}" class="nav-link" data-bs-toggle="tab">Details</a></li>
+									<li class="nav-item me-3"><a href="#logs_{{ meter.id }}" class="nav-link" data-bs-toggle="tab">Logs</a></li>
+									<li class="nav-item me-3"><a href="#settings_{{ meter.id }}" class="nav-link" data-bs-toggle="tab">Settings</a></li>
+								</ul>
+								<!-- END nav-tabs -->
+
+								<!-- BEGIN tab-content -->
+								<div class="tab-content pt-1">
+									<!-- BEGIN tab-pane -->
+									<div class="tab-pane fade show active" id="home_{{ meter.id }}">
+										<!-- BEGIN TOOLBAR -->
+										<div id="meter_toolbar_{{ meter.id }}"></div>
+										<!-- END TOOLBAR -->
+										<!-- BEGIN row -->
+										<div class="row">
+											<div class="col-9">												
+												<!-- BEGIN CHART -->
+												<div class="pt-1 flex-1">
+													<div id="meter_chart_{{ meter.id }}" class="pt-1 flex-1"></div>
+													<div id="meter_chart_polar_{{ meter.id }}" class="pt-1 flex-1"></div>												
+												</div>
+												<!-- END CHART -->
+											</div>
+											<div class="col-3">
+												<!-- BEGIN DAILY AVE -->
+												<div class="w-150px h-98px pt-1 ps-3">
+													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
+														24H AVE (m³/d)
+													</div>
+													<div class="mb-2 fs-5 text-truncate">
+														<h4 class="mb-0"><span id="24h_ave_value_{{ meter.id }}">0</span></h4>
+													</div>
+													<div class="progress h-3px bg-white-transparent-2 mb-1">
+														<div class="progress-bar bg-theme" id="24h_ave_bar_{{ meter.id }}" style="width: 0%"></div>
+													</div>
+													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+														<span id="24h_ave_info_{{ meter.id }}">@ 0% of max DA recorded.</span>
+													</div>
+												</div>
+												<!-- END DAILY AVE -->
+												<!-- BEGIN HOURLY AVE -->
+												<div class="w-150px h-98px pt-1 ps-3">
+													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
+														HOURLY AVE (m³/h)
+													</div>
+													<div class="mb-2 fs-5 text-truncate">
+														<h4 class="mb-0"><span id="hourly_ave_value_{{ meter.id }}">0</span> </h4>
+													</div>
+													<div class="progress h-3px bg-white-transparent-2 mb-1">
+														<div class="progress-bar bg-theme" id="hourly_ave_bar_{{ meter.id }}" style="width: 0%"></div>
+													</div>
+													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+														<span id="hourly_ave_info_{{ meter.id }}">@ 0% of max HA recorded.</span>
+													</div>
+												</div>
+												<!-- END HOURLY AVE -->
+												<!-- BEGIN MAX FLOW -->
+												<div class="w-150px h-98px pt-1 ps-3">
+													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
+														MAX FLOW (m³/h)
+													</div>
+													<div class="mb-2 fs-5 text-truncate">
+														<h4 class="mb-0"><span id="max_flow_value_{{ meter.id }}">0</span> </h4>
+													</div>
+													<div class="progress h-3px bg-white-transparent-2 mb-1">
+														<div class="progress-bar bg-theme" id="max_flow_bar_{{ meter.id }}" style="width: 0%"></div>
+													</div>
+													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+														<span id="max_flow_info_{{ meter.id }}">@ 0% of max max fr.</span>
+													</div>
+												</div>
+												<!-- END MAX FLOW -->
+												<!-- BEGIN MIN FLOW -->
+												<div class="w-150px h-98px pt-1 ps-3">
+													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
+														MIN FLOW (m³/h)
+													</div>
+													<div class="mb-2 fs-5 text-truncate">
+														<h4 class="mb-0"><span id="min_flow_value_{{ meter.id }}">0</span> </h4>
+													</div>
+													<div class="progress h-3px bg-white-transparent-2 mb-1">
+														<div class="progress-bar bg-theme" id="min_flow_bar_{{ meter.id }}" style="width: 0%"></div>
+													</div>
+													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+														<span id="min_flow_info_{{ meter.id }}">@ 0% of min fr.</span>
+													</div>
+												</div>
+												<!-- END MIN FLOW -->
+											</div>
+										</div>
+										<!-- END row -->
+									</div>
+									<!-- END tab-pane -->
+									<!-- BEGIN tab-pane -->
+									<div class="tab-pane fade" id="details_{{ meter.id }}">
+
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												START OF LOGGING
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Start_Date }}
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												START INDEX
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Start_Index }} m³
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												TOTAL CONSUMPTION
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Start_Index }} m³
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												PULSE UNIT MEASUREMENT
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Pulse_Unit_Measurement }}
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												PULSE UNIT VALUE
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Pulse_Unit_Value }}
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												LOCATION LAT
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Lat }}
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												LOCATION LNG
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Lng }}
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												METER TYPE
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Type }}
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												REGION
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Region }}
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												CATEGORY
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Category }}
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+
+									</div>
+									<!-- END tab-pane -->
+									<!-- BEGIN tab-pane -->
+									<div class="tab-pane fade" id="logs_{{ meter.id }}">
+										<!-- BEGIN DATATABLE -->
+										<div class="pt-2 align-items-center">
+											<table id="log2_{{ meter.id }}"></table>
+										</div>
+										<!-- END DATATABLE -->
+									</div>
+									<!-- END tab-pane -->
+
+									<!-- BEGIN SETTINGS -->
+									<div class="tab-pane fade" id="settings_{{ meter.id }}">
+										<!-- BEGIN DATATABLE -->
+										<div class="pt-2 align-items-center">
+											<!-- BEGIN #notifications -->
+											<div id="notifications" class="mb-5">
+												<h6><i class="far fa-bell fa-fw text-theme"></i> Notifications</h6>
+												<p>Enable or disable what notifications you want to receive.</p>
+												<div class="card">
+													<div class="list-group list-group-flush">
+														<div class="list-group-item d-flex align-items-center">
+															<div class="flex-1 text-break">
+																<div>Comments</div>
+																<div class="text-white text-opacity-50 d-flex align-items-center">
+																	<i class="fa fa-circle fs-8px fa-fw text-success me-1"></i> Enabled (Push, SMS)
+																</div>
+															</div>
+															<div>
+																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
+															</div>
+														</div>
+														<div class="list-group-item d-flex align-items-center">
+															<div class="flex-1 text-break">
+																<div>Tags</div>
+																<div class="text-white text-opacity-50 d-flex align-items-center">
+																	<i class="fa fa-circle fs-8px fa-fw me-1"></i> Disabled
+																</div>
+															</div>
+															<div>
+																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
+															</div>
+														</div>
+														<div class="list-group-item d-flex align-items-center">
+															<div class="flex-1 text-break">
+																<div>Reminders</div>
+																<div class="text-white text-opacity-50 d-flex align-items-center">
+																	<i class="fa fa-circle fs-8px fa-fw text-success me-1"></i> Enabled (Push, Email, SMS)
+																</div>
+															</div>
+															<div>
+																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
+															</div>
+														</div>
+														<div class="list-group-item d-flex align-items-center">
+															<div class="flex-1 text-break">
+																<div>New orders</div>
+																<div class="text-white text-opacity-50 d-flex align-items-center">
+																	<i class="fa fa-circle fs-8px fa-fw text-success me-1"></i> Enabled (Push, Email, SMS)
+																</div>
+															</div>
+															<div>
+																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
+															</div>
+														</div>
+													</div>
+													<div class="card-arrow">
+														<div class="card-arrow-top-left"></div>
+														<div class="card-arrow-top-right"></div>
+														<div class="card-arrow-bottom-left"></div>
+														<div class="card-arrow-bottom-right"></div>
+													</div>
+												</div>
+											</div>
+											<!-- END #notifications -->
+										</div>
+										<!-- END DATATABLE -->
+									</div>
+									<!-- END SETTINGS -->
+
+								</div>
+								<!-- END tab-content -->
+								
+							</div>
+							<!-- END METER DETAILS -->
+						{% endfor %}
+						</div>
+						<!-- END SUPPLY -->
+
+
+
+						<!-- BEGIN consumer -->
+						<div class="text-white small mb-2"><b>CONSUMERS</b></div>
+						<div class="list-group mb-3">							
+						{% for meter in meter_list_consumer %}
+							<!-- BEGIN METER -->
+							<input type="hidden" id="hidden_Node_Status_{{ meter.id }}" value="0">
+							<input type="hidden" id="hidden_Meter_Status_{{ meter.id }}" value="0">
+							<div class="list-group-item d-flex align-items-center">
+								<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}" id="#go_map_{{ meter.id }}">
+									<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+										{{ meter.Name|make_list|first }}
+									</div>
+								</a>
+								<div class="flex-fill px-3">									
+									<a href="#" class="text-white" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}">							
+										<div class="fw-bold">{{ meter.Name }}</div>
+									</a>
+								</div>								
+
+								<!-- <div class="flex-fill px-3">
+									<div class="small text-white text-opacity-50">Last Updated: {{ meter.Last_Updated|timesince }}</div>
+								</div> -->
+
+								<div class="opacity-10 px-3">
+									<div class="fw-bold"><span id="value_main_{{ meter.id }}">0</span> m³</div>
+								</div>
+
+								<div class="opacity-10 px-3">
+									<span id="Meter_Status_{{ meter.id }}" class="badge bg-theme" data-bs-toggle="tooltip">M</span>
+									<span id="Node_Status_{{ meter.id }}" class="badge bg-theme" data-bs-toggle="tooltip">N</span>
+								</div>
+							</div>
+							<!-- END METER -->
+
+							<!-- BEGIN METER DETAILS -->
+							<div class="collapse list-group-item" id="collapse_{{ meter.id }}">
+
+								<!-- BEGIN nav-tabs -->
+								<ul class="nav nav-tabs nav-tabs">
+									<li class="nav-item me-3"><a href="#home_{{ meter.id }}" class="nav-link active" data-bs-toggle="tab">Data</a></li>
+									<li class="nav-item me-3"><a href="#details_{{ meter.id }}" class="nav-link" data-bs-toggle="tab">Details</a></li>
+									<li class="nav-item me-3"><a href="#logs_{{ meter.id }}" class="nav-link" data-bs-toggle="tab">Logs</a></li>
+									<li class="nav-item me-3"><a href="#settings_{{ meter.id }}" class="nav-link" data-bs-toggle="tab">Settings</a></li>
+								</ul>
+								<!-- END nav-tabs -->
+
+								<!-- BEGIN tab-content -->
+								<div class="tab-content pt-1">
+									<!-- BEGIN tab-pane -->
+									<div class="tab-pane fade show active" id="home_{{ meter.id }}">
+										<!-- BEGIN TOOLBAR -->
+										<div id="meter_toolbar_{{ meter.id }}"></div>
+										<!-- END TOOLBAR -->
+										<!-- BEGIN row -->
+										<div class="row">
+											<div class="col-9">												
+												<!-- BEGIN CHART -->
+												<div class="pt-1 flex-1">
+													<div id="meter_chart_{{ meter.id }}" class="pt-1 flex-1"></div>
+													<div id="meter_chart_polar_{{ meter.id }}" class="pt-1 flex-1"></div>												
+												</div>
+												<!-- END CHART -->
+											</div>
+											<div class="col-3">
+												<!-- BEGIN DAILY AVE -->
+												<div class="w-150px h-98px pt-1 ps-3">
+													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
+														24H AVE (m³/d)
+													</div>
+													<div class="mb-2 fs-5 text-truncate">
+														<h4 class="mb-0"><span id="24h_ave_value_{{ meter.id }}">0</span></h4>
+													</div>
+													<div class="progress h-3px bg-white-transparent-2 mb-1">
+														<div class="progress-bar bg-theme" id="24h_ave_bar_{{ meter.id }}" style="width: 0%"></div>
+													</div>
+													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+														<span id="24h_ave_info_{{ meter.id }}">@ 0% of max DA recorded.</span>
+													</div>
+												</div>
+												<!-- END DAILY AVE -->
+												<!-- BEGIN HOURLY AVE -->
+												<div class="w-150px h-98px pt-1 ps-3">
+													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
+														HOURLY AVE (m³/h)
+													</div>
+													<div class="mb-2 fs-5 text-truncate">
+														<h4 class="mb-0"><span id="hourly_ave_value_{{ meter.id }}">0</span> </h4>
+													</div>
+													<div class="progress h-3px bg-white-transparent-2 mb-1">
+														<div class="progress-bar bg-theme" id="hourly_ave_bar_{{ meter.id }}" style="width: 0%"></div>
+													</div>
+													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+														<span id="hourly_ave_info_{{ meter.id }}">@ 0% of max HA recorded.</span>
+													</div>
+												</div>
+												<!-- END HOURLY AVE -->
+												<!-- BEGIN MAX FLOW -->
+												<div class="w-150px h-98px pt-1 ps-3">
+													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
+														MAX FLOW (m³/h)
+													</div>
+													<div class="mb-2 fs-5 text-truncate">
+														<h4 class="mb-0"><span id="max_flow_value_{{ meter.id }}">0</span> </h4>
+													</div>
+													<div class="progress h-3px bg-white-transparent-2 mb-1">
+														<div class="progress-bar bg-theme" id="max_flow_bar_{{ meter.id }}" style="width: 0%"></div>
+													</div>
+													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+														<span id="max_flow_info_{{ meter.id }}">@ 0% of max max fr.</span>
+													</div>
+												</div>
+												<!-- END MAX FLOW -->
+												<!-- BEGIN MIN FLOW -->
+												<div class="w-150px h-98px pt-1 ps-3">
+													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
+														MIN FLOW (m³/h)
+													</div>
+													<div class="mb-2 fs-5 text-truncate">
+														<h4 class="mb-0"><span id="min_flow_value_{{ meter.id }}">0</span> </h4>
+													</div>
+													<div class="progress h-3px bg-white-transparent-2 mb-1">
+														<div class="progress-bar bg-theme" id="min_flow_bar_{{ meter.id }}" style="width: 0%"></div>
+													</div>
+													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+														<span id="min_flow_info_{{ meter.id }}">@ 0% of min fr.</span>
+													</div>
+												</div>
+												<!-- END MIN FLOW -->
+											</div>
+										</div>
+										<!-- END row -->
+									</div>
+									<!-- END tab-pane -->
+									<!-- BEGIN tab-pane -->
+									<div class="tab-pane fade" id="details_{{ meter.id }}">
+
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												START OF LOGGING
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Start_Date }}
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												START INDEX
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Start_Index }} m³
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												TOTAL CONSUMPTION
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Start_Index }} m³
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												PULSE UNIT MEASUREMENT
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Pulse_Unit_Measurement }}
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												PULSE UNIT VALUE
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Pulse_Unit_Value }}
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												LOCATION LAT
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Lat }}
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												LOCATION LNG
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Lng }}
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												METER TYPE
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Type }}
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												REGION
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Region }}
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												CATEGORY
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Category }}
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+
+									</div>
+									<!-- END tab-pane -->
+									<!-- BEGIN tab-pane -->
+									<div class="tab-pane fade" id="logs_{{ meter.id }}">
+										<!-- BEGIN DATATABLE -->
+										<div class="pt-2 align-items-center">
+											<table id="log2_{{ meter.id }}"></table>
+										</div>
+										<!-- END DATATABLE -->
+									</div>
+									<!-- END tab-pane -->
+
+									<!-- BEGIN SETTINGS -->
+									<div class="tab-pane fade" id="settings_{{ meter.id }}">
+										<!-- BEGIN DATATABLE -->
+										<div class="pt-2 align-items-center">
+											<!-- BEGIN #notifications -->
+											<div id="notifications" class="mb-5">
+												<h6><i class="far fa-bell fa-fw text-theme"></i> Notifications</h6>
+												<p>Enable or disable what notifications you want to receive.</p>
+												<div class="card">
+													<div class="list-group list-group-flush">
+														<div class="list-group-item d-flex align-items-center">
+															<div class="flex-1 text-break">
+																<div>Comments</div>
+																<div class="text-white text-opacity-50 d-flex align-items-center">
+																	<i class="fa fa-circle fs-8px fa-fw text-success me-1"></i> Enabled (Push, SMS)
+																</div>
+															</div>
+															<div>
+																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
+															</div>
+														</div>
+														<div class="list-group-item d-flex align-items-center">
+															<div class="flex-1 text-break">
+																<div>Tags</div>
+																<div class="text-white text-opacity-50 d-flex align-items-center">
+																	<i class="fa fa-circle fs-8px fa-fw me-1"></i> Disabled
+																</div>
+															</div>
+															<div>
+																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
+															</div>
+														</div>
+														<div class="list-group-item d-flex align-items-center">
+															<div class="flex-1 text-break">
+																<div>Reminders</div>
+																<div class="text-white text-opacity-50 d-flex align-items-center">
+																	<i class="fa fa-circle fs-8px fa-fw text-success me-1"></i> Enabled (Push, Email, SMS)
+																</div>
+															</div>
+															<div>
+																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
+															</div>
+														</div>
+														<div class="list-group-item d-flex align-items-center">
+															<div class="flex-1 text-break">
+																<div>New orders</div>
+																<div class="text-white text-opacity-50 d-flex align-items-center">
+																	<i class="fa fa-circle fs-8px fa-fw text-success me-1"></i> Enabled (Push, Email, SMS)
+																</div>
+															</div>
+															<div>
+																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
+															</div>
+														</div>
+													</div>
+													<div class="card-arrow">
+														<div class="card-arrow-top-left"></div>
+														<div class="card-arrow-top-right"></div>
+														<div class="card-arrow-bottom-left"></div>
+														<div class="card-arrow-bottom-right"></div>
+													</div>
+												</div>
+											</div>
+											<!-- END #notifications -->
+										</div>
+										<!-- END DATATABLE -->
+									</div>
+									<!-- END SETTINGS -->
+
+								</div>
+								<!-- END tab-content -->
+								
+							</div>
+							<!-- END METER DETAILS -->
+						{% endfor %}
+						</div>
+						<!-- END consumer -->
+
+
+
+
+
+						<!-- BEGIN waste -->
+						<div class="text-white small mb-2"><b>WASTEWATER</b></div>
+						<div class="list-group mb-3">							
+						{% for meter in meter_list_waste %}
+							<!-- BEGIN METER -->
+							<input type="hidden" id="hidden_Node_Status_{{ meter.id }}" value="0">
+							<input type="hidden" id="hidden_Meter_Status_{{ meter.id }}" value="0">
+							<div class="list-group-item d-flex align-items-center">
+								<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}" id="#go_map_{{ meter.id }}">
+									<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+										{{ meter.Name|make_list|first }}
+									</div>
+								</a>
+								<div class="flex-fill px-3">									
+									<a href="#" class="text-white" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}">							
+										<div class="fw-bold">{{ meter.Name }}</div>
+									</a>
+								</div>								
+
+								<!-- <div class="flex-fill px-3">
+									<div class="small text-white text-opacity-50">Last Updated: {{ meter.Last_Updated|timesince }}</div>
+								</div> -->
+
+								<div class="opacity-10 px-3">
+									<div class="fw-bold"><span id="value_main_{{ meter.id }}">0</span> m³</div>
+								</div>
+
+								<div class="opacity-10 px-3">
+									<span id="Meter_Status_{{ meter.id }}" class="badge bg-theme" data-bs-toggle="tooltip">M</span>
+									<span id="Node_Status_{{ meter.id }}" class="badge bg-theme" data-bs-toggle="tooltip">N</span>
+								</div>
+							</div>
+							<!-- END METER -->
+
+							<!-- BEGIN METER DETAILS -->
+							<div class="collapse list-group-item" id="collapse_{{ meter.id }}">
+
+								<!-- BEGIN nav-tabs -->
+								<ul class="nav nav-tabs nav-tabs">
+									<li class="nav-item me-3"><a href="#home_{{ meter.id }}" class="nav-link active" data-bs-toggle="tab">Data</a></li>
+									<li class="nav-item me-3"><a href="#details_{{ meter.id }}" class="nav-link" data-bs-toggle="tab">Details</a></li>
+									<li class="nav-item me-3"><a href="#logs_{{ meter.id }}" class="nav-link" data-bs-toggle="tab">Logs</a></li>
+									<li class="nav-item me-3"><a href="#settings_{{ meter.id }}" class="nav-link" data-bs-toggle="tab">Settings</a></li>
+								</ul>
+								<!-- END nav-tabs -->
+
+								<!-- BEGIN tab-content -->
+								<div class="tab-content pt-1">
+									<!-- BEGIN tab-pane -->
+									<div class="tab-pane fade show active" id="home_{{ meter.id }}">
+										<!-- BEGIN TOOLBAR -->
+										<div id="meter_toolbar_{{ meter.id }}"></div>
+										<!-- END TOOLBAR -->
+										<!-- BEGIN row -->
+										<div class="row">
+											<div class="col-9">												
+												<!-- BEGIN CHART -->
+												<div class="pt-1 flex-1">
+													<div id="meter_chart_{{ meter.id }}" class="pt-1 flex-1"></div>
+													<div id="meter_chart_polar_{{ meter.id }}" class="pt-1 flex-1"></div>												
+												</div>
+												<!-- END CHART -->
+											</div>
+											<div class="col-3">
+												<!-- BEGIN DAILY AVE -->
+												<div class="w-150px h-98px pt-1 ps-3">
+													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
+														24H AVE (m³/d)
+													</div>
+													<div class="mb-2 fs-5 text-truncate">
+														<h4 class="mb-0"><span id="24h_ave_value_{{ meter.id }}">0</span></h4>
+													</div>
+													<div class="progress h-3px bg-white-transparent-2 mb-1">
+														<div class="progress-bar bg-theme" id="24h_ave_bar_{{ meter.id }}" style="width: 0%"></div>
+													</div>
+													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+														<span id="24h_ave_info_{{ meter.id }}">@ 0% of max DA recorded.</span>
+													</div>
+												</div>
+												<!-- END DAILY AVE -->
+												<!-- BEGIN HOURLY AVE -->
+												<div class="w-150px h-98px pt-1 ps-3">
+													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
+														HOURLY AVE (m³/h)
+													</div>
+													<div class="mb-2 fs-5 text-truncate">
+														<h4 class="mb-0"><span id="hourly_ave_value_{{ meter.id }}">0</span> </h4>
+													</div>
+													<div class="progress h-3px bg-white-transparent-2 mb-1">
+														<div class="progress-bar bg-theme" id="hourly_ave_bar_{{ meter.id }}" style="width: 0%"></div>
+													</div>
+													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+														<span id="hourly_ave_info_{{ meter.id }}">@ 0% of max HA recorded.</span>
+													</div>
+												</div>
+												<!-- END HOURLY AVE -->
+												<!-- BEGIN MAX FLOW -->
+												<div class="w-150px h-98px pt-1 ps-3">
+													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
+														MAX FLOW (m³/h)
+													</div>
+													<div class="mb-2 fs-5 text-truncate">
+														<h4 class="mb-0"><span id="max_flow_value_{{ meter.id }}">0</span> </h4>
+													</div>
+													<div class="progress h-3px bg-white-transparent-2 mb-1">
+														<div class="progress-bar bg-theme" id="max_flow_bar_{{ meter.id }}" style="width: 0%"></div>
+													</div>
+													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+														<span id="max_flow_info_{{ meter.id }}">@ 0% of max max fr.</span>
+													</div>
+												</div>
+												<!-- END MAX FLOW -->
+												<!-- BEGIN MIN FLOW -->
+												<div class="w-150px h-98px pt-1 ps-3">
+													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
+														MIN FLOW (m³/h)
+													</div>
+													<div class="mb-2 fs-5 text-truncate">
+														<h4 class="mb-0"><span id="min_flow_value_{{ meter.id }}">0</span> </h4>
+													</div>
+													<div class="progress h-3px bg-white-transparent-2 mb-1">
+														<div class="progress-bar bg-theme" id="min_flow_bar_{{ meter.id }}" style="width: 0%"></div>
+													</div>
+													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+														<span id="min_flow_info_{{ meter.id }}">@ 0% of min fr.</span>
+													</div>
+												</div>
+												<!-- END MIN FLOW -->
+											</div>
+										</div>
+										<!-- END row -->
+									</div>
+									<!-- END tab-pane -->
+									<!-- BEGIN tab-pane -->
+									<div class="tab-pane fade" id="details_{{ meter.id }}">
+
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												START OF LOGGING
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Start_Date }}
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												START INDEX
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Start_Index }} m³
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												TOTAL CONSUMPTION
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Start_Index }} m³
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												PULSE UNIT MEASUREMENT
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Pulse_Unit_Measurement }}
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												PULSE UNIT VALUE
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Pulse_Unit_Value }}
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												LOCATION LAT
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Lat }}
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												LOCATION LNG
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Lng }}
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												METER TYPE
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Type }}
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												REGION
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Region }}
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+										<!-- BEGIN DETAILS ROW -->
+										<div class="d-flex pt-2 align-items-center">
+											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+											<div class="flex-fill fs-12px px-3">
+												CATEGORY
+											</div>			
+											<div class="fs-12px ms-auto">
+												{{ meter.Category }}
+											</div>
+										</div>
+										<!-- END DETAILS ROW -->
+
+									</div>
+									<!-- END tab-pane -->
+									<!-- BEGIN tab-pane -->
+									<div class="tab-pane fade" id="logs_{{ meter.id }}">
+										<!-- BEGIN DATATABLE -->
+										<div class="pt-2 align-items-center">
+											<table id="log2_{{ meter.id }}"></table>
+										</div>
+										<!-- END DATATABLE -->
+									</div>
+									<!-- END tab-pane -->
+
+									<!-- BEGIN SETTINGS -->
+									<div class="tab-pane fade" id="settings_{{ meter.id }}">
+										<!-- BEGIN DATATABLE -->
+										<div class="pt-2 align-items-center">
+											<!-- BEGIN #notifications -->
+											<div id="notifications" class="mb-5">
+												<h6><i class="far fa-bell fa-fw text-theme"></i> Notifications</h6>
+												<p>Enable or disable what notifications you want to receive.</p>
+												<div class="card">
+													<div class="list-group list-group-flush">
+														<div class="list-group-item d-flex align-items-center">
+															<div class="flex-1 text-break">
+																<div>Comments</div>
+																<div class="text-white text-opacity-50 d-flex align-items-center">
+																	<i class="fa fa-circle fs-8px fa-fw text-success me-1"></i> Enabled (Push, SMS)
+																</div>
+															</div>
+															<div>
+																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
+															</div>
+														</div>
+														<div class="list-group-item d-flex align-items-center">
+															<div class="flex-1 text-break">
+																<div>Tags</div>
+																<div class="text-white text-opacity-50 d-flex align-items-center">
+																	<i class="fa fa-circle fs-8px fa-fw me-1"></i> Disabled
+																</div>
+															</div>
+															<div>
+																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
+															</div>
+														</div>
+														<div class="list-group-item d-flex align-items-center">
+															<div class="flex-1 text-break">
+																<div>Reminders</div>
+																<div class="text-white text-opacity-50 d-flex align-items-center">
+																	<i class="fa fa-circle fs-8px fa-fw text-success me-1"></i> Enabled (Push, Email, SMS)
+																</div>
+															</div>
+															<div>
+																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
+															</div>
+														</div>
+														<div class="list-group-item d-flex align-items-center">
+															<div class="flex-1 text-break">
+																<div>New orders</div>
+																<div class="text-white text-opacity-50 d-flex align-items-center">
+																	<i class="fa fa-circle fs-8px fa-fw text-success me-1"></i> Enabled (Push, Email, SMS)
+																</div>
+															</div>
+															<div>
+																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
+															</div>
+														</div>
+													</div>
+													<div class="card-arrow">
+														<div class="card-arrow-top-left"></div>
+														<div class="card-arrow-top-right"></div>
+														<div class="card-arrow-bottom-left"></div>
+														<div class="card-arrow-bottom-right"></div>
+													</div>
+												</div>
+											</div>
+											<!-- END #notifications -->
+										</div>
+										<!-- END DATATABLE -->
+									</div>
+									<!-- END SETTINGS -->
+
+								</div>
+								<!-- END tab-content -->
+								
+							</div>
+							<!-- END METER DETAILS -->
+						{% endfor %}
+						</div>
+						<!-- END waste -->
+
+
+
+
+
+
+
+
+					</div>
+					<div class="col-xl-6">
+
+						<!-- BEGIN NAV-TABS -->
+						<ul id="tabs" class="nav nav-tabs nav-tabs">
+							<li class="nav-item me-3"><a href="#reporting" class="nav-link active" data-bs-toggle="tab">Reporting</a></li>
+							<li class="nav-item me-3"><a href="#data_analysis" class="nav-link" data-bs-toggle="tab">Data Analysis</a></li>
+							<li class="nav-item me-3"><a href="#map" class="nav-link" data-bs-toggle="tab">Map</a></li>
+							<!-- <li class="nav-item me-3"><a href="#schematics" class="nav-link" data-bs-toggle="tab">Schematics</a></li> -->							
+						</ul>
+						<!-- END NAV-TABS -->
+
+						<!-- BEGIN tab-content -->
+						<div class="tab-content">
+							<!-- BEGIN TAB-PANE -->
+							<div class="tab-pane fade" id="map">
+								<!-- BEGIN TOOLBAR -->
+								<div class="pt-1 mb-1" id="map_toolbar"></div>
+								<!-- END TOOLBAR -->
+								<!-- BEGIN MAP -->
+								<div class="pt-1 mb-1" id="siteMap"></div>
+								<!-- END MAP -->
+							</div>
+							<!-- END TAB-PANE -->
+
+							<!-- BEGIN TAB-PANE
+							<div class="tab-pane fade" id="schematics">
+								<div id="schematics_toolbar"></div>
+							</div>
+							END TAB-PANE -->
+
+							<!-- BEGIN TAB-PANE -->
+							<div class="tab-pane fade" id="data_analysis">
+								<!-- BEGIN TOOLBAR -->
+								<div class="pt-1 mb-1" id="data_analysis_toolbar"></div>
+								<!-- END TOOLBAR -->
+								<!-- BEGIN CHART -->
+								<div class="pt-1 mb-1" id="data_analysis_chart"></div>
+								<!-- END CHART -->
+								<!-- BEGIN RANGE -->
+								<div class="pt-1 mb-1" id="data_analysis_range"></div>
+								<!-- END RANGE -->
+							</div>
+							<!-- END TAB-PANE -->
+
+							<!-- BEGIN TAB-PANE -->
+							<div class="tab-pane fade show active" id="reporting">
+								<!-- BEGIN TOOLBAR -->
+								<div class="pt-1 mb-1" id="reporting_toolbar"></div>
+								<!-- END TOOLBAR -->
+								<div class="pt-1 mb-1">
+									<p>Totals for a <span id="report_period"></span> day period from <span id="report_from"></span> to the <span id="report_to"></span>, a total of <span id="report_not_metered"></span> m3 of supply water was not metered. The waste water total for this period was <span id="report_waste"></span> m3.</p>
+								</div>
+								<!-- BEGIN PIE -->
+								<div class="pt-1 mb-1" id="reporting_pie"></div>
+								<!-- END PIE -->
+								<!-- BEGIN PIE -->
+								<div class="pt-1 mb-1" id="reporting_bar"></div>
+								<!-- END PIE -->
+								<!-- BEGIN GAUGE -->
+								<div class="pt-1 mb-1" id="reporting_gauge"></div>
+								<!-- END GAUGE -->
+								<!-- BEGIN PIE -->
+								<div class="pt-1 mb-1" id="reporting_ledger"></div>
+								<!-- END PIE -->
+							</div>
+							<!-- END TAB-PANE -->
+						</div>
+						<!-- END tab-content -->						
+					</div>
+				</div>
 			</div>
-			<!-- END page-header -->
+			<div class="card-arrow">
+				<div class="card-arrow-top-left"></div>
+				<div class="card-arrow-top-right"></div>
+				<div class="card-arrow-bottom-left"></div>
+				<div class="card-arrow-bottom-right"></div>
+			</div>
 		</div>
-		<!-- END #content -->
-		{% endblock content %}
+	</div>
+	<!-- END -->
+
+
+</div>
+<!-- END #content -->
+{% endblock content %}
 
 
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 
 <script>
-	// SET UNIVERSAL VARIABLES
-	function setHistory(db_Data) {
-		console.log(db_Data);
-	}
-	function setCurrent(db_Data) {
-		console.log(db_Data);
-	}
-	function setStatus(db_Data) {
-		console.log(db_Data);
-	}
-	function setSetup(db_Data) {
-		console.log(db_Data);
-	}
+	// -- GET OVERALL STATUS 
+	var markersData = []
+	var newMarker = {}
+	var icon = ''
+	var ajax_call = function() {
+		$.ajax({
+			type: 'GET',
+			url: '../water/meters/list/',
+			headers: {
+				"Authorization": "Basic " + btoa("admin" + ":" + "will1977"),
+				'Accept' : 'application/json'
+			},
+			success: function(data) {
+				
+				$.each(data['Data'], function(i, meter) {
+					// CREATE MAP MARKERS
+					if (meter.Meter_Status == 1) {icon = '/static/assets/img/map/error_marker.png'} else {icon = '/static/assets/img/map/ok_marker.png'}					
+					newMarker = {
+						location: {
+							lat: meter.Lat, 
+							lng: meter.Lng
+						},
+						tooltip: {
+							text: meter.Name,
+						},
+						iconSrc: icon,
+					}
+					markersData.push(newMarker)					
 
-	var startWebSocket = function () {
-		var autosondeSocket;
-		var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-		var ws_path = ws_scheme + '://' + window.location.host + ':8001/dalys/';
-		console.log(ws_path)
-		autosondeSocket = new WebSocket(ws_path);    
+					// SET STATUS 
+					//console.log(meter.Name + ': ' + parseInt(Math.abs(new Date()-new Date(meter.Last_Updated)) / (1000 * 60)))
+					if (parseInt(Math.abs(new Date()-new Date(meter.Last_Updated)) / (1000 * 60)) > 2) {
+						$('#Meter_Status_' + meter.id).addClass('bg-danger');
+						$('#Meter_Status_' + meter.id).attr('title', 'Last time data updated was too long.');
+						$("#hidden_Meter_Status_" + meter.id).val('1');
+					} else {
+						$('#Meter_Status_' + meter.id).removeClass('bg-danger');
+						$("#hidden_Meter_Status_" + meter.id).val('0');
+					}
 
-		autosondeSocket.onmessage = function (e) {
-			ws_Data = JSON.parse(e.data).message;
-			console.log(ws_Data);
-		};
+					// SET VALUES
+					set_text(meter.id, meter.Pulse_Unit_Measurement, meter.Pulse_Unit_Value, meter.readings);
 
-		autosondeSocket.onclose = function (e) {
-			console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
-		};
+					// SET MAP MARKERS
+					set_map_markers(meter);
 
-		autosondeSocket.onerror = function (err) {
-			console.error(err);
-		};
+					// SET STATUS MARKERS
+					set_status_markers(meter);	
+
+				});
+				$("#siteMap").dxMap({
+					//zoom: 5,
+					markers: markersData
+				});
+			}
+		});
 	};
 
-	function initialSetup() {
-		//setStatus(Status_Data);
-		//setSetup(Setup_Data);
-		//setHistory(History_Data);
-		//setCurrent(Current_Data);
+	function getPercentage(act, max) {
+		return (act / max) * 100;
 	}
 
+	function set_text(id, Pulse_Unit_Measurement, Pulse_Unit_Value, readings) {
+		// LOOP THROUGH READINGS
+		var value_24h_ave = 0;
+		var value_hourly_ave = 0;
+		var value_max_flow = 0;
+		var value_min_flow = 0;
+		var record_number = 0		
+		// SET PULSE VOLUME FACTOR
+		var pulse_volume_factor = 1;
+		if (Pulse_Unit_Measurement == 'liters') {
+			pulse_volume_factor = Pulse_Unit_Value/100000;
+		}
+		// LOOP DA LOOP
+		$.each(readings, function(i, reading) {
+			//console.log(reading);
+			// SET MAX FLOW
+			if (reading.Pulses*Pulse_Unit_Value*pulse_volume_factor > value_max_flow) {
+				value_max_flow = reading.Pulses*Pulse_Unit_Value*pulse_volume_factor;
+			}
+			// SET MIN FLOW
+			if (i == 0) {
+				value_min_flow = reading.Pulses*Pulse_Unit_Value*pulse_volume_factor;
+			}
+			if (reading.Pulses*Pulse_Unit_Value*pulse_volume_factor < value_min_flow) {
+				value_min_flow = reading.Pulses*Pulse_Unit_Value*pulse_volume_factor;
+			}
+			// SET HOURLY AVE
+			value_hourly_ave = value_hourly_ave + reading.Pulses*Pulse_Unit_Value*pulse_volume_factor
+			record_number += 1
+		});
+
+		$("#value_main_" + id).text((value_hourly_ave/record_number).toFixed(3));
+
+		$("#24h_ave_value_" + id).text(value_24h_ave.toFixed(3));
+		$("#24h_ave_bar_" + id).attr('style', 'width: ' + getPercentage(value_24h_ave, 4).toFixed(0) + '%');
+		$("#24h_ave_info_" + id).text('@ ' + getPercentage(value_24h_ave, 4).toFixed(0) + '% of max DA.');
+
+		$("#hourly_ave_value_" + id).text((value_hourly_ave/record_number).toFixed(3));
+		$("#hourly_ave_bar_" + id).attr('style', 'width: ' + getPercentage(value_hourly_ave/record_number, 4000).toFixed(0) + '%');
+		$("#hourly_ave_info_" + id).text('@ ' + getPercentage(value_hourly_ave/record_number, 4000).toFixed(0) + '% of max HA.');
+
+		$("#max_flow_value_" + id).text(value_max_flow.toFixed(3));
+		$("#max_flow_bar_" + id).attr('style', 'width: ' + getPercentage(value_max_flow, 4).toFixed(0) + '%');
+		$("#max_flow_info_" + id).text('@ ' + getPercentage(value_max_flow, 4).toFixed(0) + '% of max FR.');
+
+		$("#min_flow_value_" + id).text(value_min_flow.toFixed(3));
+		$("#min_flow_bar_" + id).attr('style', 'width: ' + getPercentage(value_min_flow, 4).toFixed(0) + '%');
+		$("#min_flow_info_" + id).text('@ ' + getPercentage(value_min_flow, 4).toFixed(0) + '% of min FR.');
+	}
+
+	function create_log_datatable(id) {
+		
+		// LOG		
+		var dataGrid = $('#log2_' + id).dxDataGrid({
+			//dataSource: data,
+			keyExpr: 'ID',
+			showColumnLines: false,
+			showRowLines: true,
+			rowAlternationEnabled: false,
+			showBorders: true,
+			paging: {
+				pageSize: 8,
+			},
+			pager: {
+				visible: true,
+				allowedPageSizes: [5, 10, 'all'],
+				showPageSizeSelector: true,
+				showInfo: true,
+				showNavigationButtons: true,
+			},
+			columns: [
+				{
+					title: "DATE TIME",
+					dataField: 'Data_DateTime',
+				}, {
+					title: "PULSES",
+					dataField: 'Pulses',
+					width: 100,
+				}, {
+					title: "WATER",
+					dataField: 'Water',
+					width: 100,
+				}, {
+					title: "BATT LEVEL",
+					dataField: 'Battery_Level',
+					width: 100,
+				},
+			],
+		});
+	}
+	
+	function create_charts(id) {
+		// CREATE SERIES
+		var series = [
+			{
+				type: 'bar',
+				name: 'Consumption',
+				valueField: 'Water',
+				argumentField: "Data_DateTime",
+				argumentType: "datetime",
+			},{
+				type: 'spline',
+				name: 'Baseline',
+				valueField: 'Baseline',
+				argumentField: "Data_DateTime",
+				argumentType: "datetime",
+			}
+		];
+		// CREATE POLAR CHART
+		var polar = $('#meter_chart_polar_' + id).dxPolarChart({
+			palette: 'red',
+			commonSeriesSettings: {
+				point: {
+					visible: false,
+				},
+			},
+			loadingIndicator: {
+				enabled: true
+			},
+			size: {
+				height: 300,
+			},
+			series: [
+				{
+					type: 'stackedbar',
+					name: 'Consumption',
+					valueField: 'Water',
+					argumentField: "Data_DateTime",
+					argumentType: "datetime",
+				},
+				{
+					type: 'line',
+					name: 'Baseline',
+					valueField: 'Baseline',
+					argumentField: "Data_DateTime",
+					argumentType: "datetime",
+				}
+			],
+			argumentAxis: {
+				inverted: false,
+				startAngle: 0,
+				tickInterval: 'hour',
+				period: 'day',
+			},
+			tooltip: {
+				enabled: true,
+				shared: true,
+				argumentFormat: "shortDateShortTime",
+				contentTemplate: function (pointInfo, element) {
+					var print = function (label, value) {
+						var span = $("<span>", {
+							"class": "tooltip-label",
+							text: label
+						});
+						element.append($("<div>", {
+							text: value
+						}).prepend(span));
+					};
+
+					var picarroData = {};
+					picarroData.Data = pointInfo.points[0].point.data;
+
+					print("", picarroData.Data.Data_DateTime);
+					print("Consumption: ", picarroData.Data.Water.toFixed(3));
+					print("Baseline: ", picarroData.Data.Baseline.toFixed(3));
+				},
+			},
+			legend: {
+				verticalAlignment: 'top',
+				horizontalAlignment: 'right',
+				hoverMode: 'excludePoints',
+			}
+		});
+
+		// CREATE BAR CHART
+		var chart = $('#meter_chart_' + id).dxChart({
+			palette: 'red',
+			commonSeriesSettings: {
+				point: {
+					visible: false,
+				},
+			},
+			size: {
+				height: 360,
+			},
+			loadingIndicator: {
+				enabled: true
+			},
+			argumentAxis: {
+				argumentType: "datetime",
+				label: {
+					format: "shortDateShortTime"
+				},
+				valueMarginsEnabled: false,
+				discreteAxisDivisionMode: 'crossLabels',
+				grid: {
+					visible: true,
+				},
+			},
+			series: series,
+			tooltip: {
+				enabled: true,
+			},
+			legend: {
+				verticalAlignment: 'top',
+				horizontalAlignment: 'center',
+				hoverMode: 'excludePoints',
+			},
+			crosshair: {
+				enabled: true,
+				color: '#949494',
+				width: 1,
+				dashStyle: 'dot',
+				label: {
+					visible: true,
+					backgroundColor: '#949494',
+					font: {
+					color: '#fff',
+					size: 12,
+					},
+				},
+			},
+			export: {
+				enabled: false,
+			},
+			onPointClick: function (e) {
+				var point = e.target;
+				if (point.isSelected()) {
+					point.clearSelection();
+				} else {
+					point.select();					
+				}
+			}
+		});		
+	}
+
+	
+
+	function getPercentage(act, max) {
+		return (act / max) * 100;
+	}
+
+	// CREATE TOOL BARS
+	function create_tool_bars() {
+		// CREATE  TOOL BARS
+		var toolbar = $('#_toolbar').dxToolbar({
+			items: [
+
+			],
+		});
+		// CREATE MAP TOOL BARS
+		var toolbar = $('#map_toolbar').dxToolbar({
+			items: [
+			{
+					location: 'before',
+					widget: 'dxButton',
+					locateInMenu: 'auto',
+					options: {
+						icon: 'refresh',
+						onClick() {
+							DevExpress.ui.notify('Refresh button has been clicked!');
+						},
+					},
+				}, {
+					location: 'after',
+					widget: 'dxButton',
+					locateInMenu: 'auto',
+					options: {
+						icon: 'plus',
+						onClick() {
+							DevExpress.ui.notify('Add button has been clicked!');
+						},
+					},
+				}, {
+					locateInMenu: 'always',
+					widget: 'dxButton',
+					options: {
+						text: 'Save',
+						onClick() {
+							DevExpress.ui.notify('Save option has been clicked!');
+						},
+					},
+				}, {
+					locateInMenu: 'always',
+					widget: 'dxButton',
+					options: {
+						text: 'Print',
+						onClick() {
+							DevExpress.ui.notify('Print option has been clicked!');
+						},
+					},
+				}, {
+					locateInMenu: 'always',
+					widget: 'dxButton',
+					options: {
+						text: 'Settings',
+						onClick() {
+							DevExpress.ui.notify('Settings option has been clicked!');
+						},
+					},
+				},
+			],
+		});
+		// CREATE SCHEMATIC TOOL BARS
+		var toolbar = $('#schematics_toolbar').dxToolbar({
+			items: [
+			{
+					location: 'before',
+					widget: 'dxButton',
+					locateInMenu: 'auto',
+					options: {
+						icon: 'refresh',
+						onClick() {
+							DevExpress.ui.notify('Refresh button has been clicked!');
+						},
+					},
+				}, {
+					location: 'after',
+					widget: 'dxButton',
+					locateInMenu: 'auto',
+					options: {
+						icon: 'plus',
+						onClick() {
+							DevExpress.ui.notify('Add button has been clicked!');
+						},
+					},
+				}, {
+					locateInMenu: 'always',
+					widget: 'dxButton',
+					options: {
+						text: 'Save',
+						onClick() {
+							DevExpress.ui.notify('Save option has been clicked!');
+						},
+					},
+				}, {
+					locateInMenu: 'always',
+					widget: 'dxButton',
+					options: {
+						text: 'Print',
+						onClick() {
+							DevExpress.ui.notify('Print option has been clicked!');
+						},
+					},
+				}, {
+					locateInMenu: 'always',
+					widget: 'dxButton',
+					options: {
+						text: 'Settings',
+						onClick() {
+							DevExpress.ui.notify('Settings option has been clicked!');
+						},
+					},
+				},
+			],
+		});
+				
+	}
+
+	// CREATE MAPS
+	var renderMaps = function () {
+		var siteMap = $('#siteMap').dxMap({
+			center: [51.88328620951812, -8.511571884155275],
+			zoom: 16.5,
+			height: 560,
+			width: '100%',
+			provider: 'bing',
+			controls: true,
+			apiKey: {
+			// Specify your API keys for each map provider:
+			// bing: "YOUR_BING_MAPS_API_KEY",
+			},
+			type: 'hybrid',
+    		markers: markersData,
+			mapOnClick: function (e) {
+				var point = e.target;
+			},
+		}).dxMap('instance');
+
+	};
+	
+	// GET DATA
+	function reviver_1(key, value) {
+		if (key === 'Data_DateTime' || key === 'Start_Date') {
+			return new Date(value);
+		}
+		if (key === 'readings' || key === 'logs') {
+			JSON.parse(JSON.stringify(value), reviver_2);
+		}
+		return value;
+	}
+
+	function reviver_2(key, value) {
+		if (key === 'Data_DateTime') {
+			return new Date(value);
+		}
+		return value;
+	}
+
+	var meter_list_data = JSON.parse('{{meter_list_data|escapejs}}', reviver_1).Data;
+
+	// SET UP PAGE, CREATE ALL CONTROLS
+	function page_setup() {
+		// CREATE
+		$.each(meter_list_data, function(i, meter) {
+			var Pulse_Unit_Value = meter.Pulse_Unit_Value;
+			// CREATE CHARTS
+			create_charts(meter.id);
+			$("#meter_chart_" + meter.id).show();
+			$("#meter_chart_polar_" + meter.id).hide();
+			// CREATE LOG TABLE
+			create_log_datatable(meter.id);			
+			// CREATE METER TOOL BAR
+			create_meter_tool_bars(meter);
+		});
+		// CREATE MAP
+		renderMaps();
+		// CREATE TOOLBARS
+		create_tool_bars();
+	}
+
+	// CREATE TOOL BARS BY ID
+	function create_meter_tool_bars(meter) {
+		// CREATE  TOOL BARS
+		var toolbar = $('#meter_toolbar_' + meter.id).dxToolbar({
+			items: [
+				{
+					location: 'before',
+					widget: 'dxButton',
+					locateInMenu: 'auto',
+					options: {
+						icon: 'refresh',
+						onClick() {
+							$("#meter_chart_" + meter.id).dxChart('instance').refresh();
+							$("#meter_chart_polar_" + meter.id).dxPolarChart('instance').refresh();
+							DevExpress.ui.notify('Refresh button has been clicked!');
+						},
+					},
+				}, {
+					location: 'center',
+					widget: 'dxDateBox',
+					locateInMenu: 'auto',
+					options: {
+						applyValueMode: 'useButtons',
+						width: 100,
+						value: new Date(),
+						max: new Date(),
+						min: new Date(2000, 0, 1),
+						onValueChanged(data) {
+							change_chart_data(meter.id, new Date(data.value));
+						},
+					},
+				}, {
+					location: 'center',
+					widget: 'dxDropDownButton',
+					locateInMenu: 'auto',
+					options: {
+						icon: 'chart',
+						dropDownOptions: {
+							width: 100,
+						},
+						onItemClick(e) {
+							//console.log(e.itemData);
+							change_chart_type(meter.id, e.itemData);
+						},
+						items: [
+							{id: 1, name: 'Bar', icon: 'chart' },
+							{id: 4, name: 'Line', icon: 'email'},
+							{id: 2, name: 'Polar', icon: 'group' },
+						],
+						displayExpr: 'name',
+						keyExpr: 'id',
+					},
+				}, {
+					location: 'after',
+					widget: 'dxButton',
+					locateInMenu: 'auto',
+					options: {
+						text: 'Find',
+						onClick() {
+							DevExpress.ui.notify('Find button has been clicked!');
+						},
+					},
+				}, {
+					locateInMenu: 'always',
+					widget: 'dxButton',
+					options: {
+						text: 'Print',
+						onClick() {
+							DevExpress.ui.notify('Print option has been clicked!');
+						},
+					},
+				}, {
+					locateInMenu: 'always',
+					widget: 'dxButton',
+					options: {
+						text: 'Settings',
+						onClick() {
+							DevExpress.ui.notify('Settings option has been clicked!');
+						},
+					},
+				},
+			],
+		});
+	}
+
+	// CHANGE CHART TYPE
+	function change_chart_type(id, chart_type) {
+		//console.log(chart_type);
+		if (chart_type.name === 'Bar') {
+			$("#meter_chart_" + id).show();
+			$("#meter_chart_polar_" + id).hide();
+		} else if (chart_type.name === 'Polar') {
+			$("#meter_chart_" + id).hide();
+			$("#meter_chart_polar_" + id).show();
+		} else if (chart_type.name === 'Line') {
+			$("#meter_chart_" + id).show();
+			$("#meter_chart_polar_" + id).hide();
+		}		
+	}
+
+	// CHANGE CHART DATA
+	function change_chart_data(id, date) {		
+
+		var readings = [];
+		var pulse_volume_factor = 1;
+
+		$.each(meter_list_data, function(i, meter) {
+			if (meter.id == id) {
+				// GENERATE DATA
+				$.each(meter.readings, function(i, reading) {
+					if (reading.Data_DateTime.toDateString() === date.toDateString()) {
+						// GENERATE DATA
+						$.each(meter.baseline, function(i, baseline) {
+							if (reading.Data_DateTime.getHours() == baseline.Hour) {
+								reading['Baseline'] = baseline.Pulses;
+							}
+						});
+						// PUSH
+						readings.push(reading)
+					}
+				});
+				
+				// SET PULSE VOLUME FACTOR				
+				if (meter.Pulse_Unit_Measurement == 'liters') {
+					pulse_volume_factor = meter.Pulse_Unit_Value/100000;
+				}
+
+				// SET BAR CHART DATA
+				$("#meter_chart_" + meter.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor, 'Baseline': element.Baseline*meter.Pulse_Unit_Value*pulse_volume_factor};}));
+				$("#meter_chart_" + meter.id).dxChart('instance').refresh();
+							
+				// SET POLAR CHART DATA
+				$("#meter_chart_polar_" + meter.id).dxPolarChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor, 'Baseline': element.Baseline*meter.Pulse_Unit_Value*pulse_volume_factor};}));
+				$("#meter_chart_polar_" + meter.id).dxPolarChart('instance').refresh();
+
+				// SET VALUES
+				set_text(meter.id, meter.Pulse_Unit_Measurement, meter.Pulse_Unit_Value, readings);
+			}			
+		});		
+	}
+
+	// SET UP PAGE, CREATE ALL CONTROLS
+	function data_setup() {
+		// CREATE
+		$.each(meter_list_data, function(i, meter) {
+
+			// SET PULSE VOLUME FACTOR
+			var pulse_volume_factor = 1;
+			if (meter.Pulse_Unit_Measurement == 'liters') {
+				pulse_volume_factor = meter.Pulse_Unit_Value/100000;
+			}
+
+			// SET PULSE UNIT VALUE
+			var Pulse_Unit_Value = meter.Pulse_Unit_Value;
+
+			// READINGS
+			var readings = [];
+
+			// GENERATE DATA
+			$.each(meter.readings, function(i, reading) {
+				// LAST 24 HOURS
+				var hoursBetweenDates = (reading.Data_DateTime.getTime() - new Date().getTime()) / (60 * 60 * 1000);				
+				if (hoursBetweenDates <= 24 && hoursBetweenDates >= 0) {
+					// GENERATE DATA
+					$.each(meter.baseline, function(i, baseline) {
+						if (reading.Data_DateTime.getHours() == baseline.Hour) {
+							reading['Baseline'] = baseline.Pulses;
+						}
+					});
+					// PUSH
+					readings.push(reading)
+				}
+			});
+
+			// SET CHART DATA
+			$("#meter_chart_" + meter.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor, 'Baseline': element.Baseline*meter.Pulse_Unit_Value*pulse_volume_factor};}));
+			$("#meter_chart_" + meter.id).dxChart('instance').refresh();
+
+			// SET POLAR CHART DATA
+			$("#meter_chart_polar_" + meter.id).dxPolarChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor, 'Baseline': element.Baseline*meter.Pulse_Unit_Value*pulse_volume_factor};}));
+			$("#meter_chart_polar_" + meter.id).dxPolarChart('instance').refresh();
+			
+			// SET LOG VALUES
+			$("#log2_" + meter.id).dxDataGrid("option", "dataSource", readings.map(function(element) {return {'ID': element.id, 'Data_DateTime': element.Data_DateTime, 'Pulses': element.Pulses, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor, 'Battery_Level': element.Battery_Level};}));
+			$("#log2_" + meter.id).dxDataGrid('instance').refresh();
+
+			// SET CHART DATA
+			$("#data_analysis_chart").dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor, 'Baseline': element.Baseline*meter.Pulse_Unit_Value*pulse_volume_factor};}));
+			$("#data_analysis_chart").dxChart('instance').refresh();
+
+			// SET VALUES
+			set_text(meter.id, meter.Pulse_Unit_Measurement, meter.Pulse_Unit_Value, readings)
+
+			// SET MAP MARKERS
+			set_map_markers(meter);
+
+			// SET STATUS MARKERS
+			set_status_markers(meter);			
+
+			// CREATE FAKE DATA
+			//fake_data(meter.id);
+		});
+		// PUSH MAP MARKERS
+		$("#siteMap").dxMap({
+			//zoom: 5,
+			markers: markersData
+		});
+	}
+
+	// SET MAP MARKERS
+	function set_map_markers(meter) {
+		if (meter.Meter_Status == 1) {icon = '/static/assets/img/map/error_marker.png'} else {icon = '/static/assets/img/map/ok_marker.png'}					
+		newMarker = {
+			location: {
+				lat: meter.Lat, 
+				lng: meter.Lng
+			},
+			tooltip: {
+				text: meter.Name,
+			},
+			iconSrc: icon,
+		}
+		markersData.push(newMarker)			
+	}
+
+	// SET STATUS MARKERS
+	function set_status_markers(meter) {
+		//console.log(meter.Name + ': ' + parseInt(Math.abs(new Date()-new Date(meter.Last_Updated)) / (1000 * 60)))
+		if (parseInt(Math.abs(new Date()-new Date(meter.Last_Updated)) / (1000 * 60)) > 2) {
+			$('#Meter_Status_' + meter.id).addClass('bg-danger');
+			$('#Meter_Status_' + meter.id).attr('title', 'Last time data updated was too long.');
+			$("#hidden_Meter_Status_" + meter.id).val('1');
+		} else {
+			$('#Meter_Status_' + meter.id).removeClass('bg-danger');
+			$("#hidden_Meter_Status_" + meter.id).val('0');
+		}
+	}
+
+	// CREATE FAKE DATA
+	function fake_data(id) {
+		var start = new Date("06/05/2022");
+		var end = new Date("07/05/2022");
+		var loop = new Date(start);
+
+		while (loop <= end) {
+			data = {
+				"Meter": id,
+				"Data_DateTime": loop,
+				"Pulses": Math.floor((Math.random() * 10) + 1),
+				"Battery_Level": 100,
+				"Battery_Voltage": 3.2
+            }
+
+			$.ajax({
+				type: 'POST',
+				url: '../water/readings/data/',
+				headers: {
+					"Authorization": "Basic " + btoa("admin" + ":" + "will1977"),
+					"X-CSRFTOKEN": "{{ csrf_token }}",
+				},
+				dataType: 'json',
+				contentType: "application/json",
+				data: JSON.stringify(data),
+				success: function (data) {
+					//console.log(data);
+				},
+				async: false
+			});
+
+			var newDate = loop.setTime(loop.getTime() + 1*60*60*1000);
+			loop = new Date(newDate);
+
+			break
+		}
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// DATA ANALYSIS
+	//////////////////////////////////////////////////////////////////////////
+
+	// SET CHART DATA
+	//$("#data_analysis_chart").dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor, 'Baseline': element.Baseline*meter.Pulse_Unit_Value*pulse_volume_factor};}));
+	//$("#data_analysis_chart").dxChart('instance').refresh();
+
+	
+	$(".nav-link").click(function (event) {
+		console.log('CCCCCCCCCCCCCCCCC');
+		$("#data_analysis_chart").dxChart('instance').refresh();
+	});
+
+	var renderDataAnalysis = function () {
+		// RANGE
+		var range = $('#data_analysis_range').dxRangeSelector({			
+			scale: {
+				startValue: new Date(2022, 1, 1),
+				endValue: new Date(),
+				minorTickInterval: 'day',
+				tickInterval: 'week',
+				minRange: 'week',
+				maxRange: 'month',
+				minorTick: {
+					visible: false,
+				},
+			},
+			sliderMarker: {
+				format: 'monthAndDay',
+			},
+			value: [new Date(2022, 5, 1), new Date()],
+		});
+		// CREATE SERIES
+		var series = [
+			{
+				type: 'spline',
+				name: 'Consumption',
+				valueField: 'Water',
+				argumentField: "Data_DateTime",
+				argumentType: "datetime",
+			},
+		];
+		// CHART
+		var chart = $('#data_analysis_chart').dxChart({
+			palette: 'red',
+			commonSeriesSettings: {
+				point: {
+					visible: false,
+				},
+			},
+			size: {
+				height: 360,
+			},
+			loadingIndicator: {
+				enabled: true
+			},
+			argumentAxis: {
+				argumentType: "datetime",
+				label: {
+					format: "shortDateShortTime"
+				},
+				valueMarginsEnabled: false,
+				discreteAxisDivisionMode: 'crossLabels',
+				grid: {
+					visible: true,
+				},
+			},
+			series: series,
+			tooltip: {
+				enabled: true,
+			},
+			legend: {
+				verticalAlignment: 'top',
+				horizontalAlignment: 'center',
+				hoverMode: 'excludePoints',
+			},
+			crosshair: {
+				enabled: true,
+				color: '#949494',
+				width: 1,
+				dashStyle: 'dot',
+				label: {
+					visible: true,
+					backgroundColor: '#949494',
+					font: {
+					color: '#fff',
+					size: 12,
+					},
+				},
+			},
+			export: {
+				enabled: false,
+			},
+			onPointClick: function (e) {
+				var point = e.target;
+				if (point.isSelected()) {
+					point.clearSelection();
+				} else {
+					point.select();					
+				}
+			}
+		});
+		// TOOL BAR
+		var toolbar = $('#data_analysis_toolbar').dxToolbar({
+			items: [
+			{
+					location: 'before',
+					widget: 'dxButton',
+					locateInMenu: 'auto',
+					options: {
+						icon: 'refresh',
+						onClick() {
+							DevExpress.ui.notify('Refresh button has been clicked!');
+						},
+					},
+				}, {
+					location: 'center',
+					widget: 'dxSelectBox',
+					locateInMenu: 'auto',
+					options: {
+						items: [
+							{
+								id: 1,
+								text: 'Main Water Meter',
+							}, {
+								id: 2,
+								text: 'CRC Pod Meter',
+							}, {
+								id: 3,
+								text: 'Main Ward Block',
+							}, {
+								id: 4,
+								text: 'Maternity Basement Meter',
+							}, {
+								id: 5,
+								text: 'Wastewater Flume',
+							}
+						],
+						valueExpr: 'id',
+						displayExpr: 'text',
+						value: 1,
+						onValueChanged(args) {
+							
+						},
+					},
+				}, {
+					locateInMenu: 'always',
+					widget: 'dxButton',
+					options: {
+						text: 'Print',
+						onClick() {
+							DevExpress.ui.notify('Print option has been clicked!');
+						},
+					},
+				}, {
+					locateInMenu: 'always',
+					widget: 'dxButton',
+					options: {
+						text: 'Settings',
+						onClick() {
+							DevExpress.ui.notify('Settings option has been clicked!');
+						},
+					},
+				},
+			],
+		});
+	};
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// REPORTS
+	//////////////////////////////////////////////////////////////////////////
+
+	// GET REPORT DATA BY DATE RANGE
+	function reportData(from, to) {
+		//console.log(meter_list_data);
+		var data = [];		
+		$.each(meter_list_data, function(i, meter) {
+			// SET PULSE VOLUME FACTOR
+			var pulse_volume_factor = 1;
+			if (meter.Pulse_Unit_Measurement == 'liters') {
+				pulse_volume_factor = meter.Pulse_Unit_Value/100000;
+			};			
+			var meter_pulses = 0
+			$.each(meter.report, function(i, report) {
+				if (dateCheck(from,to,report.Data_DateTime)) {
+					meter_pulses += report.Pulses;
+					//console.log(report.Pulses);
+				}				
+			});
+			if (meter.Category == 'Supply') {
+				var supply = (meter_pulses*pulse_volume_factor).toFixed(3);
+			} else if (meter.Category == 'Waste') {
+				var waste = (meter_pulses*pulse_volume_factor).toFixed(3);
+			} else if (meter.Category == 'Consumer') {
+				var consumer = (meter_pulses*pulse_volume_factor).toFixed(3);
+			}
+			// PUSH
+			data.push({
+				ID: meter.id, 
+				Meter: meter.Name, 
+				Water: (meter_pulses*pulse_volume_factor).toFixed(3),
+				Supply: supply,
+				Waste: waste,
+				Consumer: consumer, 
+				Type: meter.Category,
+			})
+		});
+		return data;
+	}
+
+	function dateCheck(from, to, check) {
+		if((check <= to && check >= from)) {
+			return true;
+		}
+		return false;
+	}
+
+	function change_reporting_data(date, type) {
+
+		var from = $("#reporting_toolbar").dxToolbar('instance').option('items')[2].options.value;
+		var to = $("#reporting_toolbar").dxToolbar('instance').option('items')[4].options.value;
+
+		if (type == 'from') {
+			from = date;
+		} else {
+			to = date;
+		}
+
+		var data = reportData(new Date(from), new Date(to));
+
+		var new_data = [];
+		var supply = 0;
+		var consumer = 0;
+		var waste = 0;
+		$.each(data, function(i, meter) {
+			if (meter.Type == 'Supply') {
+				supply += parseFloat(meter.Water);
+			} else if (meter.Type == 'Consumer') {
+				new_data.push(meter);
+				consumer += parseFloat(meter.Water);
+			} else if (meter.Type == 'Waste') {
+				waste += parseFloat(meter.Water);
+			}
+		});
+		var not_metered = supply-consumer;
+		new_data.push({
+			ID: 0, 
+			Meter: 'Not Metered', 
+			Water: not_metered.toFixed(3),
+			Supply: null,
+			Waste: null,
+			Consumer: null, 
+			Type: 'Not Metered',
+		})
+		var Difference_In_Days = (new Date(to).getTime() - new Date(from).getTime()) / (1000 * 3600 * 24);
+
+		// PIE CHART DATA
+		$("#reporting_pie").dxPieChart("option", "dataSource", new_data);
+		$("#reporting_pie").dxPieChart('instance').refresh();
+
+		// BAR CHART DATA
+		$("#reporting_bar").dxChart("option", "dataSource", data);
+		$("#reporting_bar").dxChart('instance').refresh();
+
+		// LEDGER DATA
+		$("#reporting_ledger").dxDataGrid("option", "dataSource", data);
+		$("#reporting_ledger").dxDataGrid('instance').refresh();
+
+		// TEXT
+		$("#report_period").text(Difference_In_Days.toFixed(0));
+		$("#report_from").text(new Date(from).toDateString());
+		$("#report_to").text(new Date(to).toDateString());
+		$("#report_not_metered").text(not_metered.toFixed(3));
+		$("#report_waste").text(waste.toFixed(3));
+	}
+
+	var renderReport = function () {
+
+		// PIE CHART
+		var piechart = $('#reporting_pie').dxPieChart({
+			palette: 'red',
+			//dataSource: data,
+			legend: {
+				horizontalAlignment: 'center',
+				verticalAlignment: 'bottom',
+			},
+			series: [{
+				argumentField: 'Meter',
+				valueField: 'Water',
+				label: {
+					visible: true,
+					connector: {
+						visible: true,
+						width: 0.5,
+					},
+					format: 'fixedPoint',
+					customizeText(point) {
+						return `${point.value} m3`;
+					},
+				},
+			}],
+		});
+
+		// BAR CHART
+		var barChart = $('#reporting_bar').dxChart({
+			//dataSource: data,
+			palette: 'red',
+			commonSeriesSettings: {
+				type: 'bar',
+				valueField: 'Water',
+				argumentField: 'Meter',
+				ignoreEmptyPoints: true,
+			},
+			rotated: true,
+			seriesTemplate: {
+				nameField: 'Meter',
+			},
+		});
+
+		// LEDGER		
+		var dataGrid = $('#reporting_ledger').dxDataGrid({
+			//dataSource: data,
+			keyExpr: 'ID',
+			showColumnLines: false,
+			showRowLines: true,
+			rowAlternationEnabled: false,
+			showBorders: true,
+			columns: [
+				{
+					dataField: 'Meter',
+				}, {
+					dataField: 'Supply',
+					width: 100,
+				}, {
+					dataField: 'Consumer',
+					width: 100,
+				}, {
+					dataField: 'Waste',
+					width: 100,
+				},
+			],
+			summary: {
+				totalItems: [
+					{
+						summaryType: 'sum',
+						displayFormat: '{0}',
+						column: 'Supply',
+					}, {
+						summaryType: 'sum',
+						displayFormat: '{0}',
+						column: 'Consumer',
+					}, {
+						summaryType: 'sum',
+						displayFormat: '{0}',
+						column: 'Waste',
+					}
+				],
+			},
+		});
+									
+		// TOOL BAR
+		var toolbar = $('#reporting_toolbar').dxToolbar({
+			items: [
+			{
+					location: 'before',
+					widget: 'dxButton',
+					locateInMenu: 'auto',
+					options: {
+						icon: 'refresh',
+						onClick() {
+							DevExpress.ui.notify('Refresh button has been clicked!');
+						},
+					},
+				}, {
+					location: 'center',
+					locateInMenu: 'never',
+					template() {
+						return $("<div class='toolbar-label'><b>Start Date: </b></div>");
+					},
+				}, {
+					id: 'from',
+					location: 'center',
+					widget: 'dxDateBox',
+					locateInMenu: 'auto',
+					options: {
+						applyValueMode: 'useButtons',
+						width: 100,
+						value: new Date(),
+						max: new Date(),
+						min: new Date(2000, 0, 1),
+						onValueChanged(data) {
+							change_reporting_data(data.value, 'from');
+						},
+					},
+				}, {
+					location: 'center',
+					locateInMenu: 'never',
+					template() {
+						return $("<div class='toolbar-label'><b>End Date: </b></div>");
+					},
+				}, {
+					id: 'to',
+					location: 'center',
+					widget: 'dxDateBox',
+					locateInMenu: 'auto',
+					options: {
+						applyValueMode: 'useButtons',
+						width: 100,
+						value: new Date(),
+						max: new Date(),
+						min: new Date(2000, 0, 1),
+						onValueChanged(data) {
+							change_reporting_data(data.value, 'to');
+						},
+					},
+				}, {
+					location: 'center',
+					widget: 'dxDropDownButton',
+					locateInMenu: 'auto',
+					options: {
+						icon: 'chart',
+						dropDownOptions: {
+							width: 100,
+						},
+						onItemClick(e) {
+							change_reporting_chart_type(e.itemData);
+						},
+						items: [
+							{id: 1, name: 'Bar', icon: 'chart' },
+							{id: 2, name: 'Pie', icon: 'pie-chart'},
+						],
+						displayExpr: 'name',
+						keyExpr: 'id',
+					},
+				}, {
+					locateInMenu: 'always',
+					widget: 'dxButton',
+					options: {
+						text: 'Save',
+						onClick() {
+							DevExpress.ui.notify('Save option has been clicked!');
+						},
+					},
+				}, {
+					locateInMenu: 'always',
+					widget: 'dxButton',
+					options: {
+						text: 'Print',
+						onClick() {
+							DevExpress.ui.notify('Print option has been clicked!');
+						},
+					},
+				}, {
+					locateInMenu: 'always',
+					widget: 'dxButton',
+					options: {
+						text: 'Settings',
+						onClick() {
+							DevExpress.ui.notify('Settings option has been clicked!');
+						},
+					},
+				},
+			],
+		});
+
+		function change_reporting_chart_type(item) {
+			if (item.name == 'Bar') {
+				$("#reporting_pie").hide();
+				$("#reporting_bar").show();
+			} else if (item.name == 'Pie') {
+				$("#reporting_pie").show();
+				$("#reporting_bar").hide();
+			}
+		};
+
+		$("#reporting_pie").show();
+		$("#reporting_bar").hide();
+
+		var date = new Date();
+		const data = change_reporting_data(date.setDate(date.getDate() - 1), 'from');
+
+	};
+	//////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	/* Controller
-	------------------------------------------------ */ 
+	------------------------------------------------ */
 	$(document).ready(function () {
-		startWebSocket();
-		initialSetup();
+				
+		page_setup();		
+		//ajax_call();
+		renderReport();
+		renderDataAnalysis();
+		data_setup();
+		
+		//var interval_status = 60000; // 60 secs
+		//setInterval(ajax_call, interval_status);
+
+		$(document).on('theme-reload', function () {
+			//ajax_call();
+		});
+
 	});
 </script>
-
 {% endblock javascripts %}

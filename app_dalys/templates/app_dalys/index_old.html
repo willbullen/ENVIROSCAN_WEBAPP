@@ -1,0 +1,75 @@
+{% extends "layouts/base.html" %}
+
+
+		{% block content %}
+		<!-- BEGIN #content -->
+		<div id="content" class="app-content">
+			<!-- BEGIN page-header -->			
+			<div class="d-flex fw-bold small">
+				<span class="flex-grow-1">
+					<h1 class="page-header">
+						DALYS INDEX PAGE <small>just the begining of everythings.</small>
+					</h1>
+				</span>
+			</div>
+			<!-- END page-header -->
+		</div>
+		<!-- END #content -->
+		{% endblock content %}
+
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script>
+	// SET UNIVERSAL VARIABLES
+	function setHistory(db_Data) {
+		console.log(db_Data);
+	}
+	function setCurrent(db_Data) {
+		console.log(db_Data);
+	}
+	function setStatus(db_Data) {
+		console.log(db_Data);
+	}
+	function setSetup(db_Data) {
+		console.log(db_Data);
+	}
+
+	var startWebSocket = function () {
+		var autosondeSocket;
+		var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+		var ws_path = ws_scheme + '://' + window.location.host + ':8001/dalys/';
+		console.log(ws_path)
+		autosondeSocket = new WebSocket(ws_path);    
+
+		autosondeSocket.onmessage = function (e) {
+			ws_Data = JSON.parse(e.data).message;
+			console.log(ws_Data);
+		};
+
+		autosondeSocket.onclose = function (e) {
+			console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+		};
+
+		autosondeSocket.onerror = function (err) {
+			console.error(err);
+		};
+	};
+
+	function initialSetup() {
+		//setStatus(Status_Data);
+		//setSetup(Setup_Data);
+		//setHistory(History_Data);
+		//setCurrent(Current_Data);
+	}
+
+	/* Controller
+	------------------------------------------------ */ 
+	$(document).ready(function () {
+		startWebSocket();
+		initialSetup();
+	});
+</script>
+
+{% endblock javascripts %}
