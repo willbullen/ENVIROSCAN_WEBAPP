@@ -41,7 +41,6 @@ class DalysConsumer(AsyncWebsocketConsumer):
             # GET NODE DETAILS
             Node_ID = jsonData['Node_ID']
             # GET SEND DATA
-            self.async_send(self.group_name, Get_Data.get_History_Data(Node_Power, Node_ID))
             await self.channel_layer.group_send(
                 self.group_name,
                 {
