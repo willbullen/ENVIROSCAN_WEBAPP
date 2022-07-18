@@ -2396,7 +2396,26 @@
 
 
 
+	var startWebSocket = function () {
+		var autosondeSocket;
+		var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+		var ws_path = ws_scheme + '://' + window.location.host + ':8001/dalys/';
+		console.log(ws_path)
+		autosondeSocket = new WebSocket(ws_path);    
 
+		autosondeSocket.onmessage = function (e) {
+			ws_Data = JSON.parse(e.data).message;
+			console.log(ws_Data);
+		};
+
+		autosondeSocket.onclose = function (e) {
+			console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+		};
+
+		autosondeSocket.onerror = function (err) {
+			console.error(err);
+		};
+	};
 
 
 
@@ -2419,6 +2438,7 @@
 		renderReport();
 		renderDataAnalysis();
 		data_setup();
+		startWebSocket();
 		
 		//var interval_status = 60000; // 60 secs
 		//setInterval(ajax_call, interval_status);
