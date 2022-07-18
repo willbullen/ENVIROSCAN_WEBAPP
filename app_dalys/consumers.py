@@ -41,13 +41,13 @@ class DalysConsumer(AsyncWebsocketConsumer):
             # GET NODE DETAILS
             node_id = json_data['Node_ID']
             # get history data
-            json_data_history = get_data.get_history_data(Node_Power, node_id)
+            # await get_data.get_history_data(Node_Power, node_id)
             # GET SEND DATA
             await self.channel_layer.group_send(
                 self.group_name,
                 {
                     'type': 'stream.message',
-                    'message': json_data_history
+                    'message': await get_data.get_history_data(Node_Power, node_id)
                 }
         )
 
@@ -61,7 +61,7 @@ class DalysConsumer(AsyncWebsocketConsumer):
 
 class get_data:
     # get history data
-    def get_history_data(object, node_id):
+    async def get_history_data(object, node_id):
         json_history_data = {}
         try:            
             json_history_data['Data'] = json.loads(object.objects.filter(Node = node_id).order_by('-id')[:1440].to_dataframe(index='Data_DateTime').sort_index(ascending=True).resample('10Min').mean().fillna(method='backfill').tail(140).to_json(orient="table"))
