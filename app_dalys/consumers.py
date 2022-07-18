@@ -32,7 +32,7 @@ class DalysConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_send(
             self.group_name,
             {
-                'type': 'message',
+                'type': 'stream.message',
                 'message': jsonData
             }
         )
@@ -44,7 +44,7 @@ class DalysConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(
                 self.group_name,
                 {
-                    'type': 'message',
+                    'type': 'stream.message',
                     'message': Get_Data.get_History_Data(Node_Power, Node_ID)
                 }
         )
