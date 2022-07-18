@@ -27,25 +27,26 @@ class DalysConsumer(AsyncWebsocketConsumer):
         )
 
     async def receive(self, text_data):
-        jsonData = json.loads(text_data)
+        json_data = json.loads(text_data)
+        json_data_history = Get_Data.get_History_Data(Node_Power, Node_ID)
         # Send message to group
         await self.channel_layer.group_send(
             self.group_name,
             {
                 'type': 'stream.message',
-                'message': jsonData
+                'message': json_data
             }
         )
         # Send history to group               
-        if jsonData['Action'] == 'Heartbeat':
+        if json_data['Action'] == 'Heartbeat':
             # GET NODE DETAILS
-            Node_ID = jsonData['Node_ID']
+            Node_ID = json_data['Node_ID']
             # GET SEND DATA
             await self.channel_layer.group_send(
                 self.group_name,
                 {
                     'type': 'stream.message',
-                    'message': Get_Data.get_History_Data(Node_Power, Node_ID)
+                    'message': json_data_history
                 }
         )
 
