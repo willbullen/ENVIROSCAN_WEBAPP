@@ -50,5 +50,5 @@ class DalysConsumer(AsyncWebsocketConsumer):
         }))
 
     # get history data
-    def get_history_data(object, node_id):
+    def get_history_data(self, object, node_id):
         return object.objects.filter(Node = node_id).order_by('-id')[:1440].to_dataframe(index='Data_DateTime').sort_index(ascending=True).resample('10Min').mean().fillna(method='backfill').tail(140).to_json(orient="table")
