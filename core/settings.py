@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'app_dalys',
     'app_water',
     'app_front',
+    'app_cuh',
+    'app_meteireann',
     #'beatserver',
     #'django_celery_beat',
 ]

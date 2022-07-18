@@ -6,37 +6,59 @@ from channels.generic.websocket import AsyncWebsocketConsumer, SyncConsumer, Web
 from .models import Node_Power
 from channels.layers import get_channel_layer
 
-class DalysConsumer(WebsocketConsumer):
+class DalysConsumer(AsyncWebsocketConsumer):
     # SET VARIABLES
     group_name = 'dalys'
     channel_name = ''
 
-    def async_send(self, channel_name, jsonData):
-        channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(channel_name, {"type": "stream.message", 'message': jsonData})
-
-    def connect(self):
-        # JOIN GROUP
-        async_to_sync(self.channel_layer.group_add)(
+    async def connect(self):
+        # Join group
+        await self.channel_layer.group_add(
             self.group_name,
             self.channel_name
         )
-        self.accept()
+        await self.accept()
 
-    def disconnect(self, close_code):
-        pass
+    async def disconnect(self, close_code):
+        # Leave group
+        await self.channel_layer.group_discard(
+            self.group_name,
+            self.channel_name
+        )
 
-    def receive(self, text_data):
+    async def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        message = text_data_json['message']
+        # Send message to group
+        await self.channel_layer.group_send(
+            self.group_name,
+            {
+                'type': 'message',
+                'message': message
+            }
+        )
+        # Send history to group
         jsonData = json.loads(text_data)        
         if jsonData['Action'] == 'Heartbeat':
             # GET NODE DETAILS
             Node_ID = jsonData['Node_ID']
             # GET SEND DATA
             self.async_send(self.group_name, Get_Data.get_History_Data(Node_Power, Node_ID))
+            await self.channel_layer.group_send(
+                self.group_name,
+                {
+                    'type': 'message',
+                    'message': Get_Data.get_History_Data(Node_Power, Node_ID)
+                }
+        )
 
-    def stream_message(self, event):
+    # Receive message from room group
+    async def stream_message(self, event):
         message = event['message']
-        self.send(text_data=json.dumps({'message': message}))
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'message': message
+        }))
 
 class Get_Data:
 
