@@ -64,9 +64,9 @@ class get_data:
     async def get_history_data(object, node_id):
         json_history_data = {}
         try:            
-            json_history_data['Data'] = json.loads(object.objects.filter(Node = node_id).order_by('-id')[:1440].to_dataframe(index='Data_DateTime').sort_index(ascending=True).resample('10Min').mean().fillna(method='backfill').tail(140).to_json(orient="table"))
-            json_history_data['Data_Type'] = "History_Data"
-            json_history_data['Node_ID'] = node_id            
+            json_history_data['Data'] = await json.loads(object.objects.filter(Node = node_id).order_by('-id')[:1440].to_dataframe(index='Data_DateTime').sort_index(ascending=True).resample('10Min').mean().fillna(method='backfill').tail(140).to_json(orient="table"))
+            json_history_data['Data_Type'] = await "History_Data"
+            json_history_data['Node_ID'] = await node_id            
         except Exception as e:
             print('{!r}; Get History data failed - '.format(e))
         return json_history_data
