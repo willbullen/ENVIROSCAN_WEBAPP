@@ -27,8 +27,7 @@ class DalysConsumer(AsyncWebsocketConsumer):
         )
 
     async def receive(self, text_data):
-        json_data = json.loads(text_data)
-        json_data_history = Get_Data.get_History_Data(Node_Power, Node_ID)
+        json_data = json.loads(text_data)        
         # Send message to group
         await self.channel_layer.group_send(
             self.group_name,
@@ -40,7 +39,9 @@ class DalysConsumer(AsyncWebsocketConsumer):
         # Send history to group               
         if json_data['Action'] == 'Heartbeat':
             # GET NODE DETAILS
-            Node_ID = json_data['Node_ID']
+            node_id = json_data['Node_ID']
+            # get history data
+            json_data_history = get_data.get_history_data(Node_Power, node_id)
             # GET SEND DATA
             await self.channel_layer.group_send(
                 self.group_name,
@@ -58,14 +59,14 @@ class DalysConsumer(AsyncWebsocketConsumer):
             'message': message
         }))
 
-class Get_Data:
-
-    def get_History_Data(object, node_id):
-        Ground_Station = {}
+class get_data:
+    # get history data
+    def get_history_data(object, node_id):
+        json_history_data = {}
         try:            
-            Ground_Station['Data'] = json.loads(object.objects.filter(Node = node_id).order_by('-id')[:1440].to_dataframe(index='Data_DateTime').sort_index(ascending=True).resample('10Min').mean().fillna(method='backfill').tail(140).to_json(orient="table"))
-            Ground_Station['Data_Type'] = "History_Data"
-            Ground_Station['Node_ID'] = node_id            
+            json_history_data['Data'] = json.loads(object.objects.filter(Node = node_id).order_by('-id')[:1440].to_dataframe(index='Data_DateTime').sort_index(ascending=True).resample('10Min').mean().fillna(method='backfill').tail(140).to_json(orient="table"))
+            json_history_data['Data_Type'] = "History_Data"
+            json_history_data['Node_ID'] = node_id            
         except Exception as e:
             print('{!r}; Get History data failed - '.format(e))
-        return Ground_Station
+        return json_history_data
