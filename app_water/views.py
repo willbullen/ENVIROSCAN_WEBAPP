@@ -43,7 +43,7 @@ def index(request):
     context['meter_list_supply'] = Meter_List.objects.filter(Category = 1)
     context['meter_list_consumer'] = Meter_List.objects.filter(Category = 2)
     context['meter_list_waste'] = Meter_List.objects.filter(Category = 3)
-    context['meter_list'] = json.loads(get_meters())
+    #context['meter_list'] = json.loads(get_meters())
 
     html_template = loader.get_template( 'app_water/index.html' )
     return HttpResponse(html_template.render(context, request))

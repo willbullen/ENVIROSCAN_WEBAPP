@@ -34,7 +34,7 @@ class DalysConsumer(WebsocketConsumer):
         json_data = json.loads(text_data)
         if json_data['Action'] == 'Heartbeat':
             # tag history onto data
-            json_data['History'] = Get_Data.get_history_data(Node_Power, json_data['Node_ID'])
+            json_data['history'] = Get_Data.get_history_data(Node_Power, json_data['Node_ID'])
             # send it
             self.async_send(self.group_name, json_data)
 
@@ -47,7 +47,7 @@ class Get_Data:
     def get_history_data(object, node_id):
         history = {}
         try:            
-            history = json.loads(object.objects.filter(Node = node_id).order_by('-id')[:1440].to_dataframe(index='Data_DateTime').sort_index(ascending=True).resample('10Min').mean().fillna(method='backfill').tail(140).to_json(orient="table"))          
+            history = json.loads(object.objects.filter(Node = node_id).order_by('-id')[:1440].to_dataframe(index='Data_DateTime').sort_index(ascending=True).resample('10Min').mean().fillna(method='backfill').tail(140).to_json(orient="table"))['data']          
         except Exception as e:
             print('{!r}; Get History data failed - '.format(e))
         return history
