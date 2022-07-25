@@ -75,6 +75,11 @@ python manage.py runserver
 
 
 
+cd enviroscan
+git reset --hard
+git pull enviroscan main
+sudo reboot
+
 
 
 

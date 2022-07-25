@@ -30,9 +30,13 @@ class Readings_ViewSet(viewsets.ModelViewSet):
 class Meter_List_ViewSet(viewsets.ModelViewSet):
     queryset = Meter_List.objects.all()
     serializer_class = Meter_List_Serializer
+
     def list(self, request):
         data = json.loads(get_meters())
         return Response(data)
+
+    def create(self, request):
+        print(request.data)
 
 @login_required(login_url="/login/")
 def index(request):
