@@ -166,7 +166,7 @@ function initialSetup() {
 var startWebSocket = function () {
     var soxSocket;
     var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-    var ws_path = ws_scheme + '://' + window.location.host + '/sox/';
+    var ws_path = ws_scheme + '://' + window.location.host + ':8001/sox/';
     soxSocket = new WebSocket(ws_path);    
 
     soxSocket.onmessage = function (e) {

@@ -172,7 +172,7 @@ function setSetup(db_Data) {
 var startWebSocket = function () {
     var autosondeSocket;
     var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-    var ws_path = ws_scheme + '://' + window.location.host + '/nox/';
+    var ws_path = ws_scheme + '://' + window.location.host + ':8001/nox/';
     autosondeSocket = new WebSocket(ws_path);    
 
     autosondeSocket.onmessage = function (e) {
