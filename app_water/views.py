@@ -28,8 +28,8 @@ class Readings_ViewSet(viewsets.ModelViewSet):
     serializer_class = Readings_Serializer
 
 class Meter_List_ViewSet(viewsets.ModelViewSet):
-    #queryset = Meter_List.objects.all()
-    #serializer_class = Meter_List_Serializer
+    queryset = Meter_List.objects.all()
+    serializer_class = Meter_List_Serializer
 
     def list(self, request):
         data = json.loads(get_meters())
