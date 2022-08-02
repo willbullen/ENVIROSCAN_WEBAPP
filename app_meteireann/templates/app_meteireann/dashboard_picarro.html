@@ -1,0 +1,772 @@
+{% extends "layouts/base.html" %}
+
+
+		{% block content %}
+		<!-- BEGIN #content -->
+		<div id="content" class="app-content">
+			<!-- BEGIN page-header -->			
+			<div class="d-flex fw-bold small">
+				<span class="flex-grow-1">
+					<h1 class="page-header">
+						Picarro G2401 <small>located at Valentia Island Observation Station.</small>
+					</h1>
+				</span>
+			</div>
+			<!-- END page-header -->
+			
+			<!-- BEGIN daterangepicker -->
+			<div class="d-flex align-items-center mb-3">
+				<a href="#" class="btn btn-sm btn-outline-theme rounded-0" id="daterangepicker">
+					<i class="fa fa-fw fa-calendar"></i> 
+					<span data-id="daterangepicker-date">Today</span> 
+					<i class="fa fa-fw fa-caret-down me-n1"></i> 
+				</a>
+				<span class="ms-3">updated at  </span> <span class="ms-1" id="Time"><div class="spinner-border text-theme spinner-border-sm"></div></span> <span class="flex-grow-1" id="Date"></span>
+				
+				<span id="Asset_Status" class="badge bg-theme ms-2" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+				<span id="Node_Status" class="badge bg-theme ms-2" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+				<span id="Server_Status" class="badge bg-theme ms-2" data-bs-toggle="tooltip" data-bs-placement="bottom">SERVER</span>
+				
+			</div>
+			<!-- END daterangepicker -->
+
+			<!-- BEGIN row -->
+			<div class="row">
+				<!-- BEGIN col-3 -->
+				<div class="col-xl-3 col-lg-6">
+					<!-- BEGIN card -->
+					<div class="card mb-3">
+						<!-- BEGIN card-body -->
+						<div class="card-body">
+							<!-- BEGIN title -->
+							<div class="d-flex fw-bold small">
+								<span class="flex-grow-1">SUPPLY VOLTAGE</span>
+								<a href="#" data-toggle="card-expand" class="text-white text-opacity-50 text-decoration-none"><i class="bi bi-fullscreen"></i></a>
+							</div>
+							<!-- END title -->
+							<!-- BEGIN stat-lg -->
+							<div class="row align-items-center">
+								<div class="col-5">									
+									<div class="d-flex fw-bold small mb-1">
+										<h3 class="mb-0"><span id="Voltage_Value"><div class="spinner-border text-theme spinner-border"></div></span> V</h3>
+									</div>
+									<div class="progress h-3px bg-white-transparent-2 mb-1">
+										<div class="progress-bar bg-theme" id="Voltage_Bar" style="width: 0%"></div>
+									</div>
+									<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+										updated at  <span id="Time_0"><div class="spinner-border text-theme spinner-border-sm"></div> </span>
+									</div>
+									<div class="small text-white text-opacity-50 text-truncate">
+										<i class="fa fa-arrow-alt-circle-up me-1"></i><span id="Voltage_Max"><div class="spinner-border text-theme spinner-border-sm"></div></span> V MAX<br />
+										<i class="fa fa-arrow-alt-circle-down me-1"></i><span id="Voltage_Min"><div class="spinner-border text-theme spinner-border-sm"></div></span> V MIN<br />
+										<i class="fa fa-asterisk me-1"></i><span id="Voltage_Ave"><div class="spinner-border text-theme spinner-border-sm"></div></span> V AVE
+									</div>
+								</div>
+								<div class="col-7">
+									<div id="SSC_Voltage"></div>
+								</div>
+							</div>
+							<!-- END stat-lg -->
+							<!-- BEGIN stat-sm -->
+							
+							<!-- END stat-sm -->
+						</div>
+						<!-- END card-body -->
+						
+						<!-- BEGIN card-arrow -->
+						<div class="card-arrow">
+							<div class="card-arrow-top-left"></div>
+							<div class="card-arrow-top-right"></div>
+							<div class="card-arrow-bottom-left"></div>
+							<div class="card-arrow-bottom-right"></div>
+						</div>
+						<!-- END card-arrow -->
+					</div>
+					<!-- END card -->
+				</div>
+				<!-- END col-3 -->
+				
+				<!-- BEGIN col-3 -->
+				<div class="col-xl-3 col-lg-6">
+					<!-- BEGIN card -->					
+					<div class="card mb-3">
+						<!-- BEGIN card-body -->
+						<div class="card-body">
+							<!-- BEGIN title -->
+							<div class="d-flex fw-bold small">
+								<span class="flex-grow-1">CAVITY TEMPERATURE</span>
+								<a href="#" data-toggle="card-expand" class="text-white text-opacity-50 text-decoration-none"><i class="bi bi-fullscreen"></i></a>
+							</div>
+							<!-- END title -->
+							<!-- BEGIN stat-lg -->
+							<div class="row align-items-center">
+								<div class="col-5">									
+									<div class="d-flex fw-bold small mb-1">
+										<h3 class="mb-0"><span id="CavityTemp_Value"><div class="spinner-border text-theme spinner-border"></div></span> C</h3>
+									</div>
+									<div class="progress h-3px bg-white-transparent-2 mb-1">
+										<div class="progress-bar bg-theme" id="CavityTemp_Bar" style="width: 0%"></div>
+									</div>
+									<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+										updated at  <span id="Time_1">
+											<div class="spinner-border text-theme spinner-border-sm"></div>
+										</span>
+									</div>
+									<div class="small text-white text-opacity-50 text-truncate">
+										<i class="fa fa-arrow-alt-circle-up me-1"></i><span id="CavityTemp_Max"><div class="spinner-border text-theme spinner-border-sm"></div></span> V MAX<br />
+										<i class="fa fa-arrow-alt-circle-down me-1"></i><span id="CavityTemp_Min"><div class="spinner-border text-theme spinner-border-sm"></div></span> V MIN<br />
+										<i class="fa fa-asterisk me-1"></i><span id="CavityTemp_Ave"><div class="spinner-border text-theme spinner-border-sm"></div></span> V AVE
+									</div>
+								</div>
+								<div class="col-7">
+									<div id="SSC_CavityTemp"></div>
+								</div>
+							</div>
+							<!-- END stat-lg -->
+							<!-- BEGIN stat-sm -->
+							
+							<!-- END stat-sm -->
+						</div>
+						<!-- END card-body -->
+						
+						<!-- BEGIN card-arrow -->
+						<div class="card-arrow">
+							<div class="card-arrow-top-left"></div>
+							<div class="card-arrow-top-right"></div>
+							<div class="card-arrow-bottom-left"></div>
+							<div class="card-arrow-bottom-right"></div>
+						</div>
+						<!-- END card-arrow -->
+					</div>
+					<!-- END card -->
+				</div>
+				<!-- END col-3 -->
+				
+				<!-- BEGIN col-3 -->
+				<div class="col-xl-3 col-lg-6">
+					<!-- BEGIN card -->					
+					<div class="card mb-3">
+						<!-- BEGIN card-body -->
+						<div class="card-body">
+							<!-- BEGIN title -->
+							<div class="d-flex fw-bold small">
+								<span class="flex-grow-1">WARM BOX TEMPERATURE</span>
+								<a href="#" data-toggle="card-expand" class="text-white text-opacity-50 text-decoration-none"><i class="bi bi-fullscreen"></i></a>
+							</div>
+							<!-- END title -->
+							<!-- BEGIN stat-lg -->
+							<div class="row align-items-center">
+								<div class="col-5">									
+									<div class="d-flex fw-bold small mb-1">
+										<h3 class="mb-0"><span id="WarmBoxTemp_Value"><div class="spinner-border text-theme spinner-border"></div></span> C</h3>
+									</div>
+									<div class="progress h-3px bg-white-transparent-2 mb-1">
+										<div class="progress-bar bg-theme" id="WarmBoxTemp_Bar" style="width: 0%"></div>
+									</div>
+									<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+										updated at  <span id="Time_2">
+											<div class="spinner-border text-theme spinner-border-sm"></div>
+										</span>
+									</div>
+									<div class="small text-white text-opacity-50 text-truncate">
+										<i class="fa fa-arrow-alt-circle-up me-1"></i><span id="WarmBoxTemp_Max"><div class="spinner-border text-theme spinner-border-sm"></div></span> V MAX<br />
+										<i class="fa fa-arrow-alt-circle-down me-1"></i><span id="WarmBoxTemp_Min"><div class="spinner-border text-theme spinner-border-sm"></div></span> V MIN<br />
+										<i class="fa fa-asterisk me-1"></i><span id="WarmBoxTemp_Ave"><div class="spinner-border text-theme spinner-border-sm"></div></span> V AVE
+									</div>
+								</div>
+								<div class="col-7">
+									<div id="SSC_WarmBoxTemp"></div>
+								</div>
+							</div>
+							<!-- END stat-lg -->
+							<!-- BEGIN stat-sm -->
+							
+							<!-- END stat-sm -->
+						</div>
+						<!-- END card-body -->
+						
+						<!-- BEGIN card-arrow -->
+						<div class="card-arrow">
+							<div class="card-arrow-top-left"></div>
+							<div class="card-arrow-top-right"></div>
+							<div class="card-arrow-bottom-left"></div>
+							<div class="card-arrow-bottom-right"></div>
+						</div>
+						<!-- END card-arrow -->
+					</div>
+					<!-- END card -->
+				</div>
+				<!-- END col-3 -->
+				
+				<!-- BEGIN col-3 -->
+				<div class="col-xl-3 col-lg-6">
+					<!-- BEGIN card -->
+					
+
+					<div class="card mb-3">
+						<!-- BEGIN card-body -->
+						<div class="card-body">
+							<!-- BEGIN title -->
+							<div class="d-flex fw-bold small">
+								<span class="flex-grow-1">CAVITY PRESSURE</span>
+								<a href="#" data-toggle="card-expand" class="text-white text-opacity-50 text-decoration-none"><i class="bi bi-fullscreen"></i></a>
+							</div>
+							<!-- END title -->
+							<!-- BEGIN stat-lg -->
+							<div class="row align-items-center">
+								<div class="col-5">									
+									<div class="d-flex fw-bold small mb-1">
+										<h3 class="mb-0"><span id="CavityPres_Value"><div class="spinner-border text-theme spinner-border"></div></span> Pa</h3>
+									</div>
+									<div class="progress h-3px bg-white-transparent-2 mb-1">
+										<div class="progress-bar bg-theme" id="CavityPres_Bar" style="width: 0%"></div>
+									</div>
+									<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+										updated at  <span id="Time_3">
+											<div class="spinner-border text-theme spinner-border-sm"></div>
+										</span>
+									</div>
+									<div class="small text-white text-opacity-50 text-truncate">
+										<i class="fa fa-arrow-alt-circle-up me-1"></i><span id="CavityPres_Max"><div class="spinner-border text-theme spinner-border-sm"></div></span> V MAX<br />
+										<i class="fa fa-arrow-alt-circle-down me-1"></i><span id="CavityPres_Min"><div class="spinner-border text-theme spinner-border-sm"></div></span> V MIN<br />
+										<i class="fa fa-asterisk me-1"></i><span id="CavityPres_Ave"><div class="spinner-border text-theme spinner-border-sm"></div></span> V AVE
+									</div>
+								</div>
+								<div class="col-7">
+									<div id="SSC_CavityPres"></div>
+								</div>
+							</div>
+							<!-- END stat-lg -->
+							<!-- BEGIN stat-sm -->
+							
+							<!-- END stat-sm -->
+						</div>
+						<!-- END card-body -->
+						
+						<!-- BEGIN card-arrow -->
+						<div class="card-arrow">
+							<div class="card-arrow-top-left"></div>
+							<div class="card-arrow-top-right"></div>
+							<div class="card-arrow-bottom-left"></div>
+							<div class="card-arrow-bottom-right"></div>
+						</div>
+						<!-- END card-arrow -->
+					</div>
+
+					<!-- END card -->
+				</div>
+				<!-- END col-3 -->
+				
+				<!-- BEGIN col-6 -->
+				<div class="col-xl-6">
+					<!-- BEGIN card -->
+					<div class="card mb-1">
+						<!-- BEGIN card-body -->
+						<div class="card-body">
+
+							<!-- BEGIN title -->
+							<div class="d-flex fw-bold small mb-1">
+								<span class="flex-grow-1">CORE DATA</span>
+								<a href="#" data-toggle="card-expand" class="text-white text-opacity-50 text-decoration-none"><i class="bi bi-fullscreen"></i></a>
+							</div>
+							<!-- END title -->
+
+							<!-- BEGIN row -->
+							<div class="row">
+								<div class="col-9">
+									<!-- BEGIN chart -->
+									<div class="pt-1 flex-1">
+										<div id="picarroChart"></div>
+									</div>
+									<!-- END chart -->
+								</div>
+								<div class="col-3">
+									<!-- BEGIN CO2 -->
+									<div class="w-150px h-100px pt-1 ps-3">
+										<div class="d-flex fw-bold small mb-1">
+											<span class="flex-grow-1">CO2</span>
+										</div>
+										<div class="mb-2 fs-5 text-truncate">
+											<h3 class="mb-0"><span id="CO2_Value"><div class="spinner-border text-theme spinner-border"></div></span> PPM</h3>
+										</div>
+										<div class="progress h-3px bg-white-transparent-2 mb-1">
+											<div class="progress-bar bg-theme" id="CO2_Bar" style="width: 0%"></div>
+										</div>
+										<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+											updated at  <span id="Time_4">
+												<div class="spinner-border text-theme spinner-border-sm"></div>
+											</span>
+										</div>
+									</div>
+									<!-- END CO2 -->
+									<!-- BEGIN CO -->
+									<div class="w-150px h-100px ps-3">
+										<div class="d-flex fw-bold small mb-1">
+											<span class="flex-grow-1">CO</span>
+										</div>
+										<div class="mb-2 fs-5 text-truncate">
+											<h3 class="mb-0"><span id="CO_Value"><div class="spinner-border text-theme spinner-border"></div></span> PPM</h3>
+										</div>
+										<div class="progress h-3px bg-white-transparent-2 mb-1">
+											<div class="progress-bar bg-theme" id="CO_Bar" style="width: 0%"></div>
+										</div>
+										<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+											updated at  <span id="Time_5">
+												<div class="spinner-border text-theme spinner-border-sm"></div>
+											</span>
+										</div>
+									</div>
+									<!-- END CO -->
+									<!-- BEGIN CO -->
+									<div class="w-150px h-100px ps-3">
+										<div class="d-flex fw-bold small mb-1">
+											<span class="flex-grow-1">CH4</span>
+										</div>
+										<div class="mb-2 fs-5 text-truncate">
+											<h3 class="mb-0"><span id="CH4_Value"><div class="spinner-border text-theme spinner-border"></div></span> PPM</h3>
+										</div>
+										<div class="progress h-3px bg-white-transparent-2 mb-1">
+											<div class="progress-bar bg-theme" id="CH4_Bar" style="width: 0%"></div>
+										</div>
+										<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+											updated at  <span id="Time_7">
+												<div class="spinner-border text-theme spinner-border-sm"></div>
+											</span>
+										</div>
+									</div>
+									<!-- END CO -->
+									<!-- BEGIN CO -->
+									<div class="w-150px h-100px ps-3">
+										<div class="d-flex fw-bold small mb-1">
+											<span class="flex-grow-1">H2O</span>
+										</div>
+										<div class="mb-2 fs-5 text-truncate">
+											<h3 class="mb-0"><span id="H2O_Value"><div class="spinner-border text-theme spinner-border"></div></span> %</h3>
+										</div>
+										<div class="progress h-3px bg-white-transparent-2 mb-1">
+											<div class="progress-bar bg-theme" id="H2O_Bar" style="width: 0%"></div>
+										</div>
+										<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+											updated at  <span id="Time_6">
+												<div class="spinner-border text-theme spinner-border-sm"></div>
+											</span>
+										</div>
+									</div>
+									<!-- END CO -->
+								</div>
+							</div>
+							<!-- END row -->
+						</div>
+						<!-- END card-body -->
+						
+						<!-- BEGIN card-arrow -->
+						<div class="card-arrow">
+							<div class="card-arrow-top-left"></div>
+							<div class="card-arrow-top-right"></div>
+							<div class="card-arrow-bottom-left"></div>
+							<div class="card-arrow-bottom-right"></div>
+						</div>
+						<!-- END card-arrow -->
+					</div>
+					<!-- END card -->
+				</div>
+				<!-- END col-6 -->
+				
+				<!-- BEGIN col-6 -->
+				<div class="col-xl-6">
+					<!-- BEGIN card -->
+					<div class="card mb-3">
+						<!-- BEGIN card-body -->
+						<div class="card-body">
+							<!-- BEGIN title -->
+							<div class="d-flex fw-bold small mb-3">
+								<span class="flex-grow-1">ASSET NETWORK STATUS</span>
+								<a href="#" data-toggle="card-expand" class="text-white text-opacity-50 text-decoration-none"><i class="bi bi-fullscreen"></i></a>
+							</div>
+							<!-- END title -->
+							<!-- BEGIN map -->
+							<div class="row">
+								<div id="networkStatusMap" class="jvectormap-without-padding"></div>
+							</div>
+							<!-- END map -->							
+						</div>
+						<!-- END card-body -->						
+						<!-- BEGIN card-arrow -->
+						<div class="card-arrow">
+							<div class="card-arrow-top-left"></div>
+							<div class="card-arrow-top-right"></div>
+							<div class="card-arrow-bottom-left"></div>
+							<div class="card-arrow-bottom-right"></div>
+						</div>
+						<!-- END card-arrow -->
+					</div>
+					<!-- END card -->
+				</div>
+				<!-- END col-6 -->
+				
+				<!-- BEGIN col-6 -->
+				<div class="col-xl-6">
+					<!-- BEGIN card -->
+					<div class="card mb-3">
+						<!-- BEGIN card-body -->
+						<div class="card-body">
+
+							<!-- BEGIN title -->
+							<div class="d-flex fw-bold small mb-3">
+								<span class="flex-grow-1">MET DATA</span>
+								<a href="#" data-toggle="card-expand" class="text-white text-opacity-50 text-decoration-none"><i class="bi bi-fullscreen"></i></a>
+							</div>
+							<!-- END title -->							
+
+							<!-- BEGIN row -->
+							<div class="row gx-4">
+								<!-- BEGIN col-7 -->
+								<div class="col-lg-7 mb-3 mb-lg-0">
+									<!-- BEGIN RADAR CHART -->
+									<div id="metRadarChart"></div>
+									<!-- END RADAR CHART -->
+								</div>
+								<!-- END col-7 -->
+								<!-- BEGIN col-5 -->
+								<div class="col-lg-5 pt-4">
+									<!-- BEGIN card -->
+									<div class="card">
+										<!-- BEGIN card-body -->
+										<div class="card-body py-2">
+											<div class="d-flex align-items-center">
+												
+												<div class="flex-1 ps-2">
+													<table class="w-100 small mb-0 text-white text-opacity-60">
+														<tbody>
+															<tr>
+																<td>
+																	<div class="d-flex align-items-center">
+																		<div class="w-6px h-6px rounded-pill me-2 bg-theme bg-opacity-95"></div> Wind (m/s)
+																	</div>
+																</td>
+																<td class="text-end" id="Wind_Value"><div class="spinner-border text-theme spinner-border-sm"></div></td>
+															</tr>
+															<tr>
+																<td>
+																	<div class="d-flex align-items-center">
+																		<div class="w-6px h-6px rounded-pill me-2 bg-theme bg-opacity-95"></div> Direction
+																	</div>
+																</td>
+																<td class="text-end" id="Dir_Value"><div class="spinner-border text-theme spinner-border-sm"></div></td>
+															</tr>
+															<tr>
+																<td>
+																	<div class="d-flex align-items-center">
+																		<div class="w-6px h-6px rounded-pill me-2 bg-theme bg-opacity-95"></div> Gust (m/s)
+																	</div>
+																</td>
+																<td class="text-end" id="Gust_Value"><div class="spinner-border text-theme spinner-border-sm"></div></td>
+															</tr>
+															<tr>
+																<td>
+																	<div class="d-flex align-items-center">
+																		<div class="w-6px h-6px rounded-pill me-2 bg-theme bg-opacity-95"></div> Temp (C)
+																	</div>
+																</td>
+																<td class="text-end" id="Temp_Value"><div class="spinner-border text-theme spinner-border-sm"></div></td>
+															</tr>
+															<tr>
+																<td>
+																	<div class="d-flex align-items-center">
+																		<div class="w-6px h-6px rounded-pill me-2 bg-theme bg-opacity-95"></div> Humidity (%)
+																	</div>
+																</td>
+																<td class="text-end" id="Hum_Value"><div class="spinner-border text-theme spinner-border-sm"></div></td>
+															</tr>
+															<tr>
+																<td>
+																	<div class="d-flex align-items-center">
+																		<div class="w-6px h-6px rounded-pill me-2 bg-theme bg-opacity-95"></div> Pressure (kPa)
+																	</div>
+																</td>
+																<td class="text-end" id="Pres_Value"><div class="spinner-border text-theme spinner-border-sm"></div></td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+										<!-- END card-body -->
+										
+										<!-- BEGIN card-arrow -->
+										<div class="card-arrow">
+											<div class="card-arrow-top-left"></div>
+											<div class="card-arrow-top-right"></div>
+											<div class="card-arrow-bottom-left"></div>
+											<div class="card-arrow-bottom-right"></div>
+										</div>
+										<!-- END card-arrow -->
+									</div>
+									<!-- END card -->
+								</div>
+								<!-- END col-5 -->
+							</div>
+							<!-- END row -->							
+
+							<!-- BEGIN MET CHART -->
+							<div id="weatherChart"></div>
+							<!-- END MET CHART -->
+
+						</div>
+						<!-- END card-body -->
+						
+						<!-- BEGIN card-arrow -->
+						<div class="card-arrow">
+							<div class="card-arrow-top-left"></div>
+							<div class="card-arrow-top-right"></div>
+							<div class="card-arrow-bottom-left"></div>
+							<div class="card-arrow-bottom-right"></div>
+						</div>
+						<!-- END card-arrow -->
+					</div>
+					<!-- END card -->
+				</div>
+				<!-- END col-6 -->
+				
+				<!-- BEGIN col-6 -->
+				<div class="col-xl-6">
+					<!-- BEGIN card -->
+					<div class="card mb-3">
+						<!-- BEGIN card-body -->
+						<div class="card-body">
+							<!-- BEGIN title -->
+							<div class="d-flex fw-bold small">
+								<span class="flex-grow-1">MAINTENANCE</span>
+								<a href="#" data-toggle="card-expand" class="text-white text-opacity-50 text-decoration-none"><i class="bi bi-fullscreen"></i></a>
+							</div>
+							<!-- END title -->
+							<!-- BEGIN table -->
+							<div class="card-body pt-1">
+								<!-- BEGIN nav-tabs -->
+								<ul class="nav nav-tabs nav-tabs-v2">
+									<li class="nav-item me-3"><a href="#OpenTasks" class="nav-link active" data-bs-toggle="tab">Open Tasks</a></li>
+									<li class="nav-item me-3"><a href="#InProgress" class="nav-link" data-bs-toggle="tab">In Progress</a></li>
+									<li class="nav-item me-3"><a href="#Completed" class="nav-link" data-bs-toggle="tab">Completed</a></li>	
+								</ul>
+								<!-- END nav-tabs -->
+
+								<!-- BEGIN tab-content -->
+								<div class="tab-content pt-3 h-300px overflow-auto">
+									<!-- BEGIN tab-pane -->
+									<div class="tab-pane fade show active" id="OpenTasks">
+
+										<!-- BEGIN list-group-item -->
+										<div class="row">
+											<div class="col-1">
+												<i class="fa fa-tools text-white text-opacity-50 fa-fw fa-lg"></i>
+											</div>
+											<div class="col-11 flex-fill">
+												<div class="fw-400 lh-20">HTML5 flexbox old browser compatibility</div>
+												<div class="small text-white text-opacity-50 mb-2">#29982 handled by Sean</div>
+												<div class="mb-1">
+													<span class="badge border border-indigo text-indigo">enhancement</span>
+												</div>												
+												<div class="d-flex align-items-center mt-2 mb-2">
+													<div class="fw-400 me-2">
+														Task (1/2)
+													</div>
+													<div>
+														<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#inProgressBoard">
+															<i class="fa fa-plus-circle"></i>
+														</a>
+													</div>
+													<div class="progress progress-xs w-100px me-2 ms-auto" style="height: 6px;">
+														<div class="progress-bar progress-bar-striped bg-warning" style="width: 50%;"></div>
+													</div>
+													<div class="fs-12px">50%</div>
+												</div>
+												<div class="form-group mb-1">
+													<div class="collapse" id="inProgressBoard">
+														<div class="form-check mb-2px">
+															<input type="checkbox" class="form-check-input" id="customCheck4" checked />
+															<label class="form-check-label small" for="customCheck4">check all browser
+																compatibility for HTML5 flexbox</label>
+														</div>
+														<div class="form-check mb-2px">
+															<input type="checkbox" class="form-check-input" id="customCheck5" />
+															<label class="form-check-label small" for="customCheck5">fallback integration by
+																using other display property</label>
+														</div>
+													</div>
+												</div>
+												<hr class="mt-15px mb-15px" />
+											</div>
+										</div>
+										<!-- END list-group-item -->
+
+										<!-- BEGIN list-group-item -->
+										<div class="row">
+											<div class="col-1">
+												<i class="fa fa-tools text-white text-opacity-50 fa-fw fa-lg"></i>
+											</div>
+											<div class="col-11 flex-fill">
+												<div class="fw-400 lh-20">HTML5 flexbox old browser compatibility</div>
+												<div class="small text-white text-opacity-50 mb-2">#29982 handled by Sean</div>
+												<div class="mb-1">
+													<span class="badge border border-indigo text-indigo">enhancement</span>
+												</div>												
+												<div class="d-flex align-items-center mt-2 mb-2">
+													<div class="fw-400 me-2">
+														Task (1/2)
+													</div>
+													<div>
+														<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#inProgressBoard">
+															<i class="fa fa-plus-circle"></i>
+														</a>
+													</div>
+													<div class="progress progress-xs w-100px me-2 ms-auto" style="height: 6px;">
+														<div class="progress-bar progress-bar-striped bg-warning" style="width: 50%;"></div>
+													</div>
+													<div class="fs-12px">50%</div>
+												</div>
+												<div class="form-group mb-1">
+													<div class="collapse" id="inProgressBoard">
+														<div class="form-check mb-2px">
+															<input type="checkbox" class="form-check-input" id="customCheck4" checked />
+															<label class="form-check-label small" for="customCheck4">check all browser
+																compatibility for HTML5 flexbox</label>
+														</div>
+														<div class="form-check mb-2px">
+															<input type="checkbox" class="form-check-input" id="customCheck5" />
+															<label class="form-check-label small" for="customCheck5">fallback integration by
+																using other display property</label>
+														</div>
+													</div>
+												</div>
+												<hr class="mt-15px mb-15px" />
+											</div>
+										</div>
+										<!-- END list-group-item -->
+
+
+										<!-- BEGIN list-group-item -->
+										<div class="row">
+											<div class="col-1">
+												<i class="fa fa-tools text-white text-opacity-50 fa-fw fa-lg"></i>
+											</div>
+											<div class="col-11 flex-fill">
+												<div class="fw-400 lh-20">HTML5 flexbox old browser compatibility</div>
+												<div class="small text-white text-opacity-50 mb-2">#29982 handled by Sean</div>
+												<div class="mb-1">
+													<span class="badge border border-indigo text-indigo">enhancement</span>
+												</div>												
+												<div class="d-flex align-items-center mt-2 mb-2">
+													<div class="fw-400 me-2">
+														Task (1/2)
+													</div>
+													<div>
+														<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#inProgressBoard">
+															<i class="fa fa-plus-circle"></i>
+														</a>
+													</div>
+													<div class="progress progress-xs w-100px me-2 ms-auto" style="height: 6px;">
+														<div class="progress-bar progress-bar-striped bg-warning" style="width: 50%;"></div>
+													</div>
+													<div class="fs-12px">50%</div>
+												</div>
+												<div class="form-group mb-1">
+													<div class="collapse" id="inProgressBoard">
+														<div class="form-check mb-2px">
+															<input type="checkbox" class="form-check-input" id="customCheck4" checked />
+															<label class="form-check-label small" for="customCheck4">check all browser
+																compatibility for HTML5 flexbox</label>
+														</div>
+														<div class="form-check mb-2px">
+															<input type="checkbox" class="form-check-input" id="customCheck5" />
+															<label class="form-check-label small" for="customCheck5">fallback integration by
+																using other display property</label>
+														</div>
+													</div>
+												</div>
+												<hr class="mt-15px mb-15px" />
+											</div>
+										</div>
+										<!-- END list-group-item -->
+
+
+									</div>
+									<!-- END tab-pane -->
+									<!-- BEGIN tab-pane -->
+									<div class="tab-pane fade" id="InProgress">
+										<p>
+											Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid. 
+											Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan 
+											four loko farm-to-table craft beer twee. Qui photo booth letterpress, commodo enim craft 
+											beer mlkshk aliquip jean shorts ullamco ad vinyl cillum PBR. Homo nostrud organic, assumenda 
+											labore aesthetic magna delectus mollit. Keytar helvetica VHS salvia yr, vero magna velit 
+											sapiente labore stumptown. Vegan fanny pack odio cillum wes anderson 8-bit, sustainable jean 
+											shorts beard ut DIY ethical culpa terry richardson biodiesel. Art party scenester stumptown, 
+											tumblr butcher vero sint qui sapiente accusamus tattooed echo park.
+										</p>
+									</div>
+									<!-- END tab-pane -->
+									<!-- BEGIN tab-pane -->
+									<div class="tab-pane fade" id="Completed">
+										<p>
+											Etsy mixtape wayfarers, ethical wes anderson tofu before they sold out mcsweeney's organic 
+											lomo retro fanny pack lo-fi farm-to-table readymade. Messenger bag gentrify pitchfork tattooed 
+											craft beer, iphone skateboard locavore carles etsy salvia banksy hoodie helvetica. DIY synth 
+											PBR banksy irony. Leggings gentrify squid 8-bit cred pitchfork. Williamsburg banh mi whatever 
+											gluten-free, carles pitchfork biodiesel fixie etsy retro mlkshk vice blog. Scenester cred you 
+											probably haven't heard of them, vinyl craft beer blog stumptown. Pitchfork sustainable tofu 
+											synth chambray yr.
+										</p>
+									</div>
+									<!-- END tab-pane -->									
+								</div>
+								<!-- END tab-content -->
+							</div>
+							<!-- END table -->
+						</div>
+						<!-- END card-body -->
+						
+						<!-- BEGIN card-arrow -->
+						<div class="card-arrow">
+							<div class="card-arrow-top-left"></div>
+							<div class="card-arrow-top-right"></div>
+							<div class="card-arrow-bottom-left"></div>
+							<div class="card-arrow-bottom-right"></div>
+						</div>
+						<!-- END card-arrow -->
+					</div>
+					<!-- END card -->
+				</div>
+				<!-- END col-6 -->
+			</div>
+			<!-- END row -->
+		</div>
+		<!-- END #content -->
+		{% endblock content %}
+
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script>
+
+	function reviver(key, value) {		
+		if (key === 'Data_DateTime') {
+			return new Date(value);
+		}
+		return value;
+	}
+
+	var History_Data = JSON.parse('{{History_Data|escapejs}}', reviver);
+	var Current_Data = JSON.parse('{{Current_Data|escapejs}}', reviver);
+    var Status_Data = JSON.parse('{{Status_Data|escapejs}}', reviver);
+    var Setup_Data = JSON.parse('{{Setup_Data|escapejs}}', reviver);
+
+	console.log(History_Data);
+	console.log(Current_Data);
+	console.log(Status_Data);
+	console.log(Setup_Data);
+</script>
+
+<script src="/static/assets/js/picarro.js"></script>
+
+{% endblock javascripts %}

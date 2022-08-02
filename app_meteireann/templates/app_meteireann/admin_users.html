@@ -1,0 +1,33 @@
+{% extends "layouts/base.html" %}
+
+
+		{% block content %}
+		<!-- BEGIN #content -->
+		<div id="content" class="app-content">
+			<!-- BEGIN page-header -->			
+			<div class="d-flex fw-bold small">
+				<span class="flex-grow-1">
+					<h1 class="page-header">
+						MET EIREANN HOME <small>just the begining of everythings.</small>
+					</h1>
+				</span>
+			</div>
+			<!-- END page-header -->
+		</div>
+		<!-- END #content -->
+		{% endblock content %}
+
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script>
+	var History_Data = JSON.parse('{{History_Data|escapejs}}');
+	var Current_Data = JSON.parse('{{Current_Data|escapejs}}');
+    var Status_Data = JSON.parse('{{Status_Data|escapejs}}');
+    var Setup_Data = JSON.parse('{{Setup_Data|escapejs}}');
+</script>
+
+<script src="/static/assets/js/home.js"></script>
+
+{% endblock javascripts %}

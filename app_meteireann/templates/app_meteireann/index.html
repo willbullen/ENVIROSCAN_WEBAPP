@@ -1,0 +1,448 @@
+{% extends "layouts/base.html" %}
+
+
+{% block content %}
+<!-- BEGIN #content -->
+<div id="content" class="app-content">
+	<!-- BEGIN page-header -->
+	<div class="d-flex fw-bold small">
+		<span class="flex-grow-1">
+			<h1 class="page-header">
+				MET EIREANN 
+			</h1>			
+			<p>Welcome to Met Eireann, below you will se a list of imstruments and the associated nodes to monitor the instruments.</p>
+		</span>
+	</div>
+	<!-- END page-header -->
+
+	<!-- BEGIN -->
+	<!-- BEGIN #listWidget -->
+	<div id="listWidget" class="mb-5">
+		<div class="card">
+			<div class="card-body">
+				<div class="row">
+					<div class="col-xl-6">
+						<div class="text-white text-opacity-50 small mb-2"><b>VALENTIA SITE</b></div>
+						<div class="list-group mb-3">							
+						{% for asset in asset_list %}														
+							{% if 'Valentia Island' in asset.Location.Location_Name %}
+							<!-- BEGIN ASSET -->
+							<input type="hidden" id="hidden_Node_Status_{{ asset.Node_Device_ID }}" value="0">
+							<input type="hidden" id="hidden_Asset_Status_{{ asset.Node_Device_ID }}" value="0">
+							<div class="list-group-item d-flex align-items-center">
+								<a href="#" class="text-white text-opacity-50" id="#go_map_{{ asset.Node_ID }}">
+									<div id="Status_{{ asset.Node_Device_ID }}" class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+										{{ asset.Node_Name|make_list|first }}
+									</div>
+								</a>
+								<div class="flex-fill px-3">
+									<div class="fw-bold">{{ asset.Node_Name }}</div>
+									<div class="small text-white text-opacity-50">Last Updated: {{ asset.Last_Updated|timesince }}</div>
+								</div>
+								<div class="opacity-10 px-3">
+									<span id="Asset_Status_{{ asset.Node_Device_ID }}" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status_{{ asset.Node_Device_ID }}" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+								</div>
+								<div class="fs-12px ms-auto">
+									<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#collapse_{{ asset.Node_ID }}">
+										<i class="fa fa-plus-circle"></i>
+									</a>
+								</div>
+							</div>
+							<!-- END ASSET -->
+							<!-- BEGIN ASSET DETAILS -->
+							<div class="collapse list-group-item" id="collapse_{{ asset.Node_ID }}">
+								<!-- BEGIN ROW -->
+								<div class="row justify-content-center">
+									<!-- BEGIN col-12 -->
+									<div class="col-xl-12 mb-1">
+										<div class="fw-bold">Node</div>
+										<div class="small text-white text-opacity-50">
+											<span id="value_status_{{ asset.Node_Device_ID }}"></span> for the last <span id="value_duration_online_{{ asset.Node_Device_ID }}"></span>
+										</div>
+									</div>
+									<!-- END col-12 -->
+								</div>
+								<!-- END ROW -->
+								<!-- BEGIN ROW -->
+								<div class="row justify-content-center">
+									<!-- BEGIN col-6 -->
+									<div class="col-xl-6 mb-1">
+										<div class="d-flex mb-1 text-opacity-50">
+											CPU : 
+											<span id="value_cpu_{{ asset.Node_Device_ID }}"></span>
+										</div>
+										<div class="progress h-3px bg-white-transparent-2 mb-1">
+											<div class="progress-bar bg-theme" id="pb_cpu_{{ asset.Node_Device_ID }}" style="width: 0%"></div>
+										</div>
+									</div>
+									<!-- END col-6 -->
+									<!-- BEGIN col-6 -->
+									<div class="col-xl-6 mb-1">
+										<div class="d-flex mb-1 text-opacity-50">
+											Temperature : 
+											<span id="value_temp_{{ asset.Node_Device_ID }}"></span>
+										</div>
+										<div class="progress h-3px bg-white-transparent-2 mb-1">
+											<div class="progress-bar bg-theme" id="pb_temp_{{ asset.Node_Device_ID }}" style="width: 0%"></div>
+										</div>
+									</div>
+									<!-- END col-6 -->									
+								</div>
+								<!-- END ROW -->
+								<!-- BEGIN ROW -->
+								<div class="row justify-content-center">
+									<!-- BEGIN col-6 -->
+									<div class="col-xl-6 mb-1">
+										<div class="d-flex mb-1 text-opacity-50">
+											Memory : 
+											<span id="value_memory_{{ asset.Node_Device_ID }}"></span>
+											/
+											<span id="value_memory_total_{{ asset.Node_Device_ID }}"></span>
+										</div>
+										<div class="progress h-3px bg-white-transparent-2 mb-1">
+											<div class="progress-bar bg-theme" id="pb_memory_{{ asset.Node_Device_ID }}" style="width: 0%"></div>
+										</div>
+									</div>
+									<!-- END col-6 -->
+									<!-- BEGIN col-6 -->
+									<div class="col-xl-6 mb-1">
+										<div class="d-flex mb-1 text-opacity-50">
+											Storage : 
+											<span id="value_storage_{{ asset.Node_Device_ID }}"></span>
+											/
+											<span id="value_storage_total_{{ asset.Node_Device_ID }}"></span>
+										</div>
+										<div class="progress h-3px bg-white-transparent-2 mb-1">
+											<div class="progress-bar bg-theme" id="pb_storage_{{ asset.Node_Device_ID }}" style="width: 0%"></div>
+										</div>
+									</div>
+									<!-- END col-6 -->
+								</div>
+								<!-- END ROW -->
+							</div>
+							<!-- END ASSET DETAILS -->
+							{% endif %}
+						{% endfor %}
+							
+						</div>
+
+						<div class="text-white text-opacity-50 small mb-2"><b>CAHERSIVEEN SITE</b></div>
+						<div class="list-group mb-3">							
+						{% for asset in asset_list %}
+							{% if 'Cahersiveen' in asset.Location.Location_Name %}
+							<!-- BEGIN ASSET -->
+							<input type="hidden" id="hidden_Node_Status_{{ asset.Node_Device_ID }}" value="0">
+							<input type="hidden" id="hidden_Asset_Status_{{ asset.Node_Device_ID }}" value="0">
+							<div class="list-group-item d-flex align-items-center">
+								<a href="#" class="text-white text-opacity-50" id="#go_map_{{ asset.Node_ID }}">
+									<div id="Status_{{ asset.Node_Device_ID }}" class="w-40px h-40px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+										{{ asset.Node_Name|make_list|first }}
+									</div>
+								</a>
+								<div class="flex-fill px-3">
+									<div class="fw-bold">{{ asset.Node_Name }}</div>
+									<div class="small text-white text-opacity-50">Last Updated: {{ asset.Last_Updated|timesince }}</div>
+								</div>
+								<div class="opacity-10 px-3">
+									<span id="Asset_Status_{{ asset.Node_Device_ID }}" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">ASSET</span>
+									<span id="Node_Status_{{ asset.Node_Device_ID }}" class="badge bg-theme" data-bs-toggle="tooltip" data-bs-placement="bottom">NODE</span>
+								</div>
+								<div class="fs-12px ms-auto">
+									<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#collapse_{{ asset.Node_ID }}">
+										<i class="fa fa-plus-circle"></i>
+									</a>
+								</div>
+							</div>
+							<!-- END ASSET -->
+							<!-- BEGIN ASSET DETAILS -->
+							<div class="collapse list-group-item" id="collapse_{{ asset.Node_ID }}">
+								<!-- BEGIN ROW -->
+								<div class="row justify-content-center">
+									<!-- BEGIN col-12 -->
+									<div class="col-xl-12 mb-1">
+										<div class="fw-bold">Node</div>
+										<div class="small text-white text-opacity-50">
+											<span id="value_status_{{ asset.Node_Device_ID }}"></span> for the last <span id="value_duration_online_{{ asset.Node_Device_ID }}"></span>
+										</div>
+									</div>
+									<!-- END col-12 -->
+								</div>
+								<!-- END ROW -->
+								<!-- BEGIN ROW -->
+								<div class="row justify-content-center">
+									<!-- BEGIN col-6 -->
+									<div class="col-xl-6 mb-1">
+										<div class="d-flex mb-1 text-opacity-50">
+											CPU : 
+											<span id="value_cpu_{{ asset.Node_Device_ID }}"></span>
+										</div>
+										<div class="progress h-3px bg-white-transparent-2 mb-1">
+											<div class="progress-bar bg-theme" id="pb_cpu_{{ asset.Node_Device_ID }}" style="width: 0%"></div>
+										</div>
+									</div>
+									<!-- END col-6 -->
+									<!-- BEGIN col-6 -->
+									<div class="col-xl-6 mb-1">
+										<div class="d-flex mb-1 text-opacity-50">
+											Temperature : 
+											<span id="value_temp_{{ asset.Node_Device_ID }}"></span>
+										</div>
+										<div class="progress h-3px bg-white-transparent-2 mb-1">
+											<div class="progress-bar bg-theme" id="pb_temp_{{ asset.Node_Device_ID }}" style="width: 0%"></div>
+										</div>
+									</div>
+									<!-- END col-6 -->									
+								</div>
+								<!-- END ROW -->
+								<!-- BEGIN ROW -->
+								<div class="row justify-content-center">
+									<!-- BEGIN col-6 -->
+									<div class="col-xl-6 mb-1">
+										<div class="d-flex mb-1 text-opacity-50">
+											Memory : 
+											<span id="value_memory_{{ asset.Node_Device_ID }}"></span>
+											/
+											<span id="value_memory_total_{{ asset.Node_Device_ID }}"></span>
+										</div>
+										<div class="progress h-3px bg-white-transparent-2 mb-1">
+											<div class="progress-bar bg-theme" id="pb_memory_{{ asset.Node_Device_ID }}" style="width: 0%"></div>
+										</div>
+									</div>
+									<!-- END col-6 -->
+									<!-- BEGIN col-6 -->
+									<div class="col-xl-6 mb-1">
+										<div class="d-flex mb-1 text-opacity-50">
+											Storage : 
+											<span id="value_storage_{{ asset.Node_Device_ID }}"></span>
+											/
+											<span id="value_storage_total_{{ asset.Node_Device_ID }}"></span>
+										</div>
+										<div class="progress h-3px bg-white-transparent-2 mb-1">
+											<div class="progress-bar bg-theme" id="pb_storage_{{ asset.Node_Device_ID }}" style="width: 0%"></div>
+										</div>
+									</div>
+									<!-- END col-6 -->
+								</div>
+								<!-- END ROW -->
+							</div>
+							<!-- END ASSET DETAILS -->
+							{% endif %}
+						{% endfor %}
+							
+						</div>
+						
+					</div>
+					<div class="col-xl-6">
+
+						<div class="text-white text-opacity-50 small mb-2"><b>MAP</b></div>
+						<!-- BEGIN map -->
+						<div class="map-container">
+							<div id="siteMap"></div>
+						</div>
+						<!-- END map -->
+						
+					</div>
+				</div>
+			</div>
+			<div class="card-arrow">
+				<div class="card-arrow-top-left"></div>
+				<div class="card-arrow-top-right"></div>
+				<div class="card-arrow-bottom-left"></div>
+				<div class="card-arrow-bottom-right"></div>
+			</div>
+		</div>
+	</div>
+	<!-- END -->
+
+</div>
+<!-- END #content -->
+{% endblock content %}
+
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script>
+
+	function setAssetStatus(data) {
+		element_id = '#Asset_Status_' + data.Node_Device_ID
+		if (data.Asset_Status == 1) {
+			$(element_id).addClass('bg-danger');
+			$(element_id).attr('title', data.Asset_Status_Description);
+		} else {
+			if ($("#hidden_Asset_Status_" + data.Node_Device_ID).val() != '1') {
+				$(element_id).removeClass('bg-danger');
+			} else {
+				$(element_id).addClass('bg-danger');
+				$(element_id).attr('title', 'Last time data updated was too long.');
+			}
+		}
+	}
+
+	function setNodeStatus(data) {
+		element_id = '#Node_Status_' + data.Node_Device_ID
+		if (data.Node_Status == 1) {
+			$(element_id).addClass('bg-danger');
+			$(element_id).attr('title', data.Asset_Status_Description);
+		} else {
+			if ($("#hidden_Node_Status_" + data.Node_Device_ID).val() != '1') {
+				$(element_id).removeClass('bg-danger');
+			} else {
+				$(element_id).addClass('bg-danger');
+				$(element_id).attr('title', 'Node Offline.');
+			}
+		}
+	}
+
+	function setOverallStatus(data) {
+		element_id = '#Status_' + data.Node_Device_ID
+		if (data.Asset_Status == 1 || data.Node_Status == 1 || $("#hidden_Node_Status_" + data.Node_Device_ID).val() == 1 || $("#hidden_Asset_Status_" + data.Node_Device_ID).val() == 1) {
+			$(element_id).removeClass('bg-gradient-cyan-blue');
+			$(element_id).addClass('bg-gradient-red');
+			$(element_id).attr('title', 'ERROR');
+		} else {
+			$(element_id).removeClass('bg-gradient-red');
+			$(element_id).addClass('bg-gradient-cyan-blue');
+			$(element_id).attr('title', 'OK');
+		}
+	}
+
+	// -- GET OVERALL STATUS 
+	var markersData = []
+	var newMarker = {}
+	var icon = ''
+	var ajax_call = function() {
+		$.ajax({
+			type: 'GET',
+			url: '../nodes/node/',
+			headers: {
+				"Authorization": "Basic " + btoa("admin" + ":" + "will1977"),
+				'Accept' : 'application/json'
+			},
+			success: function(data) {
+				$.each(data['results'], function(i, asset) {
+					
+					if (asset.Asset_Status == 1) {icon = '/static/assets/img/map/error_marker.png'} else {icon = '/static/assets/img/map/ok_marker.png'}					
+					newMarker = {
+						location: {
+							lat: asset.Node_Lat, 
+							lng: asset.Node_Lng
+						},
+						tooltip: {
+							text: asset.Node_Name,
+						},
+						iconSrc: icon,
+					}
+					markersData.push(newMarker)
+					console.log(asset.Node_Name + ': ' + parseInt(Math.abs(new Date()-new Date(asset.Last_Updated)) / (1000 * 60)))
+					if (parseInt(Math.abs(new Date()-new Date(asset.Last_Updated)) / (1000 * 60)) > 2) {
+						$('#Asset_Status_' + asset.Node_Device_ID).addClass('bg-danger');
+						$('#Asset_Status_' + asset.Node_Device_ID).attr('title', 'Last time data updated was too long.');
+						$("#hidden_Asset_Status_" + asset.Node_Device_ID).val('1');
+					} else {
+						$('#Asset_Status_' + asset.Node_Device_ID).removeClass('bg-danger');
+						$("#hidden_Asset_Status_" + asset.Node_Device_ID).val('0');
+					}
+
+					setAssetStatus(asset)
+					setNodeStatus(asset)
+					setOverallStatus(asset)
+
+				});
+				$("#siteMap").dxMap({
+					//zoom: 5,
+					markers: markersData
+				});
+			}
+		});
+	};	
+
+	// -- GET BALENA DATA 
+	var balena_ajax_call = function() {
+		auth_token = 'FOoYuJ6feiMDIzcRCgMSUuagFCWgAqvd'
+		balena_data = []
+		$.ajax({
+			type: 'GET',
+			url: "https://api.balena-cloud.com/v6/device", 
+			headers: {
+				"Authorization": "Bearer " + auth_token,
+				'Accept' : 'application/json'
+			},
+			success: function(data) {
+				balena_data = data['d']
+				$.each(balena_data, function(i, asset) {					
+					$("#value_status_" + asset.uuid).text(asset.api_heartbeat_state);
+					$("#value_duration_online_" + asset.uuid).text(parseInt(Math.abs(new Date()-new Date(asset.last_connectivity_event)) / (1000 * 60 * 60) % 24) + ' hours ago.');
+					$("#value_cpu_" + asset.uuid).text(' ' + asset.cpu_usage + ' % ');
+					$("#value_temp_" + asset.uuid).text(' ' + asset.cpu_temp + ' C ');
+					$("#value_memory_" + asset.uuid).text(' ' + asset.memory_usage + 'MB ');
+					$("#value_memory_total_" + asset.uuid).text(' ' + asset.memory_total + 'MB ');
+					$("#value_storage_" + asset.uuid).text(' ' + asset.storage_usage + 'MB ');
+					$("#value_storage_total_" + asset.uuid).text(' ' + asset.storage_total + 'MB ');
+					$("#pb_cpu_" + asset.uuid).attr('style', 'width: ' + asset.cpu_usage + '%');					
+					$("#pb_temp_" + asset.uuid).attr('style', 'width: ' + getPercentage(asset.cpu_temp, 100) + '%');					
+					$("#pb_memory_" + asset.uuid).attr('style', 'width: ' + getPercentage(asset.memory_usage, asset.memory_total) + '%');					
+					$("#pb_storage_" + asset.uuid).attr('style', 'width: ' + getPercentage(asset.storage_usage, asset.storage_total) + '%');
+					if (asset.api_heartbeat_state == '' || asset.api_heartbeat_state == 'offline') {
+						$('#Node_Status_' + asset.uuid).addClass('bg-danger');
+						$('#Node_Status_' + asset.uuid).attr('title', 'Node Offline.');
+						$("#hidden_Node_Status_" + asset.uuid).val('1');
+					} else {
+						$('#Node_Status_' + asset.uuid).removeClass('bg-danger');
+						$("#hidden_Node_Status_" + asset.uuid).val('0');
+					}					
+				});
+			}
+		});
+	}
+	
+	function getPercentage(act, max) {
+		return (act / max) * 100;
+	}
+
+	var renderMaps = function () {
+
+		var siteMap = $('#siteMap').dxMap({
+			center: [51.94011137604235, -10.244128704071045],
+			zoom: 14,
+			height: 560,
+			width: '100%',
+			provider: 'bing',
+			controls: true,
+			apiKey: {
+			// Specify your API keys for each map provider:
+			// bing: "YOUR_BING_MAPS_API_KEY",
+			// google: "YOUR_GOOGLE_MAPS_API_KEY",
+			// googleStatic: "YOUR_GOOGLE_STATIC_MAPS_API_KEY"
+			},
+			type: 'hybrid',
+    		markers: markersData,
+		}).dxMap('instance');
+
+	};
+
+	/* Controller
+	------------------------------------------------ */
+	$(document).ready(function () {
+
+		renderMaps();
+		ajax_call();
+		balena_ajax_call();
+
+		var interval_balena = 60000; // 60 secs
+		setInterval(balena_ajax_call, interval_balena);
+
+		var interval_status = 60000; // 60 secs
+		setInterval(ajax_call, interval_status);
+
+		$(document).on('theme-reload', function () {
+			renderMaps();
+			ajax_call();
+			balena_ajax_call();
+		});
+
+	});
+</script>
+
+{% endblock javascripts %}
