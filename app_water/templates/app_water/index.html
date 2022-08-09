@@ -1787,7 +1787,9 @@
 			$.each(meter.readings, function(i, reading) {
 				// LAST 24 HOURS
 				var hoursBetweenDates = (reading.Data_DateTime.getTime() - new Date().getTime()) / (60 * 60 * 1000);
-				console.log(hoursBetweenDates);
+				if (reading.Data_DateTime.toDateString() === new Date().toDateString()) {
+					console.log(hoursBetweenDates);
+				}				
 				if (hoursBetweenDates <= 24 && hoursBetweenDates >= 0) {
 					// GENERATE DATA
 					$.each(meter.baseline, function(i, baseline) {
