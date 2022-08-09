@@ -1768,6 +1768,9 @@
 		// CREATE
 		$.each(meter_list_data, function(i, meter) {
 
+			// PRINT DATA
+			console.log(meter);
+
 			// SET PULSE VOLUME FACTOR
 			var pulse_volume_factor = 1;
 			if (meter.Pulse_Unit_Measurement == 'liters') {
