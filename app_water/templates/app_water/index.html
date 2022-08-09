@@ -1769,7 +1769,7 @@
 		$.each(meter_list_data, function(i, meter) {
 
 			// PRINT DATA
-			console.log(meter);
+			//console.log(meter);
 
 			// SET PULSE VOLUME FACTOR
 			var pulse_volume_factor = 1;
@@ -1786,7 +1786,8 @@
 			// GENERATE DATA
 			$.each(meter.readings, function(i, reading) {
 				// LAST 24 HOURS
-				var hoursBetweenDates = (reading.Data_DateTime.getTime() - new Date().getTime()) / (60 * 60 * 1000);				
+				var hoursBetweenDates = (reading.Data_DateTime.getTime() - new Date().getTime()) / (60 * 60 * 1000);
+				console.log(hoursBetweenDates);
 				if (hoursBetweenDates <= 24 && hoursBetweenDates >= 0) {
 					// GENERATE DATA
 					$.each(meter.baseline, function(i, baseline) {
