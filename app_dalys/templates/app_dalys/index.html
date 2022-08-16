@@ -1760,11 +1760,11 @@
 				});
 
 				// SET BAR CHART DATA
-				$("#node_chart_" + node.id).dxChart("option", "dataSource", node.history.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.RealPower_L1), 'L2': Math.abs(element.RealPower_L2), 'L3': Math.abs(element.RealPower_L3)};}));
+				$("#node_chart_" + node.id).dxChart("option", "dataSource", history.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.RealPower_L1), 'L2': Math.abs(element.RealPower_L2), 'L3': Math.abs(element.RealPower_L3)};}));
 				$("#node_chart_" + node.id).dxChart('instance').refresh();
 							
 				// SET POLAR CHART DATA
-				$("#node_chart_polar_" + node.id).dxPolarChart("option", "dataSource", node.history.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.RealPower_L1), 'L2': Math.abs(element.RealPower_L2), 'L3': Math.abs(element.RealPower_L3)};}));
+				$("#node_chart_polar_" + node.id).dxPolarChart("option", "dataSource", history.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.RealPower_L1), 'L2': Math.abs(element.RealPower_L2), 'L3': Math.abs(element.RealPower_L3)};}));
 				$("#node_chart_polar_" + node.id).dxPolarChart('instance').refresh();
 
 				// SET VALUES
