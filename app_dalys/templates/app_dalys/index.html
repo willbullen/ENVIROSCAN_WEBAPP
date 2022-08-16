@@ -2376,17 +2376,37 @@
 	}
 	// process individual nodes
 	function process_node(node_id, node) {
+
+		// READINGS
+		var readings = [];
+
+		// GENERATE DATA
+		$.each(node.history, function(i, reading) {
+			// LAST 24 HOURS
+			var hoursBetweenDates = (reading.Data_DateTime.getTime() - new Date().getTime()) / (60 * 60 * 1000);
+			if (reading.Data_DateTime.toDateString() === new Date().toDateString()) {
+				// GENERATE DATA
+				$.each(node.baseline, function(i, baseline) {
+					if (reading.Data_DateTime.getHours() == baseline.Hour) {
+						//reading['Baseline'] = baseline.Pulses;
+					}
+				});
+				// PUSH
+				readings.push(reading)
+			}
+		});
+
 		// SET CHART DATA
-		$("#node_chart_" + node_id).dxChart("option", "dataSource", node.history.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.RealPower_L1), 'L2': Math.abs(element.RealPower_L2), 'L3': Math.abs(element.RealPower_L3)};}));
+		$("#node_chart_" + node_id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.RealPower_L1), 'L2': Math.abs(element.RealPower_L2), 'L3': Math.abs(element.RealPower_L3)};}));
 		$("#node_chart_" + node_id).dxChart('instance').refresh();
 		// SET POLAR CHART DATA
-		$("#node_chart_polar_" + node_id).dxPolarChart("option", "dataSource", node.history.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.RealPower_L1), 'L2': Math.abs(element.RealPower_L2), 'L3': Math.abs(element.RealPower_L3)};}));
+		$("#node_chart_polar_" + node_id).dxPolarChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.RealPower_L1), 'L2': Math.abs(element.RealPower_L2), 'L3': Math.abs(element.RealPower_L3)};}));
 		$("#node_chart_polar_" + node_id).dxPolarChart('instance').refresh();
 		// SET LOG VALUES
-		$("#log2_" + node_id).dxDataGrid("option", "dataSource", node.history.map(function(element) {return {'ID': element.id, 'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.RealPower_L1), 'L2': Math.abs(element.RealPower_L2), 'L3': Math.abs(element.RealPower_L3)};}));
+		$("#log2_" + node_id).dxDataGrid("option", "dataSource", readings.map(function(element) {return {'ID': element.id, 'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.RealPower_L1), 'L2': Math.abs(element.RealPower_L2), 'L3': Math.abs(element.RealPower_L3)};}));
 		$("#log2_" + node_id).dxDataGrid('instance').refresh();
 		// SET CHART DATA
-		$("#data_analysis_chart").dxChart("option", "dataSource", node.history.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.RealPower_L1), 'L2': Math.abs(element.RealPower_L2), 'L3': Math.abs(element.RealPower_L3)};}));
+		$("#data_analysis_chart").dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.RealPower_L1), 'L2': Math.abs(element.RealPower_L2), 'L3': Math.abs(element.RealPower_L3)};}));
 		$("#data_analysis_chart").dxChart('instance').refresh();
 		// SET VALUES
 		set_text(node_id, node)
