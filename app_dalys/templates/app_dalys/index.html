@@ -1146,7 +1146,7 @@
 								<div class="pt-1 mb-1" id="reporting_toolbar"></div>
 								<!-- END TOOLBAR -->
 								<div class="pt-1 mb-1">
-									<p>Totals for a <span id="report_period"></span> day period from <span id="report_from"></span> to the <span id="report_to"></span>, a total of <span id="report_not_nodeed"></span> m3 of supply water was not nodeed. The waste water total for this period was <span id="report_waste"></span> m3.</p>
+									<p>Totals for a <span id="report_period"></span> day period from <span id="report_from"></span> to the <span id="report_to"></span>, a total of <span id="report_not_nodeed"></span> m3 of supply power was not nodeed. The waste power total for this period was <span id="report_waste"></span> m3.</p>
 								</div>
 								<!-- BEGIN PIE -->
 								<div class="pt-1 mb-1" id="reporting_pie"></div>
@@ -1848,7 +1848,7 @@
 	//////////////////////////////////////////////////////////////////////////
 
 	// SET CHART DATA
-	//$("#data_analysis_chart").dxChart("option", "dataSource", history.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*node.Pulse_Unit_Value*pulse_volume_factor, 'Baseline': element.Baseline*node.Pulse_Unit_Value*pulse_volume_factor};}));
+	//$("#data_analysis_chart").dxChart("option", "dataSource", history.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Power': element.Pulses*node.Pulse_Unit_Value*pulse_volume_factor, 'Baseline': element.Baseline*node.Pulse_Unit_Value*pulse_volume_factor};}));
 	//$("#data_analysis_chart").dxChart('instance').refresh();
 
 	
@@ -2039,30 +2039,26 @@
 		//console.log(node_list_data);
 		var data = [];		
 		$.each(node_list_data, function(i, node) {
-			// SET PULSE VOLUME FACTOR
-			var pulse_volume_factor = 1;
-			if (node.Pulse_Unit_Measurement == 'liters') {
-				pulse_volume_factor = node.Pulse_Unit_Value/100000;
-			};			
-			var node_pulses = 0
+			
+			var power = 0
 			$.each(node.report, function(i, report) {
 				if (dateCheck(from,to,report.Data_DateTime)) {
-					node_pulses += report.Pulses;
-					//console.log(report.Pulses);
+					power += Math.abs(report.RealPower_L1) + Math.abs(report.RealPower_L2) + Math.abs(report.RealPower_L3);
 				}				
 			});
+
 			if (node.Category == 'Supply') {
-				var supply = (node_pulses*pulse_volume_factor).toFixed(3);
+				var supply = power.toFixed(3);
 			} else if (node.Category == 'Waste') {
-				var waste = (node_pulses*pulse_volume_factor).toFixed(3);
+				var waste = power.toFixed(3);
 			} else if (node.Category == 'Consumer') {
-				var consumer = (node_pulses*pulse_volume_factor).toFixed(3);
+				var consumer = power.toFixed(3);
 			}
 			// PUSH
 			data.push({
 				ID: node.id, 
 				Node: node.Name, 
-				Water: (node_pulses*pulse_volume_factor).toFixed(3),
+				Power: power.toFixed(3),
 				Supply: supply,
 				Waste: waste,
 				Consumer: consumer, 
@@ -2098,19 +2094,19 @@
 		var waste = 0;
 		$.each(data, function(i, node) {
 			if (node.Type == 'Supply') {
-				supply += parseFloat(node.Water);
+				supply += parseFloat(node.Power);
 			} else if (node.Type == 'Consumer') {
 				new_data.push(node);
-				consumer += parseFloat(node.Water);
+				consumer += parseFloat(node.Power);
 			} else if (node.Type == 'Waste') {
-				waste += parseFloat(node.Water);
+				waste += parseFloat(node.Power);
 			}
 		});
 		var not_nodeed = supply-consumer;
 		new_data.push({
 			ID: 0, 
 			Node: 'Not Nodeed', 
-			Water: not_nodeed.toFixed(3),
+			Power: not_nodeed.toFixed(3),
 			Supply: null,
 			Waste: null,
 			Consumer: null, 
@@ -2150,7 +2146,7 @@
 			},
 			series: [{
 				argumentField: 'Node',
-				valueField: 'Water',
+				valueField: 'Power',
 				label: {
 					visible: true,
 					connector: {
@@ -2171,7 +2167,7 @@
 			palette: 'red',
 			commonSeriesSettings: {
 				type: 'bar',
-				valueField: 'Water',
+				valueField: 'Power',
 				argumentField: 'Node',
 				ignoreEmptyPoints: true,
 			},
