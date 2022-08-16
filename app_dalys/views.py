@@ -103,7 +103,7 @@ def get_report(node_id):
 
 def get_power(node_id):
     try:
-        history = {'history': json.loads(Node_Power.objects.filter(Node = node_id).order_by('-id')[:1440].to_dataframe(index='Data_DateTime').sort_index(ascending=True).resample('10Min').mean().fillna(method='backfill').to_json(orient="table"))['data']}
+        history = {'history': json.loads(Node_Power.objects.filter(Node = node_id).order_by('-id')[:10000].to_dataframe(index='Data_DateTime').sort_index(ascending=True).resample('10Min').mean().fillna(method='backfill').to_json(orient="table"))['data']}
     except Exception as e:
         print('{!r}; Get history failed - '.format(e))
         return {'history': []}
