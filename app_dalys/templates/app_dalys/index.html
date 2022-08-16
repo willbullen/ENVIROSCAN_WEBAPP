@@ -1741,21 +1741,23 @@
 		var history = [];
 		var pulse_volume_factor = 1;
 
+		console.log(date);
+
 		$.each(node_list_data, function(i, node) {
 			if (node.id == id) {
 				// GENERATE DATA
-				//$.each(node.history, function(i, reading) {
-				//	if (reading.Data_DateTime.toDateString() === date.toDateString()) {
-				//		// GENERATE DATA
-				//		$.each(node.baseline, function(i, baseline) {
-				//			if (reading.Data_DateTime.getHours() == baseline.Hour) {
-				//				reading['Baseline'] = (baseline.RealPower_L1 + baseline.RealPower_L2 + baseline.RealPower_L3) / 3;
-				//			}
-				//		});
-				//		// PUSH
-				//		history.push(reading)
-				//	}
-				//});
+				$.each(node.history, function(i, reading) {
+					if (reading.Data_DateTime.toDateString() === date.toDateString()) {
+						// GENERATE DATA
+						$.each(node.baseline, function(i, baseline) {
+							if (reading.Data_DateTime.getHours() == baseline.Hour) {
+								reading['Baseline'] = (baseline.RealPower_L1 + baseline.RealPower_L2 + baseline.RealPower_L3) / 3;
+							}
+						});
+						// PUSH
+						history.push(reading)
+					}
+				});
 
 				// SET BAR CHART DATA
 				$("#node_chart_" + node.id).dxChart("option", "dataSource", node.history.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.RealPower_L1), 'L2': Math.abs(element.RealPower_L2), 'L3': Math.abs(element.RealPower_L3)};}));

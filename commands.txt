@@ -634,8 +634,11 @@ ip addr show                            # Show ip
 #####################################################
 
 
-
-
+ssh willbullen@20.229.97.149
+cd enviroscan
+git reset --hard
+git pull enviroscan main
+sudo reboot
 
 
 
