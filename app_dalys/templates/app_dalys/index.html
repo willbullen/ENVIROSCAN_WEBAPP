@@ -2087,6 +2087,7 @@
 		}
 
 		var data = reportData(new Date(from), new Date(to));
+		console.log(data);
 
 		var new_data = [];
 		var supply = 0;
@@ -2113,6 +2114,8 @@
 			Type: 'Not Nodeed',
 		})
 		var Difference_In_Days = (new Date(to).getTime() - new Date(from).getTime()) / (1000 * 3600 * 24);
+
+		console.log(new_data);
 
 		// PIE CHART DATA
 		$("#reporting_pie").dxPieChart("option", "dataSource", new_data);
