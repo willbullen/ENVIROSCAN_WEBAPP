@@ -2094,13 +2094,11 @@
 		var consumer = 0;
 		var waste = 0;
 		$.each(data, function(i, node) {
-			if (node.Type == 'Supply') {
+			if (node.Category == 'Power Supply 3 Phase') {
 				supply += parseFloat(node.Power);
-			} else if (node.Type == 'Consumer') {
+			} else if (node.Category == 'Power Consumer 3 Phase') {
 				new_data.push(node);
 				consumer += parseFloat(node.Power);
-			} else if (node.Type == 'Waste') {
-				waste += parseFloat(node.Power);
 			}
 		});
 		var not_nodeed = supply-consumer;
@@ -2158,7 +2156,7 @@
 					},
 					format: 'fixedPoint',
 					customizeText(point) {
-						return `${point.value} m3`;
+						return `${point.value} kW`;
 					},
 				},
 			}],
@@ -2197,9 +2195,6 @@
 				}, {
 					dataField: 'Consumer',
 					width: 100,
-				}, {
-					dataField: 'Waste',
-					width: 100,
 				},
 			],
 			summary: {
@@ -2212,10 +2207,6 @@
 						summaryType: 'sum',
 						displayFormat: '{0}',
 						column: 'Consumer',
-					}, {
-						summaryType: 'sum',
-						displayFormat: '{0}',
-						column: 'Waste',
 					}
 				],
 			},
