@@ -124,7 +124,7 @@ def daqc(request):
     return HttpResponse(html_template.render(context, request))   
 
 #-- sox
-@login_required(login_url="/login/")
+#@login_required(login_url="/login/")
 def sox(request):
     context = {}
 
@@ -142,7 +142,7 @@ def sox(request):
     return HttpResponse(html_template.render(context, request))        
     
 #-- nox
-@login_required(login_url="/login/")
+#@login_required(login_url="/login/")
 def nox(request):
     context = {}
 
@@ -160,7 +160,7 @@ def nox(request):
     return HttpResponse(html_template.render(context, request)) 
 
 #-- picarro
-@login_required(login_url="/login/")
+#@login_required(login_url="/login/")
 def picarro(request):
     context = {}
 
