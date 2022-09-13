@@ -28,11 +28,15 @@ from data.models import (
 class Meter_Readings_ViewSet(viewsets.ModelViewSet):
     queryset = Meter_Readings.objects.all().order_by('Data_DateTime')
     serializer_class = Meter_Readings_Serializer
+    
+    def create(self, request):
+        print(request.data)
+        pass
 
 class Readings_ViewSet(viewsets.ModelViewSet):
     queryset = Water_Meter.objects.all().order_by('Data_DateTime')
     serializer_class = Readings_Serializer
-
+    
 class Meter_List_ViewSet(viewsets.ModelViewSet):
     queryset = Meter_List.objects.all()
     serializer_class = Meter_List_Serializer
