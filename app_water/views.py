@@ -12,16 +12,22 @@ from rest_framework.response import Response
 from .models import (
     Meter_List,
     Water_Meter,
+    Meter_Readings
 )
 
 from .serializers import (
     Meter_List_Serializer,
     Readings_Serializer,
+    Meter_Readings_Serializer,
 )
 
 from data.models import (
     SOX_Data,
 )
+
+class Meter_Readings_ViewSet(viewsets.ModelViewSet):
+    queryset = Meter_Readings.objects.all().order_by('Data_DateTime')
+    serializer_class = Meter_Readings_Serializer
 
 class Readings_ViewSet(viewsets.ModelViewSet):
     queryset = Water_Meter.objects.all().order_by('Data_DateTime')

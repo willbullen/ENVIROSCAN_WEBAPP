@@ -8,11 +8,16 @@ routerMeters.register(r'list', views.Meter_List_ViewSet)
 routerReadings = routers.DefaultRouter()
 routerReadings.register(r'data', views.Readings_ViewSet)
 
+routerMeterReadings = routers.DefaultRouter()
+routerMeterReadings.register(r'readings', views.Meter_Readings_ViewSet)
+
 urlpatterns = [
 
     path('meters/', include(routerMeters.urls)),
 
     path('readings/', include(routerReadings.urls)),
+
+    path('meter_readings/', include(routerMeterReadings.urls)),
 
     # The home page
     path('', views.index, name='home'),

@@ -88,3 +88,14 @@ class Water_Meter(models.Model):
 
     class Meta:
         ordering = ['Data_DateTime']
+
+class Meter_Readings(models.Model):
+    Meter_Id = models.ForeignKey(Meter_List, on_delete=models.CASCADE)
+    Data_DateTime = models.DateTimeField('date published')
+    Pulse_Count = models.IntegerField()
+    Pulses = models.IntegerField()
+
+    objects = DataFrameManager()
+
+    class Meta:
+        ordering = ['Data_DateTime']
