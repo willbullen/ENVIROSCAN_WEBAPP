@@ -28,11 +28,32 @@ from data.models import (
 class Meter_Readings_ViewSet(viewsets.ModelViewSet):
     queryset = Meter_Readings.objects.all().order_by('Data_DateTime')
     serializer_class = Meter_Readings_Serializer
-    
-    def create(self, request):
-        print(request.data)
-        pass
 
+    def create(self, request):
+        # Data Format: {'uplink_message': {'decoded_payload': {'Data_DateTime': '2022-09-13T13:18:25.903Z', 'Meter_Id': 1, 'Pulse_Count': 407, 'Pulses': 0}}}        
+        data = request.data['uplink_message']['decoded_payload']
+        print(self.request.data)
+        pulse_count = 0
+        this_pulse_count = data['Pulse_Count']
+        last_pulse_count = Meter_Readings.objects.filter(Meter_Id = data['Meter_Id']).latest('id').Pulse_Count
+        if this_pulse_count < last_pulse_count:
+            pulse_count = this_pulse_count
+        else:
+            pulse_count = this_pulse_count - last_pulse_count
+
+        print(this_pulse_count)
+        print(last_pulse_count)
+        print(pulse_count)
+        
+        msg = Meter_Readings.objects.create(
+            Meter_Id = Meter_List.objects.get(id = data['Meter_Id']),
+            Data_DateTime = data['Data_DateTime'], 
+            Pulse_Count = data['Pulse_Count'], 
+            Pulses = pulse_count
+        )
+        
+        return Response(data = "done")
+        
 class Readings_ViewSet(viewsets.ModelViewSet):
     queryset = Water_Meter.objects.all().order_by('Data_DateTime')
     serializer_class = Readings_Serializer
