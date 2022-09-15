@@ -35,7 +35,10 @@ class Meter_Readings_ViewSet(viewsets.ModelViewSet):
         print(self.request.data)
         pulse_count = 0
         this_pulse_count = data['Pulse_Count']
-        last_pulse_count = Meter_Readings.objects.filter(Meter_Id = data['Meter_Id']).latest('id').Pulse_Count
+        if Meter_Readings.objects.filter(Meter_Id = data['Meter_Id']).exists():
+            last_pulse_count = Meter_Readings.objects.filter(Meter_Id = data['Meter_Id']).latest('id').Pulse_Count
+        else:
+            last_pulse_count = 0
         if this_pulse_count < last_pulse_count:
             pulse_count = this_pulse_count
         else:
