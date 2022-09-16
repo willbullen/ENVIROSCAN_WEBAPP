@@ -1301,13 +1301,14 @@
 				valueField: 'Water',
 				argumentField: "Data_DateTime",
 				argumentType: "datetime",
-			},{
-				type: 'spline',
-				name: 'Baseline',
-				valueField: 'Baseline',
-				argumentField: "Data_DateTime",
-				argumentType: "datetime",
-			}
+			},
+			//{
+			//	type: 'spline',
+			//	name: 'Baseline',
+			//	valueField: 'Baseline',
+			//	argumentField: "Data_DateTime",
+			//	argumentType: "datetime",
+			//}
 		];
 		// CREATE POLAR CHART
 		var polar = $('#meter_chart_polar_' + id).dxPolarChart({
@@ -1331,13 +1332,13 @@
 					argumentField: "Data_DateTime",
 					argumentType: "datetime",
 				},
-				{
-					type: 'line',
-					name: 'Baseline',
-					valueField: 'Baseline',
-					argumentField: "Data_DateTime",
-					argumentType: "datetime",
-				}
+				//{
+				//	type: 'line',
+				//	name: 'Baseline',
+				//	valueField: 'Baseline',
+				//	argumentField: "Data_DateTime",
+				//	argumentType: "datetime",
+				//}
 			],
 			argumentAxis: {
 				inverted: false,
@@ -1365,7 +1366,7 @@
 
 					print("", picarroData.Data.Data_DateTime);
 					print("Consumption: ", picarroData.Data.Water.toFixed(3));
-					print("Baseline: ", picarroData.Data.Baseline.toFixed(3));
+					//print("Baseline: ", picarroData.Data.Baseline.toFixed(3));
 				},
 			},
 			legend: {
@@ -1736,11 +1737,11 @@
 				$.each(meter.readings, function(i, reading) {
 					if (reading.Data_DateTime.toDateString() === date.toDateString()) {
 						// GENERATE DATA
-						$.each(meter.baseline, function(i, baseline) {
-							if (reading.Data_DateTime.getHours() == baseline.Hour) {
-								reading['Baseline'] = baseline.Pulses;
-							}
-						});
+						//$.each(meter.baseline, function(i, baseline) {
+						//	if (reading.Data_DateTime.getHours() == baseline.Hour) {
+						//		reading['Baseline'] = baseline.Pulses;
+						//	}
+						//});
 						// PUSH
 						readings.push(reading)
 					}
@@ -1752,11 +1753,11 @@
 				}
 
 				// SET BAR CHART DATA
-				$("#meter_chart_" + meter.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor, 'Baseline': element.Baseline*meter.Pulse_Unit_Value*pulse_volume_factor};}));
+				$("#meter_chart_" + meter.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor};}));
 				$("#meter_chart_" + meter.id).dxChart('instance').refresh();
 							
 				// SET POLAR CHART DATA
-				$("#meter_chart_polar_" + meter.id).dxPolarChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor, 'Baseline': element.Baseline*meter.Pulse_Unit_Value*pulse_volume_factor};}));
+				$("#meter_chart_polar_" + meter.id).dxPolarChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor};}));
 				$("#meter_chart_polar_" + meter.id).dxPolarChart('instance').refresh();
 
 				// SET VALUES
@@ -1786,27 +1787,31 @@
 			var readings = [];
 
 			// GENERATE DATA
-			$.each(meter.readings, function(i, reading) {
-				// LAST 24 HOURS
-				var hoursBetweenDates = (reading.Data_DateTime.getTime() - new Date().getTime()) / (60 * 60 * 1000);
-				if (reading.Data_DateTime.toDateString() === new Date().toDateString()) {
-					// GENERATE DATA
-					$.each(meter.baseline, function(i, baseline) {
-						if (reading.Data_DateTime.getHours() == baseline.Hour) {
-							reading['Baseline'] = baseline.Pulses;
-						}
-					});
-					// PUSH
-					readings.push(reading)
-				}
-			});
+
+			var readings = meter.readings.filter((item) => (new Date(item.Data_DateTime).getTime() > Date.now() - 24 * 60 * 60 * 1000));
+			console.log(readings);
+
+			//$.each(meter.readings, function(i, reading) {
+			//	// LAST 24 HOURS
+			//	var hoursBetweenDates = (reading.Data_DateTime.getTime() - new Date().getTime()) / (60 * 60 * 1000);
+			//	if (reading.Data_DateTime.toDateString() === new Date().toDateString()) {
+			//		// GENERATE DATA
+			//		//$.each(meter.baseline, function(i, baseline) {
+			//		//	if (reading.Data_DateTime.getHours() == baseline.Hour) {
+			//		//		reading['Baseline'] = baseline.Pulses;
+			//		//	}
+			//		//});
+			//		// PUSH
+			//		readings.push(reading)
+			//	}
+			//});
 
 			// SET CHART DATA
-			$("#meter_chart_" + meter.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor, 'Baseline': element.Baseline*meter.Pulse_Unit_Value*pulse_volume_factor};}));
+			$("#meter_chart_" + meter.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor};}));
 			$("#meter_chart_" + meter.id).dxChart('instance').refresh();
 
 			// SET POLAR CHART DATA
-			$("#meter_chart_polar_" + meter.id).dxPolarChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor, 'Baseline': element.Baseline*meter.Pulse_Unit_Value*pulse_volume_factor};}));
+			$("#meter_chart_polar_" + meter.id).dxPolarChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor};}));
 			$("#meter_chart_polar_" + meter.id).dxPolarChart('instance').refresh();
 			
 			// SET LOG VALUES
@@ -1814,7 +1819,7 @@
 			$("#log2_" + meter.id).dxDataGrid('instance').refresh();
 
 			// SET CHART DATA
-			$("#data_analysis_chart").dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor, 'Baseline': element.Baseline*meter.Pulse_Unit_Value*pulse_volume_factor};}));
+			$("#data_analysis_chart").dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor};}));
 			$("#data_analysis_chart").dxChart('instance').refresh();
 
 			// SET VALUES
