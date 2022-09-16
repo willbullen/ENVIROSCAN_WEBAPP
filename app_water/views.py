@@ -57,7 +57,7 @@ class Meter_Readings_ViewSet(viewsets.ModelViewSet):
         msg_water_meter = Water_Meter.objects.create(
             Meter = Meter_List.objects.get(id = data['Meter_Id']),
             Data_DateTime = data['Data_DateTime'],
-            Pulses = data['Pulse_Count'], 
+            Pulses = pulse_count, 
             Battery_Level = 100,
             Battery_Voltage = 3.3,
         )
@@ -122,7 +122,7 @@ def get_meters():
         for meter in meters['Data']:
             meter.update(get_readings(meter['id']))
             meter.update(get_report(meter['id']))
-            meter.update(get_baseline(meter['id']))
+            #meter.update(get_baseline(meter['id']))
     except Exception as e:
         print('{!r}; Get Meters failed - '.format(e))
     return json.dumps(meters)
