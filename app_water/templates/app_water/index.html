@@ -90,16 +90,16 @@
 												<!-- BEGIN DAILY AVE -->
 												<div class="w-150px h-98px pt-1 ps-3">
 													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														24H AVE (m³/d)
+														TOTAL (m³)
 													</div>
 													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="24h_ave_value_{{ meter.id }}">0</span></h4>
+														<h4 class="mb-0"><span id="total_valuel_{{ meter.id }}">0</span></h4>
 													</div>
 													<div class="progress h-3px bg-white-transparent-2 mb-1">
-														<div class="progress-bar bg-theme" id="24h_ave_bar_{{ meter.id }}" style="width: 0%"></div>
+														<div class="progress-bar bg-theme" id="total_bar_{{ meter.id }}" style="width: 0%"></div>
 													</div>
 													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="24h_ave_info_{{ meter.id }}">@ 0% of max DA recorded.</span>
+														<span id="total_info_{{ meter.id }}">@ 0% of max DA recorded.</span>
 													</div>
 												</div>
 												<!-- END DAILY AVE -->
@@ -429,16 +429,16 @@
 												<!-- BEGIN DAILY AVE -->
 												<div class="w-150px h-98px pt-1 ps-3">
 													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														24H AVE (m³/d)
+														TOTAL (m³)
 													</div>
 													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="24h_ave_value_{{ meter.id }}">0</span></h4>
+														<h4 class="mb-0"><span id="total_valuel_{{ meter.id }}">0</span></h4>
 													</div>
 													<div class="progress h-3px bg-white-transparent-2 mb-1">
-														<div class="progress-bar bg-theme" id="24h_ave_bar_{{ meter.id }}" style="width: 0%"></div>
+														<div class="progress-bar bg-theme" id="total_bar_{{ meter.id }}" style="width: 0%"></div>
 													</div>
 													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="24h_ave_info_{{ meter.id }}">@ 0% of max DA recorded.</span>
+														<span id="total_info_{{ meter.id }}">@ 0% of max DA recorded.</span>
 													</div>
 												</div>
 												<!-- END DAILY AVE -->
@@ -770,16 +770,16 @@
 												<!-- BEGIN DAILY AVE -->
 												<div class="w-150px h-98px pt-1 ps-3">
 													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														24H AVE (m³/d)
+														TOTAL (m³)
 													</div>
 													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="24h_ave_value_{{ meter.id }}">0</span></h4>
+														<h4 class="mb-0"><span id="total_valuel_{{ meter.id }}">0</span></h4>
 													</div>
 													<div class="progress h-3px bg-white-transparent-2 mb-1">
-														<div class="progress-bar bg-theme" id="24h_ave_bar_{{ meter.id }}" style="width: 0%"></div>
+														<div class="progress-bar bg-theme" id="total_bar_{{ meter.id }}" style="width: 0%"></div>
 													</div>
 													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="24h_ave_info_{{ meter.id }}">@ 0% of max DA recorded.</span>
+														<span id="total_info_{{ meter.id }}">@ 0% of max DA recorded.</span>
 													</div>
 												</div>
 												<!-- END DAILY AVE -->
@@ -1232,11 +1232,11 @@
 			record_number += 1
 		});
 
-		$("#value_main_" + id).text((value_hourly_ave/record_number).toFixed(3));
+		//$("#value_main_" + id).text((value_hourly_ave/record_number).toFixed(3));
 
-		$("#24h_ave_value_" + id).text(value_24h_ave.toFixed(3));
-		$("#24h_ave_bar_" + id).attr('style', 'width: ' + getPercentage(value_24h_ave, 4).toFixed(0) + '%');
-		$("#24h_ave_info_" + id).text('@ ' + getPercentage(value_24h_ave, 4).toFixed(0) + '% of max DA.');
+		//$("#total_valuel_" + id).text(value_24h_ave.toFixed(3));
+		//$("#total_bar_" + id).attr('style', 'width: ' + getPercentage(value_24h_ave, 4).toFixed(0) + '%');
+		//$("#total_info_" + id).text('@ ' + getPercentage(value_24h_ave, 4).toFixed(0) + '% of max DA.');
 
 		$("#hourly_ave_value_" + id).text((value_hourly_ave/record_number).toFixed(3));
 		$("#hourly_ave_bar_" + id).attr('style', 'width: ' + getPercentage(value_hourly_ave/record_number, 4000).toFixed(0) + '%');
@@ -1727,7 +1727,7 @@
 	function change_chart_data(id, date) {		
 
 		var readings = [];
-		var pulse_volume_factor = 1;
+		//var pulse_volume_factor = 1;
 
 		console.log(date);
 
@@ -1735,6 +1735,19 @@
 			if (meter.id == id) {
 
 				var readings = meter.readings.filter((item) => (new Date(item.Data_DateTime).toDateString() === date.toDateString()));
+
+				var pulseSum = 0;
+				$.each(readings, function(i, reading) {
+					pulseSum += reading.Pulses
+				});			
+
+				var waterSum = pulseSum * meter.Pulse_Unit_Value
+
+				$("#value_main_" + meter.id).text(waterSum.toFixed(3));
+				$("#total_valuel_" + meter.id).text(waterSum.toFixed(3));
+				$("#total_bar_" + meter.id).attr('style', 'width: ' + getPercentage(waterSum, 4).toFixed(0) + '%');
+				$("#total_info_" + meter.id).text('@ ' + getPercentage(waterSum, 4).toFixed(0) + '% of max DA.');
+
 				// GENERATE DATA
 				//$.each(meter.readings, function(i, reading) {
 				//	if (reading.Data_DateTime.toDateString() === date.toDateString()) {
@@ -1755,11 +1768,11 @@
 				}
 
 				// SET BAR CHART DATA
-				$("#meter_chart_" + meter.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor};}));
+				$("#meter_chart_" + meter.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value};}));
 				$("#meter_chart_" + meter.id).dxChart('instance').refresh();
 							
 				// SET POLAR CHART DATA
-				$("#meter_chart_polar_" + meter.id).dxPolarChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor};}));
+				$("#meter_chart_polar_" + meter.id).dxPolarChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value};}));
 				$("#meter_chart_polar_" + meter.id).dxPolarChart('instance').refresh();
 
 				// SET VALUES
@@ -1777,10 +1790,10 @@
 			//console.log(meter);
 
 			// SET PULSE VOLUME FACTOR
-			var pulse_volume_factor = 1;
-			if (meter.Pulse_Unit_Measurement == 'liters') {
-				pulse_volume_factor = meter.Pulse_Unit_Value/100000;
-			}
+			//var pulse_volume_factor = 1;
+			//if (meter.Pulse_Unit_Measurement == 'liters') {
+			//	pulse_volume_factor = meter.Pulse_Unit_Value/100000;
+			//}
 
 			// SET PULSE UNIT VALUE
 			var Pulse_Unit_Value = meter.Pulse_Unit_Value;
@@ -1791,7 +1804,17 @@
 			// GENERATE DATA
 
 			var readings = meter.readings.filter((item) => (new Date(item.Data_DateTime).getTime() > Date.now() - 24 * 60 * 60 * 1000));
-			console.log(readings);
+			var pulseSum = 0;
+			$.each(readings, function(i, reading) {
+				pulseSum += reading.Pulses
+			});			
+
+			var waterSum = pulseSum * meter.Pulse_Unit_Value
+
+			$("#value_main_" + meter.id).text(waterSum.toFixed(3));
+			$("#total_valuel_" + meter.id).text(waterSum.toFixed(3));
+			$("#total_bar_" + meter.id).attr('style', 'width: ' + getPercentage(waterSum, 4).toFixed(0) + '%');
+			$("#total_info_" + meter.id).text('@ ' + getPercentage(waterSum, 4).toFixed(0) + '% of max DA.');
 
 			//$.each(meter.readings, function(i, reading) {
 			//	// LAST 24 HOURS
@@ -1809,19 +1832,19 @@
 			//});
 
 			// SET CHART DATA
-			$("#meter_chart_" + meter.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor};}));
+			$("#meter_chart_" + meter.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value};}));
 			$("#meter_chart_" + meter.id).dxChart('instance').refresh();
 
 			// SET POLAR CHART DATA
-			$("#meter_chart_polar_" + meter.id).dxPolarChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor};}));
+			$("#meter_chart_polar_" + meter.id).dxPolarChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value};}));
 			$("#meter_chart_polar_" + meter.id).dxPolarChart('instance').refresh();
 			
 			// SET LOG VALUES
-			$("#log2_" + meter.id).dxDataGrid("option", "dataSource", readings.map(function(element) {return {'ID': element.id, 'Data_DateTime': element.Data_DateTime, 'Pulses': element.Pulses, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor, 'Battery_Level': element.Battery_Level};}));
+			$("#log2_" + meter.id).dxDataGrid("option", "dataSource", readings.map(function(element) {return {'ID': element.id, 'Data_DateTime': element.Data_DateTime, 'Pulses': element.Pulses, 'Water': element.Pulses*meter.Pulse_Unit_Value, 'Battery_Level': element.Battery_Level};}));
 			$("#log2_" + meter.id).dxDataGrid('instance').refresh();
 
 			// SET CHART DATA
-			$("#data_analysis_chart").dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor};}));
+			$("#data_analysis_chart").dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value};}));
 			$("#data_analysis_chart").dxChart('instance').refresh();
 
 			// SET VALUES
@@ -2090,30 +2113,41 @@
 		//console.log(meter_list_data);
 		var data = [];		
 		$.each(meter_list_data, function(i, meter) {
-			// SET PULSE VOLUME FACTOR
-			var pulse_volume_factor = 1;
-			if (meter.Pulse_Unit_Measurement == 'liters') {
-				pulse_volume_factor = meter.Pulse_Unit_Value/100000;
-			};			
-			var meter_pulses = 0
-			$.each(meter.report, function(i, report) {
-				if (dateCheck(from,to,report.Data_DateTime)) {
-					meter_pulses += report.Pulses;
-					//console.log(report.Pulses);
-				}				
+
+			var readings = meter.readings.filter((item) => (new Date(item.Data_DateTime).getTime() > Date.now() - 24 * 60 * 60 * 1000));
+			//var readings = meter.readings.filter((item) => (new Date(item.Data_DateTime).toDateString() === date.toDateString()));
+			var readings = meter.readings.filter(item => {
+				let date = new Date(item.Data_DateTime).getTime();
+				return date >= from && date <= to;
 			});
+
+			var pulseSum = 0;
+			$.each(readings, function(i, reading) {
+				pulseSum += reading.Pulses
+			});			
+
+			var waterSum = pulseSum * meter.Pulse_Unit_Value
+
+			//var meter_pulses = 0
+			//$.each(meter.report, function(i, report) {
+			//	if (dateCheck(from,to,report.Data_DateTime)) {
+			//		meter_pulses += report.Pulses;
+			//		//console.log(report.Pulses);
+			//	}				
+			//});
+
 			if (meter.Category == 'Supply') {
-				var supply = (meter_pulses*pulse_volume_factor).toFixed(3);
+				var supply = waterSum.toFixed(3);
 			} else if (meter.Category == 'Waste') {
-				var waste = (meter_pulses*pulse_volume_factor).toFixed(3);
+				var waste = waterSum.toFixed(3);
 			} else if (meter.Category == 'Consumer') {
-				var consumer = (meter_pulses*pulse_volume_factor).toFixed(3);
+				var consumer = waterSum.toFixed(3);
 			}
 			// PUSH
 			data.push({
 				ID: meter.id, 
 				Meter: meter.Name, 
-				Water: (meter_pulses*pulse_volume_factor).toFixed(3),
+				Water: waterSum.toFixed(3),
 				Supply: supply,
 				Waste: waste,
 				Consumer: consumer, 
