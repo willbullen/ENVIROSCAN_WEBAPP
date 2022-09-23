@@ -23,6 +23,24 @@
 				<div class="row">
 					<div class="col-xl-6">
 
+<!-- 
+						BEGIN NAV-TABS
+						<ul id="tabs" class="nav nav-tabs nav-tabs">
+							<li class="nav-item me-3"><a href="#readings" class="nav-link active" data-bs-toggle="tab">Readings</a></li>					
+						</ul>
+						END NAV-TABS
+
+						BEGIN tab-content
+						<div class="tab-content">
+							BEGIN TAB-PANE
+							<div class="tab-pane fade show active" id="readings">								
+
+							</div>
+							END TAB-PANE
+						</div>
+						END tab-content
+ -->
+
 						<!-- BEGIN SUPPLY -->
 						<div class="text-white small mb-2"><b>SUPPLY</b></div>
 						<div class="list-group mb-3">							
@@ -74,15 +92,44 @@
 									<!-- BEGIN tab-pane -->
 									<div class="tab-pane fade show active" id="home_{{ meter.id }}">
 										<!-- BEGIN TOOLBAR -->
-										<div id="meter_toolbar_{{ meter.id }}"></div>
+										<nav class="navbar navbar-expand-lg navbar-dark bg-opacity-25 rounded">
+											<div class="container-fluid">
+												<!-- BEGIN REFRESH BUTTON -->
+												<div class="opacity-10 px-1">
+													<button id="refresh_{{ meter.id }}" type="button" class="btn btn-outline-theme btn-sm"><i class="fa fa-redo"></i></button>
+												</div>
+												<!-- END REFRESH BUTTON -->
+												<!-- BEGIN DATE PICKER -->
+												<div class="flex-fill px-1">
+													<div id="daterange_{{ meter.id }}" class="btn btn-outline-theme d-flex align-items-center text-start btn-sm">
+														<span class="text-truncate">&nbsp;</span>
+														<i class="fa fa-caret-down ms-auto"></i>
+													</div>
+												</div>
+												<!-- END DATE PICKER -->
+												<!-- BEGIN SELECT CHART TYPE -->
+												<select id="select_chart_type_{{ meter.id }}" class="form-select btn-outline-theme form-select-sm" style="width: 100px;">
+													<option value="Bar"><i class="fa fa-bar-chart"></i>Bar</option>
+													<option value="Line"><i class="fa fa-line-chart"></i>Line</option>
+													<option value="Polar"><i class="fa fa-pie-chart"></i>Polar</option>
+												</select>
+												<!-- END SELECT CHART TYPE -->
+												<!-- BEGIN FIND BUTTON -->
+												<div class="opacity-10 px-1">
+													<button id="find_{{ meter.id }}" type="button" class="btn btn-outline-theme btn-sm"><i class="fa fa-search"></i></button>
+												</div>
+												<!-- END FIND BUTTON -->
+											</div>
+										</nav>
 										<!-- END TOOLBAR -->
 										<!-- BEGIN row -->
 										<div class="row">
 											<div class="col-9">												
 												<!-- BEGIN CHART -->
 												<div class="pt-1 flex-1">
-													<div id="meter_chart_{{ meter.id }}" class="pt-1 flex-1"></div>
-													<div id="meter_chart_polar_{{ meter.id }}" class="pt-1 flex-1"></div>												
+													<div id="meter_chart_bar_{{ meter.id }}" class="pt-1 flex-1"></div>
+													<div id="meter_chart_polar_{{ meter.id }}" class="pt-1 flex-1"></div>
+													<div id="meter_chart_line_{{ meter.id }}" class="pt-1 flex-1"></div>
 												</div>
 												<!-- END CHART -->
 											</div>
@@ -413,15 +460,44 @@
 									<!-- BEGIN tab-pane -->
 									<div class="tab-pane fade show active" id="home_{{ meter.id }}">
 										<!-- BEGIN TOOLBAR -->
-										<div id="meter_toolbar_{{ meter.id }}"></div>
+										<nav class="navbar navbar-expand-lg navbar-dark bg-opacity-25 rounded">
+											<div class="container-fluid">
+												<!-- BEGIN REFRESH BUTTON -->
+												<div class="opacity-10 px-1">
+													<button id="refresh_{{ meter.id }}" type="button" class="btn btn-outline-theme btn-sm"><i class="fa fa-redo"></i></button>
+												</div>
+												<!-- END REFRESH BUTTON -->
+												<!-- BEGIN DATE PICKER -->
+												<div class="flex-fill px-1">
+													<div id="daterange_{{ meter.id }}" class="btn btn-outline-theme d-flex align-items-center text-start btn-sm">
+														<span class="text-truncate">&nbsp;</span>
+														<i class="fa fa-caret-down ms-auto"></i>
+													</div>
+												</div>
+												<!-- END DATE PICKER -->
+												<!-- BEGIN SELECT CHART TYPE -->
+												<select id="select_chart_type_{{ meter.id }}" class="form-select btn-outline-theme form-select-sm" style="width: 100px;">
+													<option>Bar</option>
+													<option>Line</option>
+													<option>Polar</option>
+												</select>
+												<!-- END SELECT CHART TYPE -->
+												<!-- BEGIN FIND BUTTON -->
+												<div class="opacity-10 px-1">
+													<button id="find_{{ meter.id }}" type="button" class="btn btn-outline-theme btn-sm">Find</button>
+												</div>
+												<!-- END FIND BUTTON -->
+											</div>
+										</nav>
 										<!-- END TOOLBAR -->
 										<!-- BEGIN row -->
 										<div class="row">
 											<div class="col-9">												
 												<!-- BEGIN CHART -->
 												<div class="pt-1 flex-1">
-													<div id="meter_chart_{{ meter.id }}" class="pt-1 flex-1"></div>
-													<div id="meter_chart_polar_{{ meter.id }}" class="pt-1 flex-1"></div>												
+													<div id="meter_chart_bar_{{ meter.id }}" class="pt-1 flex-1"></div>
+													<div id="meter_chart_polar_{{ meter.id }}" class="pt-1 flex-1"></div>
+													<div id="meter_chart_line_{{ meter.id }}" class="pt-1 flex-1"></div>
 												</div>
 												<!-- END CHART -->
 											</div>
@@ -754,15 +830,44 @@
 									<!-- BEGIN tab-pane -->
 									<div class="tab-pane fade show active" id="home_{{ meter.id }}">
 										<!-- BEGIN TOOLBAR -->
-										<div id="meter_toolbar_{{ meter.id }}"></div>
+										<nav class="navbar navbar-expand-lg navbar-dark bg-opacity-25 rounded">
+											<div class="container-fluid">
+												<!-- BEGIN REFRESH BUTTON -->
+												<div class="opacity-10 px-1">
+													<button id="refresh_{{ meter.id }}" type="button" class="btn btn-outline-theme btn-sm"><i class="fa fa-redo"></i></button>
+												</div>
+												<!-- END REFRESH BUTTON -->
+												<!-- BEGIN DATE PICKER -->
+												<div class="flex-fill px-1">
+													<div id="daterange_{{ meter.id }}" class="btn btn-outline-theme d-flex align-items-center text-start btn-sm">
+														<span class="text-truncate">&nbsp;</span>
+														<i class="fa fa-caret-down ms-auto"></i>
+													</div>
+												</div>
+												<!-- END DATE PICKER -->
+												<!-- BEGIN SELECT CHART TYPE -->
+												<select id="select_chart_type_{{ meter.id }}" class="form-select btn-outline-theme form-select-sm" style="width: 100px;">
+													<option>Bar</option>
+													<option>Line</option>
+													<option>Polar</option>
+												</select>
+												<!-- END SELECT CHART TYPE -->
+												<!-- BEGIN FIND BUTTON -->
+												<div class="opacity-10 px-1">
+													<button id="find_{{ meter.id }}" type="button" class="btn btn-outline-theme btn-sm">Find</button>
+												</div>
+												<!-- END FIND BUTTON -->
+											</div>
+										</nav>
 										<!-- END TOOLBAR -->
 										<!-- BEGIN row -->
 										<div class="row">
 											<div class="col-9">												
 												<!-- BEGIN CHART -->
 												<div class="pt-1 flex-1">
-													<div id="meter_chart_{{ meter.id }}" class="pt-1 flex-1"></div>
-													<div id="meter_chart_polar_{{ meter.id }}" class="pt-1 flex-1"></div>												
+													<div id="meter_chart_bar_{{ meter.id }}" class="pt-1 flex-1"></div>
+													<div id="meter_chart_polar_{{ meter.id }}" class="pt-1 flex-1"></div>
+													<div id="meter_chart_line_{{ meter.id }}" class="pt-1 flex-1"></div>
 												</div>
 												<!-- END CHART -->
 											</div>
@@ -1038,9 +1143,7 @@
 							<!-- END METER DETAILS -->
 						{% endfor %}
 						</div>
-						<!-- END waste -->
-
-
+						<!-- END waste -->		
 
 
 
@@ -1063,9 +1166,6 @@
 						<div class="tab-content">
 							<!-- BEGIN TAB-PANE -->
 							<div class="tab-pane fade" id="map">
-								<!-- BEGIN TOOLBAR -->
-								<div class="pt-1 mb-1" id="map_toolbar"></div>
-								<!-- END TOOLBAR -->
 								<!-- BEGIN MAP -->
 								<div class="pt-1 mb-1" id="siteMap"></div>
 								<!-- END MAP -->
@@ -1081,7 +1181,35 @@
 							<!-- BEGIN TAB-PANE -->
 							<div class="tab-pane fade" id="data_analysis">
 								<!-- BEGIN TOOLBAR -->
-								<div class="pt-1 mb-1" id="data_analysis_toolbar"></div>
+								<nav class="navbar navbar-expand-lg navbar-dark bg-opacity-25 rounded">
+									<div class="container-fluid">
+										<!-- BEGIN REFRESH BUTTON -->
+										<div class="opacity-10 px-1">
+											<button id="refresh_da" type="button" class="btn btn-outline-theme btn-sm"><i class="fa fa-redo"></i></button>
+										</div>
+										<!-- END REFRESH BUTTON -->
+										<!-- BEGIN DATE PICKER -->
+										<div class="flex-fill px-1">
+											<div id="daterange_da" class="btn btn-outline-theme d-flex align-items-center text-start btn-sm">
+												<span class="text-truncate">&nbsp;</span>
+												<i class="fa fa-caret-down ms-auto"></i>
+											</div>
+										</div>
+										<!-- END DATE PICKER -->
+										<!-- BEGIN SELECT CHART TYPE -->
+										<select id="select_chart_type_da" class="form-select btn-outline-theme form-select-sm" style="width: 100px;">
+											<option value="Bar"><i class="fa fa-bar-chart"></i>Bar</option>
+											<option value="Line"><i class="fa fa-line-chart"></i>Line</option>
+											<option value="Polar"><i class="fa fa-pie-chart"></i>Polar</option>
+										</select>
+										<!-- END SELECT CHART TYPE -->
+										<!-- BEGIN FIND BUTTON -->
+										<div class="opacity-10 px-1">
+											<button id="find_da" type="button" class="btn btn-outline-theme btn-sm"><i class="fa fa-search"></i></button>
+										</div>
+										<!-- END FIND BUTTON -->
+									</div>
+								</nav>
 								<!-- END TOOLBAR -->
 								<!-- BEGIN CHART -->
 								<div class="pt-1 mb-1" id="data_analysis_chart"></div>
@@ -1095,7 +1223,34 @@
 							<!-- BEGIN TAB-PANE -->
 							<div class="tab-pane fade show active" id="reporting">
 								<!-- BEGIN TOOLBAR -->
-								<div class="pt-1 mb-1" id="reporting_toolbar"></div>
+								<nav class="navbar navbar-expand-lg navbar-dark bg-opacity-25 rounded">
+									<div class="container-fluid">
+										<!-- BEGIN REFRESH BUTTON -->
+										<div class="opacity-10 px-1">
+											<button id="refresh_reporting" type="button" class="btn btn-outline-theme btn-sm"><i class="fa fa-redo"></i></button>
+										</div>
+										<!-- END REFRESH BUTTON -->
+										<!-- BEGIN DATE PICKER -->
+										<div class="flex-fill px-1">
+											<div id="daterange_reporting" class="btn btn-outline-theme d-flex align-items-center text-start btn-sm">
+												<span class="text-truncate">&nbsp;</span>
+												<i class="fa fa-caret-down ms-auto"></i>
+											</div>
+										</div>
+										<!-- END DATE PICKER -->
+										<!-- BEGIN SELECT CHART TYPE -->
+										<select id="select_chart_type_reporting" class="form-select btn-outline-theme form-select-sm" style="width: 100px;">											
+											<option value="Pie"><i class="fa fa-pie-chart"></i>Pie</option>
+											<option value="Bar"><i class="fa fa-bar-chart"></i>Bar</option>
+										</select>
+										<!-- END SELECT CHART TYPE -->
+										<!-- BEGIN FIND BUTTON -->
+										<div class="opacity-10 px-1">
+											<button id="find_reporting" type="button" class="btn btn-outline-theme btn-sm"><i class="fa fa-search"></i></button>
+										</div>
+										<!-- END FIND BUTTON -->
+									</div>
+								</nav>
 								<!-- END TOOLBAR -->
 								<div class="pt-1 mb-1">
 									<p>Totals for a <span id="report_period"></span> day period from <span id="report_from"></span> to the <span id="report_to"></span>, a total of <span id="report_not_metered"></span> m3 of supply water was not metered. The waste water total for this period was <span id="report_waste"></span> m3.</p>
@@ -1273,7 +1428,7 @@
 			},
 			columns: [
 				{
-					title: "DATE TIME",
+					title: "TIMESTAMP",
 					dataField: 'Data_DateTime',
 				}, {
 					title: "PULSES",
@@ -1283,33 +1438,13 @@
 					title: "WATER",
 					dataField: 'Water',
 					width: 100,
-				}, {
-					title: "BATT LEVEL",
-					dataField: 'Battery_Level',
-					width: 100,
 				},
 			],
 		});
 	}
 	
 	function create_charts(id) {
-		// CREATE SERIES
-		var series = [
-			{
-				type: 'bar',
-				name: 'Consumption',
-				valueField: 'Water',
-				argumentField: "Data_DateTime",
-				argumentType: "datetime",
-			},
-			//{
-			//	type: 'spline',
-			//	name: 'Baseline',
-			//	valueField: 'Baseline',
-			//	argumentField: "Data_DateTime",
-			//	argumentType: "datetime",
-			//}
-		];
+		
 		// CREATE POLAR CHART
 		var polar = $('#meter_chart_polar_' + id).dxPolarChart({
 			palette: 'red',
@@ -1370,14 +1505,12 @@
 				},
 			},
 			legend: {
-				verticalAlignment: 'top',
-				horizontalAlignment: 'right',
-				hoverMode: 'excludePoints',
+				visible: false,
 			}
 		});
 
 		// CREATE BAR CHART
-		var chart = $('#meter_chart_' + id).dxChart({
+		var chart = $('#meter_chart_bar_' + id).dxChart({
 			palette: 'red',
 			commonSeriesSettings: {
 				point: {
@@ -1401,14 +1534,101 @@
 					visible: true,
 				},
 			},
-			series: series,
+			series: [
+				{
+					type: 'stackedbar',
+					name: 'Consumption',
+					valueField: 'Water',
+					argumentField: "Data_DateTime",
+					argumentType: "datetime",
+				},
+				//{
+				//	type: 'line',
+				//	name: 'Baseline',
+				//	valueField: 'Baseline',
+				//	argumentField: "Data_DateTime",
+				//	argumentType: "datetime",
+				//}
+			],
 			tooltip: {
 				enabled: true,
 			},
 			legend: {
-				verticalAlignment: 'top',
-				horizontalAlignment: 'center',
-				hoverMode: 'excludePoints',
+				visible: false,
+			},
+			crosshair: {
+				enabled: true,
+				color: '#949494',
+				width: 1,
+				dashStyle: 'dot',
+				label: {
+					visible: true,
+					backgroundColor: '#949494',
+					font: {
+					color: '#fff',
+					size: 12,
+					},
+				},
+			},
+			export: {
+				enabled: false,
+			},
+			onPointClick: function (e) {
+				var point = e.target;
+				if (point.isSelected()) {
+					point.clearSelection();
+				} else {
+					point.select();					
+				}
+			}
+		});	
+		
+		// CREATE LINE CHART
+		var chart = $('#meter_chart_line_' + id).dxChart({
+			palette: 'red',
+			commonSeriesSettings: {
+				point: {
+					visible: false,
+				},
+			},
+			size: {
+				height: 360,
+			},
+			loadingIndicator: {
+				enabled: true
+			},
+			argumentAxis: {
+				argumentType: "datetime",
+				label: {
+					format: "shortDateShortTime"
+				},
+				valueMarginsEnabled: false,
+				discreteAxisDivisionMode: 'crossLabels',
+				grid: {
+					visible: true,
+				},
+			},
+			series: [
+				{
+					type: 'spline',
+					name: 'Consumption',
+					valueField: 'Water',
+					argumentField: "Data_DateTime",
+					argumentType: "datetime",
+				},
+				//{
+				//	type: 'line',
+				//	name: 'Baseline',
+				//	valueField: 'Baseline',
+				//	argumentField: "Data_DateTime",
+				//	argumentType: "datetime",
+				//}
+			],
+			tooltip: {
+				enabled: true,
+			},
+			legend: {
+				visible: false,
 			},
 			crosshair: {
 				enabled: true,
@@ -1610,8 +1830,9 @@
 			var Pulse_Unit_Value = meter.Pulse_Unit_Value;
 			// CREATE CHARTS
 			create_charts(meter.id);
-			$("#meter_chart_" + meter.id).show();
+			$("#meter_chart_bar_" + meter.id).show();
 			$("#meter_chart_polar_" + meter.id).hide();
+			$("#meter_chart_line_" + meter.id).hide();
 			// CREATE LOG TABLE
 			create_log_datatable(meter.id);			
 			// CREATE METER TOOL BAR
@@ -1625,116 +1846,93 @@
 
 	// CREATE TOOL BARS BY ID
 	function create_meter_tool_bars(meter) {
-		// CREATE  TOOL BARS
-		var toolbar = $('#meter_toolbar_' + meter.id).dxToolbar({
-			items: [
-				{
-					location: 'before',
-					widget: 'dxButton',
-					locateInMenu: 'auto',
-					options: {
-						icon: 'refresh',
-						onClick() {
-							$("#meter_chart_" + meter.id).dxChart('instance').refresh();
-							$("#meter_chart_polar_" + meter.id).dxPolarChart('instance').refresh();
-							DevExpress.ui.notify('Refresh button has been clicked!');
-						},
-					},
-				}, {
-					location: 'center',
-					widget: 'dxDateBox',
-					locateInMenu: 'auto',
-					options: {
-						applyValueMode: 'useButtons',
-						width: 100,
-						value: new Date(),
-						max: new Date(),
-						min: new Date(2000, 0, 1),
-						onValueChanged(data) {
-							change_chart_data(meter.id, new Date(data.value));
-						},
-					},
-				}, {
-					location: 'center',
-					widget: 'dxDropDownButton',
-					locateInMenu: 'auto',
-					options: {
-						icon: 'chart',
-						dropDownOptions: {
-							width: 100,
-						},
-						onItemClick(e) {
-							//console.log(e.itemData);
-							change_chart_type(meter.id, e.itemData);
-						},
-						items: [
-							{id: 1, name: 'Bar', icon: 'chart' },
-							{id: 4, name: 'Line', icon: 'email'},
-							{id: 2, name: 'Polar', icon: 'group' },
-						],
-						displayExpr: 'name',
-						keyExpr: 'id',
-					},
-				}, {
-					location: 'after',
-					widget: 'dxButton',
-					locateInMenu: 'auto',
-					options: {
-						text: 'Find',
-						onClick() {
-							DevExpress.ui.notify('Find button has been clicked!');
-						},
-					},
-				}, {
-					locateInMenu: 'always',
-					widget: 'dxButton',
-					options: {
-						text: 'Print',
-						onClick() {
-							DevExpress.ui.notify('Print option has been clicked!');
-						},
-					},
-				}, {
-					locateInMenu: 'always',
-					widget: 'dxButton',
-					options: {
-						text: 'Settings',
-						onClick() {
-							DevExpress.ui.notify('Settings option has been clicked!');
-						},
-					},
-				},
-			],
+
+		// REFRESH CHART
+		$('#refresh_' + meter.id).click({}, function() {
+			$("#meter_chart_bar_" + meter.id).dxChart('instance').refresh();
+			$("#meter_chart_polar_" + meter.id).dxPolarChart('instance').refresh();
+			$("#meter_chart_line_" + meter.id).dxChart('instance').refresh();
+		});
+
+		// SET CHART SELECTION
+		$('#select_chart_type_' + meter.id).change({}, function() {
+			console.log(this.value);
+			if (this.value === 'Bar') {
+				$("#meter_chart_bar_" + meter.id).show();
+				$("#meter_chart_polar_" + meter.id).hide();
+				$("#meter_chart_line_" + meter.id).hide();
+			} else if (this.value === 'Polar') {
+				$("#meter_chart_bar_" + meter.id).hide();
+				$("#meter_chart_polar_" + meter.id).show();
+				$("#meter_chart_line_" + meter.id).hide();
+			} else if (this.value === 'Line') {
+				$("#meter_chart_bar_" + meter.id).hide();
+				$("#meter_chart_polar_" + meter.id).hide();
+				$("#meter_chart_line_" + meter.id).show();
+			}
+			$("#meter_chart_bar_" + meter.id).dxChart('instance').refresh();
+			$("#meter_chart_polar_" + meter.id).dxPolarChart('instance').refresh();
+			$("#meter_chart_line_" + meter.id).dxChart('instance').refresh();		
+		});
+
+		// SETUP DATEPICKER
+		$('#daterange_' + meter.id + ' span').html(moment().subtract('hours', 24).format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
+		$('#daterange_' + meter.id).daterangepicker({
+			format: 'MM/DD/YYYY',
+			startDate: moment().subtract(29, 'days'),
+			endDate: moment(),
+			minDate: moment().subtract(6, 'months'),
+			maxDate: moment(),
+			dateLimit: { days: 60 },
+			showDropdowns: true,
+			showWeekNumbers: true,
+			timePicker: false,
+			timePickerIncrement: 1,
+			timePicker12Hour: true,
+			ranges: {
+				'Today': [moment(), moment()],
+				'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],				
+				'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+				'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+				'Last 24 Hours': [moment().subtract(24, 'hours'), moment()],
+				'This Month': [moment().startOf('month'), moment().endOf('month')],
+				'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+			},
+			opens: 'right',
+			drops: 'down',
+			buttonClasses: ['btn', 'btn-sm'],
+			applyClass: 'btn-primary',
+			cancelClass: 'btn-default',
+			separator: ' to ',
+			locale: {
+				applyLabel: 'Submit',
+				cancelLabel: 'Cancel',
+				fromLabel: 'From',
+				toLabel: 'To',
+				customRangeLabel: 'Custom',
+				daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr','Sa'],
+				monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+				firstDay: 1
+			}
+		}, function(start, end, label) {
+			$('#daterange_' + meter.id + ' span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+			change_chart_data(meter.id, new Date(start.format()), new Date(end.format()));
 		});
 	}
 
-	// CHANGE CHART TYPE
-	function change_chart_type(id, chart_type) {
-		//console.log(chart_type);
-		if (chart_type.name === 'Bar') {
-			$("#meter_chart_" + id).show();
-			$("#meter_chart_polar_" + id).hide();
-		} else if (chart_type.name === 'Polar') {
-			$("#meter_chart_" + id).hide();
-			$("#meter_chart_polar_" + id).show();
-		} else if (chart_type.name === 'Line') {
-			$("#meter_chart_" + id).show();
-			$("#meter_chart_polar_" + id).hide();
-		}		
-	}
-
 	// CHANGE CHART DATA
-	function change_chart_data(id, date) {		
+	function change_chart_data(id, start, end) {		
 
 		var readings = [];
 		//var pulse_volume_factor = 1;
 
-		console.log(date);
+		console.log(start);
 
 		$.each(meter_list_data, function(i, meter) {
 			if (meter.id == id) {
 
-				var readings = meter.readings.filter((item) => (new Date(item.Data_DateTime).toDateString() === date.toDateString()));
+				var readings = meter.readings.filter((item) => item.Data_DateTime.getTime() >= start.getTime() && item.Data_DateTime.getTime() <= end.getTime());
+				//var readings = meter.readings.filter((item) => (new Date(item.Data_DateTime).toDateString() === start.toDateString()));
 
 				var pulseSum = 0;
 				$.each(readings, function(i, reading) {
@@ -1768,12 +1966,16 @@
 				}
 
 				// SET BAR CHART DATA
-				$("#meter_chart_" + meter.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value};}));
-				$("#meter_chart_" + meter.id).dxChart('instance').refresh();
+				$("#meter_chart_bar_" + meter.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value};}));
+				$("#meter_chart_bar_" + meter.id).dxChart('instance').refresh();
 							
 				// SET POLAR CHART DATA
 				$("#meter_chart_polar_" + meter.id).dxPolarChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value};}));
 				$("#meter_chart_polar_" + meter.id).dxPolarChart('instance').refresh();
+
+				// SET BAR CHART DATA
+				$("#meter_chart_line_" + meter.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value};}));
+				$("#meter_chart_line_" + meter.id).dxChart('instance').refresh();
 
 				// SET VALUES
 				set_text(meter.id, meter.Pulse_Unit_Measurement, meter.Pulse_Unit_Value, readings);
@@ -1802,6 +2004,7 @@
 			var readings = [];
 
 			// GENERATE DATA
+			//var readings = meter.readings.filter((item) => item.Data_DateTime.getTime() >= start.getTime() && item.Data_DateTime.getTime() <= end.getTime());
 
 			var readings = meter.readings.filter((item) => (new Date(item.Data_DateTime).getTime() > Date.now() - 24 * 60 * 60 * 1000));
 			var pulseSum = 0;
@@ -1831,16 +2034,20 @@
 			//	}
 			//});
 
-			// SET CHART DATA
-			$("#meter_chart_" + meter.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value};}));
-			$("#meter_chart_" + meter.id).dxChart('instance').refresh();
+			// SET BAR CHART DATA
+			$("#meter_chart_bar_" + meter.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value};}));
+			$("#meter_chart_bar_" + meter.id).dxChart('instance').refresh();
 
 			// SET POLAR CHART DATA
 			$("#meter_chart_polar_" + meter.id).dxPolarChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value};}));
 			$("#meter_chart_polar_" + meter.id).dxPolarChart('instance').refresh();
+
+			// SET LINE CHART DATA
+			$("#meter_chart_line_" + meter.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value};}));
+			$("#meter_chart_line_" + meter.id).dxChart('instance').refresh();
 			
 			// SET LOG VALUES
-			$("#log2_" + meter.id).dxDataGrid("option", "dataSource", readings.map(function(element) {return {'ID': element.id, 'Data_DateTime': element.Data_DateTime, 'Pulses': element.Pulses, 'Water': element.Pulses*meter.Pulse_Unit_Value, 'Battery_Level': element.Battery_Level};}));
+			$("#log2_" + meter.id).dxDataGrid("option", "dataSource", readings.map(function(element) {return {'ID': element.id, 'Data_DateTime': element.Data_DateTime, 'Pulses': element.Pulses, 'Water': (element.Pulses*meter.Pulse_Unit_Value).toFixed(3)};}));
 			$("#log2_" + meter.id).dxDataGrid('instance').refresh();
 
 			// SET CHART DATA
@@ -1939,16 +2146,56 @@
 	//////////////////////////////////////////////////////////////////////////
 
 	// SET CHART DATA
-	//$("#data_analysis_chart").dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value*pulse_volume_factor, 'Baseline': element.Baseline*meter.Pulse_Unit_Value*pulse_volume_factor};}));
-	//$("#data_analysis_chart").dxChart('instance').refresh();
+	function change_da_data(start, end) {
 
-	
-	$(".nav-link").click(function (event) {
-		console.log('CCCCCCCCCCCCCCCCC');
-		$("#data_analysis_chart").dxChart('instance').refresh();
-	});
+	};
 
 	var renderDataAnalysis = function () {
+
+		// SETUP DA DATEPICKER
+		$('#daterange_da span').html(moment().subtract('hours', 24).format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
+		$('#daterange_da').daterangepicker({
+			format: 'MM/DD/YYYY',
+			startDate: moment().subtract(29, 'days'),
+			endDate: moment(),
+			minDate: moment().subtract(6, 'months'),
+			maxDate: moment(),
+			dateLimit: { days: 60 },
+			showDropdowns: true,
+			showWeekNumbers: true,
+			timePicker: false,
+			timePickerIncrement: 1,
+			timePicker12Hour: true,
+			ranges: {
+				'Today': [moment(), moment()],
+				'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],				
+				'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+				'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+				'Last 24 Hours': [moment().subtract(24, 'hours'), moment()],
+				'This Month': [moment().startOf('month'), moment().endOf('month')],
+				'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+			},
+			opens: 'right',
+			drops: 'down',
+			buttonClasses: ['btn', 'btn-sm'],
+			applyClass: 'btn-primary',
+			cancelClass: 'btn-default',
+			separator: ' to ',
+			locale: {
+				applyLabel: 'Submit',
+				cancelLabel: 'Cancel',
+				fromLabel: 'From',
+				toLabel: 'To',
+				customRangeLabel: 'Custom',
+				daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr','Sa'],
+				monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+				firstDay: 1
+			}
+		}, function(start, end, label) {
+			$('#daterange_da span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+			change_da_data(new Date(start.format()), new Date(end.format()));
+		});
+
 		// RANGE
 		var range = $('#data_analysis_range').dxRangeSelector({			
 			scale: {
@@ -1967,16 +2214,7 @@
 			},
 			value: [new Date(2022, 5, 1), new Date()],
 		});
-		// CREATE SERIES
-		var series = [
-			{
-				type: 'spline',
-				name: 'Consumption',
-				valueField: 'Water',
-				argumentField: "Data_DateTime",
-				argumentType: "datetime",
-			},
-		];
+		
 		// CHART
 		var chart = $('#data_analysis_chart').dxChart({
 			palette: 'red',
@@ -2002,7 +2240,13 @@
 					visible: true,
 				},
 			},
-			series: series,
+			series: {
+				type: 'spline',
+				name: 'Consumption',
+				valueField: 'Water',
+				argumentField: "Data_DateTime",
+				argumentType: "datetime",
+			},
 			tooltip: {
 				enabled: true,
 			},
@@ -2037,70 +2281,7 @@
 				}
 			}
 		});
-		// TOOL BAR
-		var toolbar = $('#data_analysis_toolbar').dxToolbar({
-			items: [
-			{
-					location: 'before',
-					widget: 'dxButton',
-					locateInMenu: 'auto',
-					options: {
-						icon: 'refresh',
-						onClick() {
-							DevExpress.ui.notify('Refresh button has been clicked!');
-						},
-					},
-				}, {
-					location: 'center',
-					widget: 'dxSelectBox',
-					locateInMenu: 'auto',
-					options: {
-						items: [
-							{
-								id: 1,
-								text: 'Main Water Meter',
-							}, {
-								id: 2,
-								text: 'CRC Pod Meter',
-							}, {
-								id: 3,
-								text: 'Main Ward Block',
-							}, {
-								id: 4,
-								text: 'Maternity Basement Meter',
-							}, {
-								id: 5,
-								text: 'Wastewater Flume',
-							}
-						],
-						valueExpr: 'id',
-						displayExpr: 'text',
-						value: 1,
-						onValueChanged(args) {
-							
-						},
-					},
-				}, {
-					locateInMenu: 'always',
-					widget: 'dxButton',
-					options: {
-						text: 'Print',
-						onClick() {
-							DevExpress.ui.notify('Print option has been clicked!');
-						},
-					},
-				}, {
-					locateInMenu: 'always',
-					widget: 'dxButton',
-					options: {
-						text: 'Settings',
-						onClick() {
-							DevExpress.ui.notify('Settings option has been clicked!');
-						},
-					},
-				},
-			],
-		});
+		
 	};
 
 
@@ -2108,18 +2289,14 @@
 	// REPORTS
 	//////////////////////////////////////////////////////////////////////////
 
-	// GET REPORT DATA BY DATE RANGE
-	function reportData(from, to) {
-		//console.log(meter_list_data);
+	
+	function change_reporting_data(start, end) {
+
+		// GET REPORT DATA BY DATE RANGE		
 		var data = [];		
 		$.each(meter_list_data, function(i, meter) {
 
-			var readings = meter.readings.filter((item) => (new Date(item.Data_DateTime).getTime() > Date.now() - 24 * 60 * 60 * 1000));
-			//var readings = meter.readings.filter((item) => (new Date(item.Data_DateTime).toDateString() === date.toDateString()));
-			var readings = meter.readings.filter(item => {
-				let date = new Date(item.Data_DateTime).getTime();
-				return date >= from && date <= to;
-			});
+			var readings = meter.readings.filter((item) => item.Data_DateTime.getTime() >= start.getTime() && item.Data_DateTime.getTime() <= end.getTime());
 
 			var pulseSum = 0;
 			$.each(readings, function(i, reading) {
@@ -2127,14 +2304,6 @@
 			});			
 
 			var waterSum = pulseSum * meter.Pulse_Unit_Value
-
-			//var meter_pulses = 0
-			//$.each(meter.report, function(i, report) {
-			//	if (dateCheck(from,to,report.Data_DateTime)) {
-			//		meter_pulses += report.Pulses;
-			//		//console.log(report.Pulses);
-			//	}				
-			//});
 
 			if (meter.Category == 'Supply') {
 				var supply = waterSum.toFixed(3);
@@ -2154,28 +2323,6 @@
 				Type: meter.Category,
 			})
 		});
-		return data;
-	}
-
-	function dateCheck(from, to, check) {
-		if((check <= to && check >= from)) {
-			return true;
-		}
-		return false;
-	}
-
-	function change_reporting_data(date, type) {
-
-		var from = $("#reporting_toolbar").dxToolbar('instance').option('items')[2].options.value;
-		var to = $("#reporting_toolbar").dxToolbar('instance').option('items')[4].options.value;
-
-		if (type == 'from') {
-			from = date;
-		} else {
-			to = date;
-		}
-
-		var data = reportData(new Date(from), new Date(to));
 
 		var new_data = [];
 		var supply = 0;
@@ -2201,7 +2348,7 @@
 			Consumer: null, 
 			Type: 'Not Metered',
 		})
-		var Difference_In_Days = (new Date(to).getTime() - new Date(from).getTime()) / (1000 * 3600 * 24);
+		var Difference_In_Days = (new Date(end).getTime() - new Date(start).getTime()) / (1000 * 3600 * 24);
 
 		// PIE CHART DATA
 		$("#reporting_pie").dxPieChart("option", "dataSource", new_data);
@@ -2217,13 +2364,78 @@
 
 		// TEXT
 		$("#report_period").text(Difference_In_Days.toFixed(0));
-		$("#report_from").text(new Date(from).toDateString());
-		$("#report_to").text(new Date(to).toDateString());
+		$("#report_from").text(new Date(start).toDateString());
+		$("#report_to").text(new Date(end).toDateString());
 		$("#report_not_metered").text(not_metered.toFixed(3));
 		$("#report_waste").text(waste.toFixed(3));
 	}
 
 	var renderReport = function () {
+
+		// REFRESH CHART
+		$('#refresh_reporting').click({}, function() {
+			$("#reporting_bar").dxChart('instance').refresh();
+			$("#reporting_pie").dxPieChart('instance').refresh();
+		});
+
+		// SET CHART SELECTION
+		$('#select_chart_type_reporting').change({}, function() {
+			console.log(this.value);
+			if (this.value === 'Bar') {
+				$("#reporting_bar").show();
+				$("#reporting_pie").hide();
+			} else if (this.value === 'Pie') {
+				$("#reporting_bar").hide();
+				$("#reporting_pie").show();
+			} 
+			$("#reporting_pie").dxPieChart('instance').refresh();
+			$("#reporting_bar").dxChart('instance').refresh();
+		});
+
+
+		// SETUP REPORTING DATEPICKER
+		$('#daterange_reporting span').html(moment().subtract('hours', 24).format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
+		$('#daterange_reporting').daterangepicker({
+			format: 'MM/DD/YYYY',
+			startDate: moment().subtract(29, 'days'),
+			endDate: moment(),
+			minDate: moment().subtract(6, 'months'),
+			maxDate: moment(),
+			dateLimit: { days: 60 },
+			showDropdowns: true,
+			showWeekNumbers: true,
+			timePicker: false,
+			timePickerIncrement: 1,
+			timePicker12Hour: true,
+			ranges: {
+				'Today': [moment(), moment()],
+				'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],				
+				'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+				'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+				'Last 24 Hours': [moment().subtract(24, 'hours'), moment()],
+				'This Month': [moment().startOf('month'), moment().endOf('month')],
+				'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+			},
+			opens: 'right',
+			drops: 'down',
+			buttonClasses: ['btn', 'btn-sm'],
+			applyClass: 'btn-primary',
+			cancelClass: 'btn-default',
+			separator: ' to ',
+			locale: {
+				applyLabel: 'Submit',
+				cancelLabel: 'Cancel',
+				fromLabel: 'From',
+				toLabel: 'To',
+				customRangeLabel: 'Custom',
+				daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr','Sa'],
+				monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+				firstDay: 1
+			}
+		}, function(start, end, label) {
+			$('#daterange_reporting span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+			change_reporting_data(new Date(start.format()), new Date(end.format()));
+		});
 
 		// PIE CHART
 		var piechart = $('#reporting_pie').dxPieChart({
@@ -2306,111 +2518,6 @@
 				],
 			},
 		});
-									
-		// TOOL BAR
-		var toolbar = $('#reporting_toolbar').dxToolbar({
-			items: [
-			{
-					location: 'before',
-					widget: 'dxButton',
-					locateInMenu: 'auto',
-					options: {
-						icon: 'refresh',
-						onClick() {
-							DevExpress.ui.notify('Refresh button has been clicked!');
-						},
-					},
-				}, {
-					location: 'center',
-					locateInMenu: 'never',
-					template() {
-						return $("<div class='toolbar-label'><b>Start Date: </b></div>");
-					},
-				}, {
-					id: 'from',
-					location: 'center',
-					widget: 'dxDateBox',
-					locateInMenu: 'auto',
-					options: {
-						applyValueMode: 'useButtons',
-						width: 100,
-						value: new Date(),
-						max: new Date(),
-						min: new Date(2000, 0, 1),
-						onValueChanged(data) {
-							change_reporting_data(data.value, 'from');
-						},
-					},
-				}, {
-					location: 'center',
-					locateInMenu: 'never',
-					template() {
-						return $("<div class='toolbar-label'><b>End Date: </b></div>");
-					},
-				}, {
-					id: 'to',
-					location: 'center',
-					widget: 'dxDateBox',
-					locateInMenu: 'auto',
-					options: {
-						applyValueMode: 'useButtons',
-						width: 100,
-						value: new Date(),
-						max: new Date(),
-						min: new Date(2000, 0, 1),
-						onValueChanged(data) {
-							change_reporting_data(data.value, 'to');
-						},
-					},
-				}, {
-					location: 'center',
-					widget: 'dxDropDownButton',
-					locateInMenu: 'auto',
-					options: {
-						icon: 'chart',
-						dropDownOptions: {
-							width: 100,
-						},
-						onItemClick(e) {
-							change_reporting_chart_type(e.itemData);
-						},
-						items: [
-							{id: 1, name: 'Bar', icon: 'chart' },
-							{id: 2, name: 'Pie', icon: 'pie-chart'},
-						],
-						displayExpr: 'name',
-						keyExpr: 'id',
-					},
-				}, {
-					locateInMenu: 'always',
-					widget: 'dxButton',
-					options: {
-						text: 'Save',
-						onClick() {
-							DevExpress.ui.notify('Save option has been clicked!');
-						},
-					},
-				}, {
-					locateInMenu: 'always',
-					widget: 'dxButton',
-					options: {
-						text: 'Print',
-						onClick() {
-							DevExpress.ui.notify('Print option has been clicked!');
-						},
-					},
-				}, {
-					locateInMenu: 'always',
-					widget: 'dxButton',
-					options: {
-						text: 'Settings',
-						onClick() {
-							DevExpress.ui.notify('Settings option has been clicked!');
-						},
-					},
-				},
-			],
-		});
 
 		function change_reporting_chart_type(item) {
 			if (item.name == 'Bar') {
@@ -2425,8 +2532,7 @@
 		$("#reporting_pie").show();
 		$("#reporting_bar").hide();
 
-		var date = new Date();
-		const data = change_reporting_data(date.setDate(date.getDate() - 1), 'from');
+		change_reporting_data(new Date(moment().subtract(24, 'hours').format()), new Date(moment().format()));
 
 	};
 	//////////////////////////////////////////////////////////////////////////
