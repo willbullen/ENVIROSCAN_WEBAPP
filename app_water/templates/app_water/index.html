@@ -55,7 +55,7 @@
 									</div>
 								</a>
 								<div class="flex-fill px-3">									
-									<a href="#" class="text-white" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}">
+									<a href="#" class="text-white" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}" id="slider_{{ meter.id }}">
 										<div class="fw-bold">{{ meter.Name }}</div>
 									</a>
 								</div>								
@@ -423,7 +423,7 @@
 									</div>
 								</a>
 								<div class="flex-fill px-3">									
-									<a href="#" class="text-white" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}">							
+									<a href="#" class="text-white" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}" id="slider_{{ meter.id }}">							
 										<div class="fw-bold">{{ meter.Name }}</div>
 									</a>
 								</div>								
@@ -793,7 +793,7 @@
 									</div>
 								</a>
 								<div class="flex-fill px-3">									
-									<a href="#" class="text-white" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}">							
+									<a href="#" class="text-white" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}" id="slider_{{ meter.id }}">							
 										<div class="fw-bold">{{ meter.Name }}</div>
 									</a>
 								</div>								
@@ -1872,6 +1872,13 @@
 
 		// REFRESH CHART
 		$('#refresh_' + meter.id).click({}, function() {
+			$("#meter_chart_bar_" + meter.id).dxChart('instance').refresh();
+			$("#meter_chart_polar_" + meter.id).dxPolarChart('instance').refresh();
+			$("#meter_chart_line_" + meter.id).dxChart('instance').refresh();
+		});
+
+		// REFRESH CHART ON SLIDER CLICK
+		$('#slider_' + meter.id).click({}, function() {
 			$("#meter_chart_bar_" + meter.id).dxChart('instance').refresh();
 			$("#meter_chart_polar_" + meter.id).dxPolarChart('instance').refresh();
 			$("#meter_chart_line_" + meter.id).dxChart('instance').refresh();
