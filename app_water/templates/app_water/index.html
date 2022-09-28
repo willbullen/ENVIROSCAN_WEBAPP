@@ -1214,9 +1214,32 @@
 								<!-- BEGIN CHART -->
 								<div class="pt-1 mb-1" id="data_analysis_chart"></div>
 								<!-- END CHART -->
-								<!-- BEGIN RANGE -->
-								<div class="pt-1 mb-1" id="data_analysis_range"></div>
-								<!-- END RANGE -->
+								<!-- BEGIN TABLE -->
+								<table class="table">
+									<thead class="table-dark">
+										<tr>
+											<th scope="col">Name</th>
+											<th scope="col">Location</th>
+											<th scope="col">Total m3</th>
+											<th scope="col">Show</th>
+										</tr>
+									</thead>
+									<tbody>
+										{% for meter in meter_list_consumer %}
+										<tr>
+											<td>{{ meter.Name }}</td>
+											<td>{{ meter.Region }}</td>
+											<td></td>
+											<td>
+												<div class="form-check form-switch">
+													<input type="checkbox" class="form-check-input" id="show_da_chart_{{ meter.id }}">
+												</div>
+											</td>
+										</tr>
+										{% endfor %}
+									</tbody>
+								</table>
+								<!-- END TABLE -->
 							</div>
 							<!-- END TAB-PANE -->
 
@@ -1876,7 +1899,7 @@
 		});
 
 		// SETUP DATEPICKER
-		$('#daterange_' + meter.id + ' span').html(moment().subtract('hours', 24).format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
+		$('#daterange_' + meter.id + ' span').html(moment().subtract(24, 'hours').format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
 		$('#daterange_' + meter.id).daterangepicker({
 			format: 'MM/DD/YYYY',
 			startDate: moment().subtract(29, 'days'),
@@ -2004,9 +2027,13 @@
 			var readings = [];
 
 			// GENERATE DATA
-			//var readings = meter.readings.filter((item) => item.Data_DateTime.getTime() >= start.getTime() && item.Data_DateTime.getTime() <= end.getTime());
+			var start = new Date(moment().subtract(24, 'hours').format());
+			var end =  new Date(moment().format());
+			
+			var readings = meter.readings.filter((item) => item.Data_DateTime.getTime() >= start.getTime() && item.Data_DateTime.getTime() <= end.getTime());
 
-			var readings = meter.readings.filter((item) => (new Date(item.Data_DateTime).getTime() > Date.now() - 24 * 60 * 60 * 1000));
+			//var readings = meter.readings.filter((item) => (new Date(item.Data_DateTime).getTime() > Date.now() - 24 * 60 * 60 * 1000));
+
 			var pulseSum = 0;
 			$.each(readings, function(i, reading) {
 				pulseSum += reading.Pulses
@@ -2051,8 +2078,8 @@
 			$("#log2_" + meter.id).dxDataGrid('instance').refresh();
 
 			// SET CHART DATA
-			$("#data_analysis_chart").dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value};}));
-			$("#data_analysis_chart").dxChart('instance').refresh();
+			//$("#data_analysis_chart").dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value};}));
+			//$("#data_analysis_chart").dxChart('instance').refresh();
 
 			// SET VALUES
 			set_text(meter.id, meter.Pulse_Unit_Measurement, meter.Pulse_Unit_Value, readings)
@@ -2143,17 +2170,166 @@
 
 	//////////////////////////////////////////////////////////////////////////
 	// DATA ANALYSIS
-	//////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////	
+	var renderDataAnalysis = function () {		
+		// LIST OF METERS
+		var da_meter_list = [1,5,6];
+		// SERIES BUILDER
+		var da_series = [];
+		// DA CHART SETUP
+		var chart = $('#data_analysis_chart').dxChart({
+			palette: 'red',
+			commonSeriesSettings: {
+				point: {
+					visible: false,
+				},
+			},
+			size: {
+				height: 360,
+			},
+			loadingIndicator: {
+				enabled: true
+			},
+			argumentAxis: {
+				argumentType: "datetime",
+				label: {
+					format: "shortDateShortTime"
+				},
+				valueMarginsEnabled: false,
+				discreteAxisDivisionMode: 'crossLabels',
+				grid: {
+					visible: true,
+				},
+			},
+			series: da_series,
+			tooltip: {
+				enabled: true,
+			},
+			legend: {
+				verticalAlignment: 'top',
+				horizontalAlignment: 'center',
+				hoverMode: 'excludePoints',
+			},
+			crosshair: {
+				enabled: true,
+				color: '#949494',
+				width: 1,
+				dashStyle: 'dot',
+				label: {
+					visible: true,
+					backgroundColor: '#949494',
+					font: {
+					color: '#fff',
+					size: 12,
+					},
+				},
+			},
+			export: {
+				enabled: false,
+			},
+			onPointClick: function (e) {
+				var point = e.target;
+				if (point.isSelected()) {
+					point.clearSelection();
+				} else {
+					point.select();					
+				}
+			}
+		});
+		// DA CHART RANGE SELECTOR SETUP
+		$('#data_analysis_chart_range_selector').dxRangeSelector({
+			scale: {
+				startValue: new Date(2022, 8, 8),
+				endValue: new Date(),
+				minorTickInterval: 'day',
+				tickInterval: 'week',
+				minRange: 'week',
+				maxRange: 'month',
+				minorTick: {
+					visible: false,
+				},
+			},
+			sliderMarker: {
+				format: 'monthAndDay',
+			},
+			value: [new Date(2022, 8, 8), new Date()],
 
-	// SET CHART DATA
-	function change_da_data(start, end) {
-
-	};
-
-	var renderDataAnalysis = function () {
-
+			size: {
+				height: 120,
+			},
+			margin: {
+				left: 10,
+			},
+			//scale: {
+			//	minorTickCount: 1,
+			//},
+			//dataSource: zoomingData,
+			chart: {
+				da_series,
+				palette: 'Harmony Light',
+			},
+			behavior: {
+				callValueChanged: 'onMoving',
+			},
+			onValueChanged(e) {
+				const zoomedChart = $('#data_analysis_chart').dxChart('instance');
+				zoomedChart.getArgumentAxis().visualRange(e.value);
+			},
+		});
+		// CHANGE DA CHART DATA
+		function change_da_data(start, end) {			
+			// LOOP THROUGH METERS
+			var all_readings = [];
+			da_series = [];
+			$.each(meter_list_data, function(i, meter) {
+				if (da_meter_list.includes(meter.id)) {
+					da_series.push({
+						type: 'spline',
+						name: meter.Name,
+						valueField: meter.id,
+						argumentField: "date_time",
+						argumentType: "datetime",
+					});
+					// SET DATE SPAN FOR READINGS
+					var readings = meter.readings.filter((item) => item.Data_DateTime.getTime() >= start.getTime() && item.Data_DateTime.getTime() <= end.getTime());
+					$.each(readings, function(i, reading) {
+						all_readings.push({
+							'date_time': reading.Data_DateTime,
+							[meter.id]: reading.Pulses*meter.Pulse_Unit_Value
+						});
+					});					
+					//all_readings.push(readings.map(function(element) {return {'id': meter.id,'datetime': element.Data_DateTime, 'value': element.Pulses*meter.Pulse_Unit_Value};}));
+				}			
+			});
+			var test = [];
+			var val_arr = {};
+			result = all_readings.reduce(function(groups, item) {
+				const val = item['date_time']
+				//groups[val] = groups[val] || []
+				if (!groups[val]) {
+					if (val_arr != {}) {
+						test.push(val_arr);
+					}
+					groups[val] = [];
+					val_arr = {};
+					val_arr['date_time'] = val;
+				}
+				groups[val].push(item);
+				val_arr[Object.keys(item)[0]] = Object.values(item)[0];
+				return groups
+			}, {});
+			console.log(test);
+			// SET BAR CHART DATA
+			$("#data_analysis_chart").dxChart("option", "series", da_series);
+			$("#data_analysis_chart").dxChart("option", "dataSource", test);
+			$("#data_analysis_chart").dxChart('instance').refresh();
+			// SET BAR CHART RANGE DATA
+			//$("#data_analysis_chart_range_selector").dxRangeSelector("option", "series", da_series);
+			//$("#data_analysis_chart_range_selector").dxRangeSelector("option", "dataSource", test);
+			//$("#data_analysis_chart_range_selector").dxRangeSelector('instance').refresh();
+		};
 		// SETUP DA DATEPICKER
-		$('#daterange_da span').html(moment().subtract('hours', 24).format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
+		$('#daterange_da span').html(moment().subtract(24, 'hours').format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
 		$('#daterange_da').daterangepicker({
 			format: 'MM/DD/YYYY',
 			startDate: moment().subtract(29, 'days'),
@@ -2195,93 +2371,8 @@
 			$('#daterange_da span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
 			change_da_data(new Date(start.format()), new Date(end.format()));
 		});
-
-		// RANGE
-		var range = $('#data_analysis_range').dxRangeSelector({			
-			scale: {
-				startValue: new Date(2022, 1, 1),
-				endValue: new Date(),
-				minorTickInterval: 'day',
-				tickInterval: 'week',
-				minRange: 'week',
-				maxRange: 'month',
-				minorTick: {
-					visible: false,
-				},
-			},
-			sliderMarker: {
-				format: 'monthAndDay',
-			},
-			value: [new Date(2022, 5, 1), new Date()],
-		});
-		
-		// CHART
-		var chart = $('#data_analysis_chart').dxChart({
-			palette: 'red',
-			commonSeriesSettings: {
-				point: {
-					visible: false,
-				},
-			},
-			size: {
-				height: 360,
-			},
-			loadingIndicator: {
-				enabled: true
-			},
-			argumentAxis: {
-				argumentType: "datetime",
-				label: {
-					format: "shortDateShortTime"
-				},
-				valueMarginsEnabled: false,
-				discreteAxisDivisionMode: 'crossLabels',
-				grid: {
-					visible: true,
-				},
-			},
-			series: {
-				type: 'spline',
-				name: 'Consumption',
-				valueField: 'Water',
-				argumentField: "Data_DateTime",
-				argumentType: "datetime",
-			},
-			tooltip: {
-				enabled: true,
-			},
-			legend: {
-				verticalAlignment: 'top',
-				horizontalAlignment: 'center',
-				hoverMode: 'excludePoints',
-			},
-			crosshair: {
-				enabled: true,
-				color: '#949494',
-				width: 1,
-				dashStyle: 'dot',
-				label: {
-					visible: true,
-					backgroundColor: '#949494',
-					font: {
-					color: '#fff',
-					size: 12,
-					},
-				},
-			},
-			export: {
-				enabled: false,
-			},
-			onPointClick: function (e) {
-				var point = e.target;
-				if (point.isSelected()) {
-					point.clearSelection();
-				} else {
-					point.select();					
-				}
-			}
-		});
-		
+		// CALL DA FUNCTION
+		change_da_data(new Date(moment().subtract(24, 'hours').format()), new Date(moment().format()));
 	};
 
 
@@ -2394,7 +2485,7 @@
 
 
 		// SETUP REPORTING DATEPICKER
-		$('#daterange_reporting span').html(moment().subtract('hours', 24).format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
+		$('#daterange_reporting span').html(moment().subtract(24, 'hours').format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
 		$('#daterange_reporting').daterangepicker({
 			format: 'MM/DD/YYYY',
 			startDate: moment().subtract(29, 'days'),
