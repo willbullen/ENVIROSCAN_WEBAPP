@@ -52,19 +52,20 @@ class Meter_Readings_ViewSet(viewsets.ModelViewSet):
         print(last_pulse_count)
         print(pulse_count)
         
-        msg_meter_readings = Meter_Readings.objects.create(
-            Meter_Id = Meter_List.objects.get(id = data['Meter_Id']),
-            Data_DateTime = data['Data_DateTime'], 
-            Pulse_Count = data['Pulse_Count'], 
-            Pulses = pulse_count
-        )
-        msg_water_meter = Water_Meter.objects.create(
-            Meter = Meter_List.objects.get(id = data['Meter_Id']),
-            Data_DateTime = data['Data_DateTime'],
-            Pulses = pulse_count, 
-            Battery_Level = 100,
-            Battery_Voltage = 3.3,
-        )
+        if (pulse_count >= 0):
+            msg_meter_readings = Meter_Readings.objects.create(
+                Meter_Id = Meter_List.objects.get(id = data['Meter_Id']),
+                Data_DateTime = data['Data_DateTime'], 
+                Pulse_Count = data['Pulse_Count'], 
+                Pulses = pulse_count
+            )
+            msg_water_meter = Water_Meter.objects.create(
+                Meter = Meter_List.objects.get(id = data['Meter_Id']),
+                Data_DateTime = data['Data_DateTime'],
+                Pulses = pulse_count, 
+                Battery_Level = 100,
+                Battery_Voltage = 3.3,
+            )
         
         return Response(data = "done")
         

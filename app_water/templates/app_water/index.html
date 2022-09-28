@@ -1212,7 +1212,9 @@
 								</nav>
 								<!-- END TOOLBAR -->
 								<!-- BEGIN CHART -->
-								<div class="pt-1 mb-1" id="data_analysis_chart"></div>
+								<div class="pt-1 flex-1">
+									<div class="pt-1 mb-1" id="data_analysis_chart" style="width: 100%;"></div>
+								</div>
 								<!-- END CHART -->
 								<!-- BEGIN TABLE -->
 								<table class="table">
@@ -2178,7 +2180,15 @@
 	//////////////////////////////////////////////////////////////////////////
 	// DATA ANALYSIS
 	//////////////////////////////////////////////////////////////////////////	
-	var renderDataAnalysis = function () {		
+	var renderDataAnalysis = function () {
+		// DA REFRESH CHART ON TAB CLICK
+		$('#da_tab_click').click({}, function() {
+			$("#data_analysis_chart").dxChart('instance').refresh();
+		});
+		// DA REFRESH CHART
+		$('#refresh_da').click({}, function() {
+			$("#data_analysis_chart").dxChart('instance').refresh();
+		});
 		// LIST OF METERS
 		var da_meter_list = [1,5,6];
 		// SERIES BUILDER
@@ -2389,7 +2399,7 @@
 
 	
 	function change_reporting_data(start, end) {
-
+		
 		// GET REPORT DATA BY DATE RANGE		
 		var data = [];		
 		$.each(meter_list_data, function(i, meter) {
@@ -2469,6 +2479,12 @@
 	}
 
 	var renderReport = function () {
+
+		// REPORTING REFRESH CHART ON TAB CLICK
+		$('#reporting_tab_click').click({}, function() {
+			$("#reporting_bar").dxChart('instance').refresh();
+			$("#reporting_pie").dxPieChart('instance').refresh();
+		});
 
 		// REFRESH CHART
 		$('#refresh_reporting').click({}, function() {
