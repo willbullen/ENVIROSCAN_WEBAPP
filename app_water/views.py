@@ -41,12 +41,12 @@ class Meter_Readings_ViewSet(viewsets.ModelViewSet):
         else:
             last_pulse_count = 0
 
-        #if this_pulse_count < last_pulse_count:
-        #    pulse_count = this_pulse_count
-        #else:
-        #    pulse_count = this_pulse_count - last_pulse_count
+        if this_pulse_count < last_pulse_count:
+            pulse_count = this_pulse_count
+        else:
+            pulse_count = this_pulse_count - last_pulse_count
 
-        pulse_count = this_pulse_count - last_pulse_count
+        #pulse_count = this_pulse_count - last_pulse_count
 
         print(this_pulse_count)
         print(last_pulse_count)
