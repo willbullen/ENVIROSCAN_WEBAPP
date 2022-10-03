@@ -95,6 +95,8 @@ def index(request):
     context['meter_list_waste'] = Meter_List.objects.filter(Category = 3)
     #context['meter_list'] = json.loads(get_meters())
 
+    context['data_analysis_data'] = get_data_analysis()
+
     html_template = loader.get_template( 'app_water/index.html' )
     return HttpResponse(html_template.render(context, request))
 
@@ -120,13 +122,22 @@ def pages(request):
         html_template = loader.get_template('page_404_error.html')
         return HttpResponse(html_template.render(context, request))
 
+def get_data_analysis():
+    df = pd.DataFrame(Water_Meter.objects.all().values('id', 'Data_DateTime', 'Pulses', 'Meter', 'Meter__Pulse_Unit_Value').order_by('-id')[:5000])
+    df["Water"] = df["Pulses"] * df["Meter__Pulse_Unit_Value"]
+    #print(df)
+    df = df.pivot_table(values='Water', index='Data_DateTime', columns='Meter', aggfunc='first').sort_index(ascending=True).resample('60Min').sum().fillna(method='backfill')
+    #print(df)
+    data = json.loads(df.to_json(orient="table"))['data']
+    return json.dumps(data)
+
 def get_meters():
     meters = {}
     try:
         meters['Data'] = json.loads(Meter_List.objects.all().order_by('Category').to_dataframe().to_json(orient="table"))['data']
         for meter in meters['Data']:
             meter.update(get_readings(meter['id']))
-            meter.update(get_report(meter['id']))
+            #meter.update(get_report(meter['id']))
             #meter.update(get_baseline(meter['id']))
     except Exception as e:
         print('{!r}; Get Meters failed - '.format(e))

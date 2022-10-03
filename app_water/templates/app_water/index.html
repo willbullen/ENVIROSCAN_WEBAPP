@@ -1220,21 +1220,57 @@
 								<table class="table">
 									<thead class="table-dark">
 										<tr>
-											<th scope="col">Name</th>
+											<th scope="col"></th>
+											<th scope="col">Meter</th>
 											<th scope="col">Location</th>
-											<th scope="col">Total m³</th>
 											<th scope="col">Show</th>
 										</tr>
 									</thead>
 									<tbody>
-										{% for meter in meter_list_consumer %}
+										{% for meter in meter_list_supply %}
 										<tr>
+											<td>
+												<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-{{ meter.Kwargs }} text-white rounded-2 ms-n1">
+													{{ meter.Name|make_list|first }}
+												</div>
+											</td>
 											<td>{{ meter.Name }}</td>
 											<td>{{ meter.Region }}</td>
-											<td></td>
 											<td>
 												<div class="form-check form-switch">
-													<input type="checkbox" class="form-check-input" id="show_da_chart_{{ meter.id }}">
+													<input type="checkbox" class="form-check-input" value='{"name": "{{ meter.Name }}", "color": "{{ meter.Kwargs }}"}' id="show_da_chart_{{ meter.id }}">
+												</div>
+											</td>
+										</tr>
+										{% endfor %}
+										{% for meter in meter_list_consumer %}
+										<tr>
+											<td>
+												<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-{{ meter.Kwargs }} text-white rounded-2 ms-n1">
+													{{ meter.Name|make_list|first }}
+												</div>
+											</td>
+											<td>{{ meter.Name }}</td>
+											<td>{{ meter.Region }}</td>
+											<td>
+												<div class="form-check form-switch">
+													<input type="checkbox" class="form-check-input" value='{"name": "{{ meter.Name }}", "color": "{{ meter.Kwargs }}"}' id="show_da_chart_{{ meter.id }}">
+												</div>
+											</td>
+										</tr>
+										{% endfor %}
+										{% for meter in meter_list_waste %}
+										<tr>
+											<td>
+												<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-{{ meter.Kwargs }} text-white rounded-2 ms-n1">
+													{{ meter.Name|make_list|first }}
+												</div>
+											</td>
+											<td>{{ meter.Name }}</td>
+											<td>{{ meter.Region }}</td>
+											<td>
+												<div class="form-check form-switch">
+													<input type="checkbox" class="form-check-input" value='{"name": "{{ meter.Name }}", "color": "{{ meter.Kwargs }}"}' id="show_da_chart_{{ meter.id }}">
 												</div>
 											</td>
 										</tr>
@@ -1914,6 +1950,7 @@
 	}
 
 	var meter_list_data = JSON.parse('{{meter_list_data|escapejs}}', reviver_1).Data;
+	
 
 	// SET UP PAGE, CREATE ALL CONTROLS
 	function page_setup() {
@@ -2085,6 +2122,8 @@
 
 	// SET UP PAGE, CREATE ALL CONTROLS
 	function data_setup() {
+		// PRINT DATA
+		//console.log(meter_list_data);
 		// CREATE
 		$.each(meter_list_data, function(i, meter) {
 
@@ -2245,10 +2284,31 @@
 	}
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	//////////////////////////////////////////////////////////////////////////
 	// DATA ANALYSIS
 	//////////////////////////////////////////////////////////////////////////	
 	var renderDataAnalysis = function () {
+		// GET DATA
+		var data_analysis_data = JSON.parse('{{data_analysis_data|escapejs}}', reviver_1);
+		// HIDE CHART
+		$("#data_analysis_chart").hide();
 		// DA REFRESH CHART ON TAB CLICK
 		$('#da_tab_click').click({}, function() {
 			$("#data_analysis_chart").dxChart('instance').refresh();
@@ -2257,8 +2317,6 @@
 		$('#refresh_da').click({}, function() {
 			$("#data_analysis_chart").dxChart('instance').refresh();
 		});
-		// LIST OF METERS
-		var da_meter_list = [1,5,6];
 		// SERIES BUILDER
 		var da_series = [];
 		// DA CHART SETUP
@@ -2291,9 +2349,7 @@
 				enabled: true,
 			},
 			legend: {
-				verticalAlignment: 'top',
-				horizontalAlignment: 'center',
-				hoverMode: 'excludePoints',
+				visible: false,
 			},
 			crosshair: {
 				enabled: true,
@@ -2321,97 +2377,33 @@
 				}
 			}
 		});
-		// DA CHART RANGE SELECTOR SETUP
-		$('#data_analysis_chart_range_selector').dxRangeSelector({
-			scale: {
-				startValue: new Date(2022, 8, 8),
-				endValue: new Date(),
-				minorTickInterval: 'day',
-				tickInterval: 'week',
-				minRange: 'week',
-				maxRange: 'month',
-				minorTick: {
-					visible: false,
-				},
-			},
-			sliderMarker: {
-				format: 'monthAndDay',
-			},
-			value: [new Date(2022, 8, 8), new Date()],
-
-			size: {
-				height: 120,
-			},
-			margin: {
-				left: 10,
-			},
-			//scale: {
-			//	minorTickCount: 1,
-			//},
-			//dataSource: zoomingData,
-			chart: {
-				da_series,
-				palette: 'Harmony Light',
-			},
-			behavior: {
-				callValueChanged: 'onMoving',
-			},
-			onValueChanged(e) {
-				const zoomedChart = $('#data_analysis_chart').dxChart('instance');
-				zoomedChart.getArgumentAxis().visualRange(e.value);
-			},
+		var da_series = [];
+		// TOGGLE SHOW CHART
+		$.each(meter_list_data, function(i, meter) {
+			$('#show_da_chart_' + meter.id).click({}, function() {
+				// RESET SERIES
+				var da_series = [];
+				$(`[id^="show_da_chart_"]`).each(function () {
+					var data = JSON.parse(this.value);
+					if ($(this).is(':checked')) {						
+						da_series.push({type: 'line', name: data.name, color: data.color, valueField: this.id.substr(this.id.lastIndexOf("_") + 1), argumentField: "Data_DateTime", argumentType: "datetime"});
+					};					
+				});
+				//console.log(da_series);
+				// REFRESH DA CHART
+				$("#data_analysis_chart").show();
+				$("#data_analysis_chart").dxChart("option", "series", da_series);
+				$("#data_analysis_chart").dxChart('instance').refresh();
+			});
 		});
 		// CHANGE DA CHART DATA
 		function change_da_data(start, end) {			
-			// LOOP THROUGH METERS
-			var all_readings = [];
-			da_series = [];
-			$.each(meter_list_data, function(i, meter) {
-				if (da_meter_list.includes(meter.id)) {
-					da_series.push({
-						type: 'spline',
-						name: meter.Name,
-						valueField: meter.id,
-						argumentField: "date_time",
-						argumentType: "datetime",
-					});
-					// SET DATE SPAN FOR READINGS
-					var readings = meter.readings.filter((item) => item.Data_DateTime.getTime() >= start.getTime() && item.Data_DateTime.getTime() <= end.getTime());
-					$.each(readings, function(i, reading) {
-						all_readings.push({
-							'date_time': reading.Data_DateTime,
-							[meter.id]: reading.Pulses*meter.Pulse_Unit_Value
-						});
-					});					
-					//all_readings.push(readings.map(function(element) {return {'id': meter.id,'datetime': element.Data_DateTime, 'value': element.Pulses*meter.Pulse_Unit_Value};}));
-				}			
-			});
-			var test = [];
-			var val_arr = {};
-			result = all_readings.reduce(function(groups, item) {
-				const val = item['date_time']
-				//groups[val] = groups[val] || []
-				if (!groups[val]) {
-					if (val_arr != {}) {
-						test.push(val_arr);
-					}
-					groups[val] = [];
-					val_arr = {};
-					val_arr['date_time'] = val;
-				}
-				groups[val].push(item);
-				val_arr[Object.keys(item)[0]] = Object.values(item)[0];
-				return groups
-			}, {});
-			//console.log(test);
+			// SET DATA
+			analysis_data = data_analysis_data.filter((item) => item.Data_DateTime.getTime() >= start.getTime() && item.Data_DateTime.getTime() <= end.getTime())
 			// SET BAR CHART DATA
+			$("#data_analysis_chart").dxChart("option", "dataSource", analysis_data);
 			$("#data_analysis_chart").dxChart("option", "series", da_series);
-			$("#data_analysis_chart").dxChart("option", "dataSource", test);
 			$("#data_analysis_chart").dxChart('instance').refresh();
-			// SET BAR CHART RANGE DATA
-			//$("#data_analysis_chart_range_selector").dxRangeSelector("option", "series", da_series);
-			//$("#data_analysis_chart_range_selector").dxRangeSelector("option", "dataSource", test);
-			//$("#data_analysis_chart_range_selector").dxRangeSelector('instance').refresh();
 		};
 		// SETUP DA DATEPICKER
 		$('#daterange_da span').html(moment().subtract(24, 'hours').format('DD-MM-YYYY HH:00') + ' - ' + moment().format('DD-MM-YYYY HH:00'));
@@ -2460,6 +2452,33 @@
 		// CALL DA FUNCTION
 		change_da_data(new Date(moment().subtract(24, 'hours').format()), new Date(moment().format()));
 	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -2552,7 +2571,7 @@
 		$("#reporting_pie").dxPieChart("option", "dataSource", chart_data);
 		$("#reporting_pie").dxPieChart('instance').refresh();
 		// BAR CHART DATA
-		$("#reporting_bar").dxChart("option", "dataSource", data);
+		$("#reporting_bar").dxChart("option", "dataSource", chart_data);
 		$("#reporting_bar").dxChart('instance').refresh();
 		// TEXT
 		$("#report_period").text(((new Date(end).getTime() - new Date(start).getTime()) / (1000 * 3600 * 24)).toFixed(0));
