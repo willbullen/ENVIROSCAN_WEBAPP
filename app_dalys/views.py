@@ -33,6 +33,8 @@ class Node_List_ViewSet(viewsets.ModelViewSet):
 def index(request):
     context = {}
 
+    print('trest')
+
     context['node_list_data'] = get_nodes()
     context['node_list_supply'] = Node_List.objects.filter(Category = 3)
     context['node_list_consumer'] = Node_List.objects.filter(Category = 1)
@@ -86,7 +88,7 @@ def get_nodes():
         nodes['Data'] = json.loads(Node_List.objects.all().order_by('Category').to_dataframe().to_json(orient="table"))['data']
         for node in nodes['Data']:
             node.update(get_power(node['id']))
-            node.update(get_report(node['id']))            
+            #node.update(get_report(node['id']))            
             node.update(get_latest(node['id']))
             #node.update(get_baseline(node['id']))
     except Exception as e:
@@ -103,7 +105,7 @@ def get_report(node_id):
 
 def get_power(node_id):
     try:
-        history = {'history': json.loads(Node_Power.objects.filter(Node = node_id).order_by('-id')[:20000].to_dataframe(index='Data_DateTime').sort_index(ascending=True).resample('10Min').mean().fillna(method='backfill').to_json(orient="table"))['data']}
+        history = {'history': json.loads(Node_Power.objects.filter(Node = node_id).order_by('-id')[:6000].to_dataframe(index='Data_DateTime').sort_index(ascending=True).resample('10Min').mean().fillna(method='backfill').to_json(orient="table"))['data']}
     except Exception as e:
         print('{!r}; Get history failed - '.format(e))
         return {'history': []}

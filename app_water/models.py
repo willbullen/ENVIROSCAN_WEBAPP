@@ -99,3 +99,19 @@ class Meter_Readings(models.Model):
 
     class Meta:
         ordering = ['Data_DateTime']
+
+class Meter_Readings_Ave_WDH(models.Model):
+    Meter_Id = models.ForeignKey(Meter_List, on_delete=models.CASCADE)
+    Last_Updated = models.DateTimeField('date published')
+    Day_0 = models.CharField(max_length=700, blank=True, null=True)
+    Day_1 = models.CharField(max_length=700, blank=True, null=True)
+    Day_2 = models.CharField(max_length=700, blank=True, null=True)
+    Day_3 = models.CharField(max_length=700, blank=True, null=True)
+    Day_4 = models.CharField(max_length=700, blank=True, null=True)
+    Day_5 = models.CharField(max_length=700, blank=True, null=True)
+    Day_6 = models.CharField(max_length=700, blank=True, null=True)
+
+    objects = DataFrameManager()
+
+    class Meta:
+        ordering = ['Last_Updated']

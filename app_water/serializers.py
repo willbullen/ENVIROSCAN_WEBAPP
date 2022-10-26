@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Meter_List, Water_Meter, Meter_Readings
+from .models import Meter_List, Water_Meter, Meter_Readings, Meter_Readings_Ave_WDH
 
 class Meter_List_Serializer(serializers.ModelSerializer):
     class Meta:
@@ -19,4 +19,9 @@ class GeneralSerializer(serializers.ModelSerializer):
 class Meter_Readings_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Meter_Readings
+        fields = '__all__'
+
+class Meter_Readings_Ave_WDH_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = Meter_Readings_Ave_WDH
         fields = '__all__'

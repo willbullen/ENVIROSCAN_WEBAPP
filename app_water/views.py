@@ -6,24 +6,32 @@ from django import template
 import json
 import pandas as pd
 
+from datetime import timedelta, datetime, date
+
 from rest_framework import viewsets
 from rest_framework.response import Response
 
 from .models import (
     Meter_List,
     Water_Meter,
-    Meter_Readings
+    Meter_Readings,
+    Meter_Readings_Ave_WDH,
 )
 
 from .serializers import (
     Meter_List_Serializer,
     Readings_Serializer,
     Meter_Readings_Serializer,
+    Meter_Readings_Ave_WDH_Serializer,
 )
 
 from data.models import (
     SOX_Data,
 )
+
+class Meter_Readings_Ave_WDH_ViewSet(viewsets.ModelViewSet):
+    queryset = Meter_Readings_Ave_WDH.objects.all().order_by('Last_Updated')
+    serializer_class = Meter_Readings_Ave_WDH_Serializer
 
 class Meter_Readings_ViewSet(viewsets.ModelViewSet):
     queryset = Meter_Readings.objects.all().order_by('Data_DateTime')
@@ -123,12 +131,13 @@ def pages(request):
         return HttpResponse(html_template.render(context, request))
 
 def get_data_analysis():
-    df = pd.DataFrame(Water_Meter.objects.all().values('id', 'Data_DateTime', 'Pulses', 'Meter', 'Meter__Pulse_Unit_Value').order_by('-id')[:5000])
-    df["Water"] = df["Pulses"] * df["Meter__Pulse_Unit_Value"]
-    #print(df)
-    df = df.pivot_table(values='Water', index='Data_DateTime', columns='Meter', aggfunc='first').sort_index(ascending=True).resample('60Min').sum().fillna(method='backfill')
-    #print(df)
-    data = json.loads(df.to_json(orient="table"))['data']
+    try:
+        df = pd.DataFrame(Water_Meter.objects.all().values('id', 'Data_DateTime', 'Pulses', 'Meter', 'Meter__Pulse_Unit_Value').order_by('-id')[:5000])
+        df["Water"] = df["Pulses"] * df["Meter__Pulse_Unit_Value"]
+        df = df.pivot_table(values='Water', index='Data_DateTime', columns='Meter', aggfunc='first').sort_index(ascending=True).resample('60Min').sum().fillna(method='backfill')
+        data = json.loads(df.to_json(orient="table"))['data']
+    except Exception as e:
+        print('{!r}; Get data analysis data failed - '.format(e))
     return json.dumps(data)
 
 def get_meters():
@@ -138,7 +147,7 @@ def get_meters():
         for meter in meters['Data']:
             meter.update(get_readings(meter['id']))
             #meter.update(get_report(meter['id']))
-            #meter.update(get_baseline(meter['id']))
+            meter.update(get_averages(meter['id']))
     except Exception as e:
         print('{!r}; Get Meters failed - '.format(e))
     return json.dumps(meters)
@@ -159,10 +168,53 @@ def get_readings(meter_id):
         return {'readings': []}
     return readings
 
-def get_baseline(meter_id):    
+def get_averages(meter_id):    
     try:
-        df = Water_Meter.objects.filter(Meter = meter_id).order_by('-id').to_dataframe(index='Data_DateTime').rename_axis('Hour')        
-        baseline = {'baseline': json.loads(df.groupby(df.index.hour).mean().to_json(orient="table"))['data']}
+        result = abs(Meter_Readings_Ave_WDH.objects.only('Last_Updated').get(Meter_Id=Meter_List.objects.get(id = meter_id)).Last_Updated - datetime.now().astimezone())
+        print(result.days)
+
+        if (result.days >= 0):
+            df = pd.DataFrame(Water_Meter.objects.all().values('Data_DateTime', 'Pulses', 'Meter__Pulse_Unit_Value').filter(Meter = meter_id).order_by('-id'))
+            df["Water"] = df["Pulses"] * df["Meter__Pulse_Unit_Value"]
+            df = df.set_index('Data_DateTime').rename_axis('DayTime')
+            df = df.drop(columns=['Meter__Pulse_Unit_Value', 'Pulses'])
+            #df = df.groupby([df.index.dayofweek, df.index.hour]).mean()
+            df = df.groupby([df.index.dayofweek, df.index.hour]).agg({'Water': ['mean', 'min', 'max']})
+            #print(df)
+            #df = df.round({'Water': 3})
+
+            print('################')
+            data = []
+            day = 0
+            day_array = []
+            for index, row in df.iterrows():
+                if day == index[0]:
+                    day_array.append([round(row[0], 3), round(row[1], 3), round(row[2], 3)])
+                else:
+                    #print(str(day) + ' - ' + str(day_array))
+                    data.append(day_array)
+                    day_array = []
+                    day_array.append([round(row[0], 3), round(row[1], 3), round(row[2], 3)])  
+                day = index[0]
+            #print(str(day) + ' - ' + str(day_array))
+            data.append(day_array)
+            print(data[0])
+
+            Meter_Readings_Ave_WDH.objects.update_or_create(
+                Meter_Id=Meter_List.objects.get(id = meter_id), defaults={                    
+                    'Last_Updated': datetime.now(), 
+                    'Day_0': str(data[0]), 
+                    'Day_1': str(data[1]), 
+                    'Day_2': str(data[2]), 
+                    'Day_3': str(data[3]), 
+                    'Day_4': str(data[4]), 
+                    'Day_5': str(data[5]), 
+                    'Day_6': str(data[6]),                    
+                }
+            )
+            baseline = {'baseline': json.loads(Meter_Readings_Ave_WDH.objects.filter(Meter_Id=Meter_List.objects.get(id = meter_id)).to_dataframe(index='Last_Updated').to_json(orient="table"))['data']}
+        else:
+            baseline = {'baseline': json.loads(Meter_Readings_Ave_WDH.objects.filter(Meter_Id=Meter_List.objects.get(id = meter_id)).to_dataframe(index='Last_Updated').to_json(orient="table"))['data']}
     except Exception as e:
         print('{!r}; Get baseline failed - '.format(e))
         return {'baseline': []}
