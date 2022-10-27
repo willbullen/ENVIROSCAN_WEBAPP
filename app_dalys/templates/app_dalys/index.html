@@ -1594,11 +1594,16 @@
 		// GET REPORT DATA BY DATE RANGE		
 		var data = [];	
 		var chart_data = [];
+		// SUPPLY VARIABLES
 		var supply_cost_total = 0;
+		var supply_cost_day = 0;
+		var supply_cost_night = 0;
 		var supply_kwvar_total = 0;
+		// CONSUMER VARIABLES
 		var consumer_cost_total = 0;
+		var consumer_cost_day = 0;
+		var consumer_cost_night = 0;
 		var consumer_kwvar_total = 0;
-		var waste_total = 0;
 		
 		// LOOP
 		$.each(node_list_data, function(i, node) {
@@ -1683,9 +1688,13 @@
 			console.log(node.Category);
 			if (node.Category == 'Power Supply 3 Phase') {
 				supply_cost_total += parseFloat(cost_total);
+				supply_cost_day += parseFloat(cost_total_day);
+				supply_cost_night += parseFloat(cost_total_night);
 				supply_kwvar_total += parseFloat(kwh_total);
 			} else if (node.Category == 'Power Consumer 3 Phase') {
 				consumer_cost_total += parseFloat(cost_total);
+				consumer_cost_day += parseFloat(cost_total_day);
+				consumer_cost_night += parseFloat(cost_total_night);
 				consumer_kwvar_total += parseFloat(kwh_total);
 				// CREATE CHART DATA
 				chart_data.push({
@@ -1713,8 +1722,8 @@
 		
 		// GET TOGGLE STATUS
 		if ($("#toggle_money_kwh").not(':checked')) {
-			chart_data = chart_data.map(function(element) {return {'ID': element.ID, 'Node': element.Node, 'Value_kWVAr': ((element.Value_kWVAr/supply_cost_total)*100).toFixed(1)};})
-			data = data.map(function(element) {return {'ID': element.ID, 'Node': element.Node, 'Value_kWVAr': ((element.Value_kWVAr/supply_cost_total)*100).toFixed(1)};})
+			chart_data = chart_data.map(function(element) {return {'ID': element.ID, 'Node': element.Node, 'Value_kWVAr': ((element.Value_kWVAr/supply_kwvar_total)*100).toFixed(1)};})
+			data = data.map(function(element) {return {'ID': element.ID, 'Node': element.Node, 'Value_kWVAr': ((element.Value_kWVAr/supply_kwvar_total)*100).toFixed(1)};})
 		}
 		
 		// PIE CHART DATA
