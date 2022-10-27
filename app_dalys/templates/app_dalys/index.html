@@ -802,401 +802,6 @@
 
 
 
-
-						<!-- BEGIN waste -->
-						<div class="text-white small mb-2"><b>DISTRIBUTION</b></div>
-						<div class="list-group mb-3">							
-						{% for node in node_list_distribution %}
-							<!-- BEGIN NODE -->
-							<input type="hidden" id="hidden_Node_Status_{{ node.id }}" value="0">
-							<input type="hidden" id="hidden_Node_Status_{{ node.id }}" value="0">
-							<div class="list-group-item d-flex align-items-center">
-								<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#collapse_{{ node.id }}" id="#go_map_{{ node.id }}">
-									<div id="Status_{{ node.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
-										{{ node.Name|make_list|first }}
-									</div>
-								</a>
-								<div class="flex-fill px-3">									
-									<a href="#" class="text-white" data-bs-toggle="collapse" data-bs-target="#collapse_{{ node.id }}" id="slider_{{ node.id }}">							
-										<div class="fw-bold">{{ node.Name }}</div>
-									</a>
-								</div>								
-
-								<!-- <div class="flex-fill px-3">
-									<div class="small text-white text-opacity-50">Last Updated: {{ node.Last_Updated|timesince }}</div>
-								</div> -->
-
-								<div class="opacity-10 px-3">
-									<div class="fw-bold"><span id="value_main_{{ node.id }}">0</span> kW</div>
-								</div>
-
-								<div class="opacity-10 px-3">
-									<span id="Node_Status_{{ node.id }}" class="badge bg-theme" data-bs-toggle="tooltip">M</span>
-									<span id="Node_Status_{{ node.id }}" class="badge bg-theme" data-bs-toggle="tooltip">N</span>
-								</div>
-							</div>
-							<!-- END NODE -->
-
-							<!-- BEGIN NODE DETAILS -->
-							<div class="collapse list-group-item" id="collapse_{{ node.id }}">
-
-								<!-- BEGIN nav-tabs -->
-								<ul class="nav nav-tabs nav-tabs">
-									<li class="nav-item me-3"><a href="#home_{{ node.id }}" class="nav-link active" data-bs-toggle="tab">Data</a></li>
-									<li class="nav-item me-3"><a href="#details_{{ node.id }}" class="nav-link" data-bs-toggle="tab">Details</a></li>
-									<li class="nav-item me-3"><a href="#logs_{{ node.id }}" class="nav-link" data-bs-toggle="tab">Logs</a></li>
-									<li class="nav-item me-3"><a href="#settings_{{ node.id }}" class="nav-link" data-bs-toggle="tab">Settings</a></li>
-								</ul>
-								<!-- END nav-tabs -->
-
-								<!-- BEGIN tab-content -->
-								<div class="tab-content pt-1">
-									<!-- BEGIN tab-pane -->
-									<div class="tab-pane fade show active" id="home_{{ node.id }}">
-										<!-- BEGIN TOOLBAR -->
-										<nav class="navbar navbar-expand-lg navbar-dark bg-opacity-25 rounded">
-											<div class="container-fluid">
-												<!-- BEGIN REFRESH BUTTON -->
-												<div class="opacity-10 px-1">
-													<button id="refresh_{{ node.id }}" type="button" class="btn btn-outline-theme btn-sm"><i class="fa fa-redo"></i></button>
-												</div>
-												<!-- END REFRESH BUTTON -->
-												<!-- BEGIN DATE PICKER -->
-												<div class="flex-fill px-1">
-													<div id="daterange_{{ node.id }}" class="btn btn-outline-theme d-flex align-items-center text-start btn-sm">
-														<span class="text-truncate">&nbsp;</span>
-														<i class="fa fa-caret-down ms-auto"></i>
-													</div>
-												</div>
-												<!-- END DATE PICKER -->
-												<!-- BEGIN SELECT CHART TYPE -->
-												<select id="select_chart_type_{{ node.id }}" class="form-select btn-outline-theme form-select-sm" style="width: 100px;">
-													<option value="Bar"><i class="fa fa-bar-chart"></i>Bar</option>
-													<option value="Line"><i class="fa fa-line-chart"></i>Line</option>
-													<option value="Polar"><i class="fa fa-pie-chart"></i>Polar</option>
-												</select>
-												<!-- END SELECT CHART TYPE -->
-												<!-- BEGIN FIND BUTTON -->
-												<div class="opacity-10 px-1">
-													<button id="find_{{ node.id }}" type="button" class="btn btn-outline-theme btn-sm"><i class="fa fa-search"></i></button>
-												</div>
-												<!-- END FIND BUTTON -->
-											</div>
-										</nav>
-										<!-- END TOOLBAR -->
-										<!-- BEGIN row -->
-										<div class="row">
-											<div class="col-9">												
-												<!-- BEGIN CHART -->
-												<div class="pt-1 flex-1">
-													<div id="node_chart_{{ node.id }}" class="pt-1 flex-1"></div>
-													<div id="node_chart_polar_{{ node.id }}" class="pt-1 flex-1"></div>												
-												</div>
-												<!-- END CHART -->
-											</div>
-											<div class="col-3">
-												<!-- BEGIN REAL POWER -->
-												<div class="w-150px h-98px pt-1 ps-3">
-													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														REAL POWER (kW)
-													</div>
-													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="real_power_value_{{ node.id }}">0</span> </h4>
-													</div>
-													<div class="progress h-3px bg-white-transparent-2 mb-1">
-														<div class="progress-bar bg-theme" id="real_power_bar_{{ node.id }}" style="width: 0%"></div>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="real_power_info_{{ node.id }}"></span>
-													</div>
-												</div>
-												<!-- END REAL POWER -->
-												<!-- BEGIN APPAR POWER -->
-												<div class="w-150px h-98px pt-1 ps-3">
-													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														CONSUMED (kW/h)
-													</div>													
-													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="total_kwh_value_{{ node.id }}">0</span></h4>
-													</div>
-													<div class="progress h-3px bg-white-transparent-2 mb-1">
-														<div class="progress-bar bg-theme" id="total_kwh_bar_{{ node.id }}" style="width: 0%"></div>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
-														<span id="total_kwh_day_{{ node.id }}"></span>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="total_kwh_night_{{ node.id }}"></span>
-													</div>
-												</div>
-												<!-- END APPAR POWER -->
-												<!-- BEGIN IRMS -->
-												<div class="w-150px h-98px pt-1 ps-3">
-													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														CURRENT (A)
-													</div>
-													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="irms_value_{{ node.id }}">0</span> </h4>
-													</div>
-													<div class="progress h-3px bg-white-transparent-2 mb-2">
-														<div class="progress-bar bg-theme" id="irms_bar_{{ node.id }}" style="width: 0%"></div>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="irms_info_{{ node.id }}">@ 0% of 200 A.</span>
-													</div>
-												</div>
-												<!-- END IRMS -->
-												<!-- BEGIN VRMS -->
-												<div class="w-150px h-98px pt-1 ps-3">
-													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														COST (€)
-													</div>
-													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="cost_value_{{ node.id }}">0</span> </h4>
-													</div>
-													<div class="progress h-3px bg-white-transparent-2 mb-2">
-														<div class="progress-bar bg-theme" id="cost_bar_{{ node.id }}" style="width: 0%"></div>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
-														<span id="cost_day_{{ node.id }}"></span>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="cost_night_{{ node.id }}"></span>
-													</div>
-												</div>
-												<!-- END VRMS -->
-												<!-- BEGIN POWER FACTOR
-												<div class="w-150px h-98px pt-1 ps-3">
-													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														POWER FACTOR
-													</div>
-													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="power_factor_value_{{ node.id }}">0</span> </h4>
-													</div>
-													<div class="progress h-3px bg-white-transparent-2 mb-1">
-														<div class="progress-bar bg-theme" id="power_factor_bar_{{ node.id }}" style="width: 0%"></div>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="power_factor_info_{{ node.id }}">@ 0%.</span>
-													</div>
-												</div>
-												END POWER FACTOR -->
-											</div>
-										</div>
-										<!-- END row -->
-									</div>
-									<!-- END tab-pane -->
-									<!-- BEGIN tab-pane -->
-									<div class="tab-pane fade" id="details_{{ node.id }}">
-
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ node.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												START OF LOGGING
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ node.Start_Date }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ node.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												START INDEX
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ node.Start_Index }} kW
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ node.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												TOTAL CONSUMPTION
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ node.Start_Index }} kW
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ node.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												PULSE UNIT MEASUREMENT
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ node.Pulse_Unit_Measurement }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ node.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												PULSE UNIT VALUE
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ node.Pulse_Unit_Value }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ node.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												LOCATION LAT
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ node.Lat }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ node.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												LOCATION LNG
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ node.Lng }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ node.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												NODE TYPE
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ node.Type }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ node.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												REGION
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ node.Region }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ node.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												CATEGORY
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ node.Category }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-
-									</div>
-									<!-- END tab-pane -->
-									<!-- BEGIN tab-pane -->
-									<div class="tab-pane fade" id="logs_{{ node.id }}">
-										<!-- BEGIN DATATABLE -->
-										<div class="pt-2 align-items-center">
-											<table id="log2_{{ node.id }}"></table>
-										</div>
-										<!-- END DATATABLE -->
-									</div>
-									<!-- END tab-pane -->
-
-									<!-- BEGIN SETTINGS -->
-									<div class="tab-pane fade" id="settings_{{ node.id }}">
-										<!-- BEGIN DATATABLE -->
-										<div class="pt-2 align-items-center">
-											<!-- BEGIN #notifications -->
-											<div id="notifications" class="mb-5">
-												<h6><i class="far fa-bell fa-fw text-theme"></i> Notifications</h6>
-												<p>Enable or disable what notifications you want to receive.</p>
-												<div class="card">
-													<div class="list-group list-group-flush">
-														<div class="list-group-item d-flex align-items-center">
-															<div class="flex-1 text-break">
-																<div>Comments</div>
-																<div class="text-white text-opacity-50 d-flex align-items-center">
-																	<i class="fa fa-circle fs-8px fa-fw text-success me-1"></i> Enabled (Push, SMS)
-																</div>
-															</div>
-															<div>
-																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
-															</div>
-														</div>
-														<div class="list-group-item d-flex align-items-center">
-															<div class="flex-1 text-break">
-																<div>Tags</div>
-																<div class="text-white text-opacity-50 d-flex align-items-center">
-																	<i class="fa fa-circle fs-8px fa-fw me-1"></i> Disabled
-																</div>
-															</div>
-															<div>
-																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
-															</div>
-														</div>
-														<div class="list-group-item d-flex align-items-center">
-															<div class="flex-1 text-break">
-																<div>Reminders</div>
-																<div class="text-white text-opacity-50 d-flex align-items-center">
-																	<i class="fa fa-circle fs-8px fa-fw text-success me-1"></i> Enabled (Push, Email, SMS)
-																</div>
-															</div>
-															<div>
-																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
-															</div>
-														</div>
-														<div class="list-group-item d-flex align-items-center">
-															<div class="flex-1 text-break">
-																<div>New orders</div>
-																<div class="text-white text-opacity-50 d-flex align-items-center">
-																	<i class="fa fa-circle fs-8px fa-fw text-success me-1"></i> Enabled (Push, Email, SMS)
-																</div>
-															</div>
-															<div>
-																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
-															</div>
-														</div>
-													</div>
-													<div class="card-arrow">
-														<div class="card-arrow-top-left"></div>
-														<div class="card-arrow-top-right"></div>
-														<div class="card-arrow-bottom-left"></div>
-														<div class="card-arrow-bottom-right"></div>
-													</div>
-												</div>
-											</div>
-											<!-- END #notifications -->
-										</div>
-										<!-- END DATATABLE -->
-									</div>
-									<!-- END SETTINGS -->
-
-								</div>
-								<!-- END tab-content -->
-								
-							</div>
-							<!-- END NODE DETAILS -->
-						{% endfor %}
-						</div>
-						<!-- END waste -->
-
-
-
-
-
-
-
-
 					</div>
 					<div class="col-xl-6">
 
@@ -1275,9 +880,8 @@
 											<tr>
 												<th scope="col"></th>
 												<th scope="col">Node</th>
-												<th scope="col">Supply</th>
+												<th scope="col">Main Supply</th>
 												<th scope="col">Consumers</th>
-												<th scope="col">Cost</th>
 												<th scope="col">
 													<div class="form-check form-switch px-1">
 														<input type="checkbox" class="form-check-input" id="toggle_money_kwh">
@@ -1297,7 +901,6 @@
 												<td><span id="report_table_value_{{ node.id }}"></span></td>
 												<td></td>
 												<td></td>
-												<td></td>
 											</tr>
 											{% endfor %}
 
@@ -1312,22 +915,6 @@
 												<td></td>
 												<td><span id="report_table_value_{{ node.id }}"></span></td>
 												<td></td>
-												<td></td>
-											</tr>
-											{% endfor %}
-											
-											{% for node in node_list_waste %}
-											<tr>
-												<td>
-													<div id="Status_{{ node.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
-														{{ node.Name|make_list|first }}
-													</div>
-												</td>
-												<td>{{ node.Name }}</td>
-												<td></td>
-												<td></td>
-												<td><span id="report_table_value_{{ node.id }}"></span></td>
-												<td></td>
 											</tr>
 											{% endfor %}
 											<tr>
@@ -1335,7 +922,6 @@
 												<td>TOTALS</td>
 												<td><span id="report_supply_total_value"></span></td>
 												<td><span id="report_consumer_total_value"></span></td>
-												<td><span id="report_waste_total_value"></span></td>
 												<td></td>
 											</tr>
 										</tbody>
@@ -1388,7 +974,7 @@
 									<thead class="table-dark">
 										<tr>
 											<th scope="col"></th>
-											<th scope="col">node</th>
+											<th scope="col">Node</th>
 											<th scope="col">Location</th>
 											<th scope="col">Show</th>
 										</tr>
@@ -2008,8 +1594,10 @@
 		// GET REPORT DATA BY DATE RANGE		
 		var data = [];	
 		var chart_data = [];
-		var supply_total = 0;
-		var consumer_total = 0;
+		var supply_cost_total = 0;
+		var supply_kwvar_total = 0;
+		var consumer_cost_total = 0;
+		var consumer_kwvar_total = 0;
 		var waste_total = 0;
 		
 		// LOOP
@@ -2075,10 +1663,14 @@
 				}
 			});
 
-			// total
+			// TOTALS kVAr
 			var kwh_total_day = ((Wh1_day + Wh2_day + Wh3_day) / 1000)
 			var kwh_total_night = ((Wh1_night + Wh2_night + Wh3_night) / 1000)
 			var kwh_total = kwh_total_day + kwh_total_night;
+			// TOTALS COST
+			var cost_total_day = kwh_total_day * rate_day
+			var cost_total_night = kwh_total_night * rate_night
+			var cost_total = cost_total_day + cost_total_night;
 
 			// SET TABLE DATA
 			if ($("#toggle_money_kwh").not(':checked')) {				
@@ -2090,39 +1682,39 @@
 			// SET VARIABLES AND PUSH TO ARRAY
 			console.log(node.Category);
 			if (node.Category == 'Power Supply 3 Phase') {
-				var supply = kwh_total.toFixed(3);
-				supply_total += parseFloat(kwh_total);
+				supply_cost_total += parseFloat(cost_total);
+				supply_kwvar_total += parseFloat(kwh_total);
 			} else if (node.Category == 'Power Consumer 3 Phase') {
-				var consumer = kwh_total.toFixed(3);
-				consumer_total += parseFloat(kwh_total);
+				consumer_cost_total += parseFloat(cost_total);
+				consumer_kwvar_total += parseFloat(kwh_total);
 				// CREATE CHART DATA
 				chart_data.push({
 					ID: node.id, 
 					Node: node.Name, 
-					Value: kwh_total.toFixed(3),
+					Value_kWVAr: kwh_total.toFixed(3),
 				});
 			}
 			// PUSH
 			data.push({
 				ID: node.id, 
 				Node: node.Name, 
-				Value: kwh_total.toFixed(3),
+				Value_kWVAr: kwh_total.toFixed(3),
+				Value_Cost: cost_total.toFixed(3),
 			});
 		});
 		// PUSH NOT nodeED VALUE TO ARRAY
-		var not_nodeed = supply_total-consumer_total;
 		chart_data.push({
 			ID: 0, 
 			Node: 'Not Recorded', 
-			Value: not_nodeed.toFixed(3),
+			Value_kWVAr: (supply_kwvar_total-consumer_kwvar_total).toFixed(3),
 		})
 
 		console.log(chart_data);
 		
 		// GET TOGGLE STATUS
 		if ($("#toggle_money_kwh").not(':checked')) {
-			chart_data = chart_data.map(function(element) {return {'ID': element.ID, 'Node': element.Node, 'Value': ((element.Value/supply_total)*100).toFixed(1)};})
-			data = data.map(function(element) {return {'ID': element.ID, 'Node': element.Node, 'Value': ((element.Value/supply_total)*100).toFixed(1)};})
+			chart_data = chart_data.map(function(element) {return {'ID': element.ID, 'Node': element.Node, 'Value_kWVAr': ((element.Value_kWVAr/supply_cost_total)*100).toFixed(1)};})
+			data = data.map(function(element) {return {'ID': element.ID, 'Node': element.Node, 'Value_kWVAr': ((element.Value_kWVAr/supply_cost_total)*100).toFixed(1)};})
 		}
 		
 		// PIE CHART DATA
@@ -2136,21 +1728,17 @@
 		$("#report_from").text(new Date(start).toDateString());
 		$("#report_to").text(new Date(end).toDateString());
 		if ($("#toggle_money_kwh").not(':checked')) {
-			$("#report_not_nodeed").text(((not_nodeed/supply_total)*100).toFixed(1) + ' %');
-			$("#report_waste").text(((waste_total/supply_total)*100).toFixed(1) + ' %');
+			$("#report_not_nodeed").text('€' + (supply_cost_total-consumer_cost_total).toFixed(2));
 		} else {
-			$("#report_not_nodeed").text(not_nodeed.toFixed(3) + ' kVAr');
-			$("#report_waste").text(waste_total.toFixed(3) + ' kVAr');
+			$("#report_not_nodeed").text((supply_kwvar_total-consumer_kwvar_total).toFixed(3) + ' kVAr');
 		}
 		// SET TOTALS TEXT
 		if ($("#toggle_money_kwh").not(':checked')) {
-			$("#report_supply_total_value").text(((supply_total/supply_total)*100).toFixed(1) + ' %');
-			$("#report_waste_total_value").text(((waste_total/supply_total)*100).toFixed(1) + ' %');
-			$("#report_consumer_total_value").text(((consumer_total/supply_total)*100).toFixed(1) + ' %');
+			$("#report_supply_total_value").text('€' + (supply_cost_total).toFixed(2));
+			$("#report_consumer_total_value").text('€' + (consumer_cost_total).toFixed(2));
 		} else {
-			$("#report_supply_total_value").text(supply_total.toFixed(3) + ' kVAr');
-			$("#report_waste_total_value").text(waste_total.toFixed(3) + ' kVAr');
-			$("#report_consumer_total_value").text(consumer_total.toFixed(3) + ' kVAr');
+			$("#report_supply_total_value").text(supply_kwvar_total.toFixed(3) + ' kVAr');
+			$("#report_consumer_total_value").text(consumer_kwvar_total.toFixed(3) + ' kVAr');
 		}		
 	}
 
@@ -2232,7 +1820,7 @@
 			},
 			series: [{
 				argumentField: 'Node',
-				valueField: 'Value',
+				valueField: 'Value_kWVAr',
 				label: {
 					visible: true,
 					connector: {
@@ -2259,7 +1847,7 @@
 			palette: 'red',
 			commonSeriesSettings: {
 				type: 'bar',
-				valueField: 'Value',
+				valueField: 'Value_kWVAr',
 				argumentField: 'Node',
 				ignoreEmptyPoints: true,
 			},
