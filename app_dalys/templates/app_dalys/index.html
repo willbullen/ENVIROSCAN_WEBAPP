@@ -47,7 +47,7 @@
 								</div> -->
 
 								<div class="opacity-10 px-3">
-									<div class="fw-bold"><span id="value_main_{{ node.id }}">0</span> kW</div>
+									<div class="fw-bold"><span id="value_main_{{ node.id }}">0</span> kVA</div>
 								</div>
 
 								<div class="opacity-10 px-3">
@@ -115,10 +115,53 @@
 												<!-- END CHART -->
 											</div>
 											<div class="col-3">
-												<!-- BEGIN REAL POWER -->
+												<!-- BEGIN COST -->
 												<div class="w-150px h-98px pt-1 ps-3">
 													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														REAL POWER (kW)
+														COST (€)
+													</div>
+													<div class="mb-2 fs-5 text-truncate">
+														<h4 class="mb-0"><span id="cost_value_{{ node.id }}">0</span> </h4>
+													</div>
+													<div class="progress h-3px bg-white-transparent-2 mb-2">
+														<div class="progress-bar bg-theme" id="cost_bar_{{ node.id }}" style="width: 0%"></div>
+													</div>
+													<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
+														<i class="bi bi-circle-fill fs-6px me-2 text-theme"></i>
+														<span id="cost_day_{{ node.id }}"></span>
+													</div>
+													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+														<i class="bi bi-circle-fill fs-6px me-2 text-theme"></i>
+														<span id="cost_night_{{ node.id }}"></span>
+													</div>
+												</div>
+												<!-- END COST -->
+												<!-- BEGIN CONSUMED -->
+												<div class="w-150px h-98px pt-1 ps-3">
+													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
+														CONSUMED (kVA/h)
+													</div>													
+													<div class="mb-2 fs-5 text-truncate">
+														<h4 class="mb-0"><span id="total_kwh_value_{{ node.id }}">0</span></h4>
+													</div>
+													<div class="progress h-3px bg-white-transparent-2 mb-1">
+														<div class="progress-bar bg-theme" id="total_kwh_bar_{{ node.id }}" style="width: 0%"></div>
+													</div>
+													<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
+														<i class="bi bi-circle-fill fs-6px me-2 text-theme"></i>
+														<span id="total_kwh_day_{{ node.id }}"></span>
+													</div>
+													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+														<i class="bi bi-circle-fill fs-6px me-2 text-theme"></i>
+														<span id="total_kwh_night_{{ node.id }}"></span>
+													</div>
+												</div>
+												<!-- END CONSUMED -->
+
+												<!-- BEGIN Apparent Power -->
+												<div class="w-150px h-98px pt-1 ps-3">
+													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
+														APP POWER (kVA)
 													</div>
 													<div class="mb-2 fs-5 text-truncate">
 														<h4 class="mb-0"><span id="real_power_value_{{ node.id }}">0</span> </h4>
@@ -130,26 +173,8 @@
 														<span id="real_power_info_{{ node.id }}">@ 0% of 600 kW.</span>
 													</div>
 												</div>
-												<!-- END REAL POWER -->
-												<!-- BEGIN APPAR POWER -->
-												<div class="w-150px h-98px pt-1 ps-3">
-													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														CONSUMED (kW/h)
-													</div>													
-													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="total_kwh_value_{{ node.id }}">0</span></h4>
-													</div>
-													<div class="progress h-3px bg-white-transparent-2 mb-1">
-														<div class="progress-bar bg-theme" id="total_kwh_bar_{{ node.id }}" style="width: 0%"></div>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
-														<span id="total_kwh_day_{{ node.id }}"></span>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="total_kwh_night_{{ node.id }}"></span>
-													</div>
-												</div>
-												<!-- END APPAR POWER -->
+												<!-- END Apparent Power -->
+												
 												<!-- BEGIN IRMS -->
 												<div class="w-150px h-98px pt-1 ps-3">
 													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
@@ -166,25 +191,7 @@
 													</div>
 												</div>
 												<!-- END IRMS -->
-												<!-- BEGIN VRMS -->
-												<div class="w-150px h-98px pt-1 ps-3">
-													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														COST (€)
-													</div>
-													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="cost_value_{{ node.id }}">0</span> </h4>
-													</div>
-													<div class="progress h-3px bg-white-transparent-2 mb-2">
-														<div class="progress-bar bg-theme" id="cost_bar_{{ node.id }}" style="width: 0%"></div>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
-														<span id="cost_day_{{ node.id }}"></span>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="cost_night_{{ node.id }}"></span>
-													</div>
-												</div>
-												<!-- END VRMS -->
+												
 												<!-- BEGIN POWER FACTOR
 												<div class="w-150px h-98px pt-1 ps-3">
 													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
@@ -436,7 +443,7 @@
 								</div> -->
 
 								<div class="opacity-10 px-3">
-									<div class="fw-bold"><span id="value_main_{{ node.id }}">0</span> kW</div>
+									<div class="fw-bold"><span id="value_main_{{ node.id }}">0</span> kVA</div>
 								</div>
 
 								<div class="opacity-10 px-3">
@@ -504,10 +511,53 @@
 												<!-- END CHART -->
 											</div>
 											<div class="col-3">
-												<!-- BEGIN REAL POWER -->
+												<!-- BEGIN COST -->
 												<div class="w-150px h-98px pt-1 ps-3">
 													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														REAL POWER (kW)
+														COST (€)
+													</div>
+													<div class="mb-2 fs-5 text-truncate">
+														<h4 class="mb-0"><span id="cost_value_{{ node.id }}">0</span> </h4>
+													</div>
+													<div class="progress h-3px bg-white-transparent-2 mb-2">
+														<div class="progress-bar bg-theme" id="cost_bar_{{ node.id }}" style="width: 0%"></div>
+													</div>
+													<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
+														<i class="bi bi-circle-fill fs-6px me-2 text-theme"></i>
+														<span id="cost_day_{{ node.id }}"></span>
+													</div>
+													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+														<i class="bi bi-circle-fill fs-6px me-2 text-theme"></i>
+														<span id="cost_night_{{ node.id }}"></span>
+													</div>
+												</div>
+												<!-- END COST -->
+												<!-- BEGIN CONSUMED -->
+												<div class="w-150px h-98px pt-1 ps-3">
+													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
+														CONSUMED (kVA/h)
+													</div>													
+													<div class="mb-2 fs-5 text-truncate">
+														<h4 class="mb-0"><span id="total_kwh_value_{{ node.id }}">0</span></h4>
+													</div>
+													<div class="progress h-3px bg-white-transparent-2 mb-1">
+														<div class="progress-bar bg-theme" id="total_kwh_bar_{{ node.id }}" style="width: 0%"></div>
+													</div>
+													<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
+														<i class="bi bi-circle-fill fs-6px me-2 text-theme"></i>
+														<span id="total_kwh_day_{{ node.id }}"></span>
+													</div>
+													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+														<i class="bi bi-circle-fill fs-6px me-2 text-theme"></i>
+														<span id="total_kwh_night_{{ node.id }}"></span>
+													</div>
+												</div>
+												<!-- END CONSUMED -->
+
+												<!-- BEGIN Apparent Power -->
+												<div class="w-150px h-98px pt-1 ps-3">
+													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
+														APP POWER (kVA)
 													</div>
 													<div class="mb-2 fs-5 text-truncate">
 														<h4 class="mb-0"><span id="real_power_value_{{ node.id }}">0</span> </h4>
@@ -519,26 +569,8 @@
 														<span id="real_power_info_{{ node.id }}">@ 0% of 600 kW.</span>
 													</div>
 												</div>
-												<!-- END REAL POWER -->
-												<!-- BEGIN APPAR POWER -->
-												<div class="w-150px h-98px pt-1 ps-3">
-													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														CONSUMED (kW/h)
-													</div>													
-													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="total_kwh_value_{{ node.id }}">0</span></h4>
-													</div>
-													<div class="progress h-3px bg-white-transparent-2 mb-1">
-														<div class="progress-bar bg-theme" id="total_kwh_bar_{{ node.id }}" style="width: 0%"></div>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
-														<span id="total_kwh_day_{{ node.id }}"></span>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="total_kwh_night_{{ node.id }}"></span>
-													</div>
-												</div>
-												<!-- END APPAR POWER -->
+												<!-- END Apparent Power -->
+												
 												<!-- BEGIN IRMS -->
 												<div class="w-150px h-98px pt-1 ps-3">
 													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
@@ -555,25 +587,7 @@
 													</div>
 												</div>
 												<!-- END IRMS -->
-												<!-- BEGIN VRMS -->
-												<div class="w-150px h-98px pt-1 ps-3">
-													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														COST (€)
-													</div>
-													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="cost_value_{{ node.id }}">0</span> </h4>
-													</div>
-													<div class="progress h-3px bg-white-transparent-2 mb-2">
-														<div class="progress-bar bg-theme" id="cost_bar_{{ node.id }}" style="width: 0%"></div>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
-														<span id="cost_day_{{ node.id }}"></span>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="cost_night_{{ node.id }}"></span>
-													</div>
-												</div>
-												<!-- END VRMS -->
+												
 												<!-- BEGIN POWER FACTOR
 												<div class="w-150px h-98px pt-1 ps-3">
 													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
@@ -861,7 +875,42 @@
 								</nav>
 								<!-- END TOOLBAR -->
 								<div class="pt-1 mb-1">
-									<p>Totals for a <span id="report_period"></span> day period from <span id="report_from"></span> to the <span id="report_to"></span>, a total of <span id="report_not_nodeed"></span> of supply Value was not nodeed. The waste Value total for this period was <span id="report_waste"></span></p>
+
+									<div class="row">
+										<div class="col-lg-3 mb-3 mb-lg-0">
+											<div class="d-flex align-items-center bg-white bg-opacity-15">
+												<div class="ps-3 m-5px flex-1">
+													<div class="fs-10px fw-bold text-white text-opacity-50 mb-1">TOTAL COST</div>
+													<h5>€ <span id="cost_total"></span></h5>
+												</div>										
+											</div>
+										</div>										
+										<div class="col-lg-3">
+											<div class="d-flex bg-white bg-opacity-15">
+												<div class="ps-3 m-5px flex-1">
+													<div class="fs-10px fw-bold text-white text-opacity-50 mb-1">DAY COST</div>
+													<h5>€ <span id="cost_day"></span></h5>
+												</div>										
+											</div>
+										</div>
+										<div class="col-lg-3">
+											<div class="d-flex bg-white bg-opacity-15">
+												<div class="ps-3 m-5px flex-1">
+													<div class="fs-10px fw-bold text-white text-opacity-50 mb-1">NIGHT COST</div>
+													<h5>€ <span id="cost_night"></span></h5>
+												</div>										
+											</div>
+										</div>	
+										<div class="col-lg-3">
+											<div class="d-flex bg-white bg-opacity-15">
+												<div class="ps-3 m-5px flex-1">
+													<div class="fs-10px fw-bold text-white text-opacity-50 mb-1">CONSUMED</div>
+													<h5><span id="consumed_total"></span> kVA/h</h5>
+												</div>										
+											</div>
+										</div>	
+									</div>
+
 								</div>
 								<!-- BEGIN PIE -->
 								<div class="pt-1 mb-1" id="reporting_pie"></div>
@@ -1598,12 +1647,12 @@
 		var supply_cost_total = 0;
 		var supply_cost_day = 0;
 		var supply_cost_night = 0;
-		var supply_kwvar_total = 0;
+		var supply_kva_total = 0;
 		// CONSUMER VARIABLES
 		var consumer_cost_total = 0;
 		var consumer_cost_day = 0;
 		var consumer_cost_night = 0;
-		var consumer_kwvar_total = 0;
+		var consumer_kva_total = 0;
 		
 		// LOOP
 		$.each(node_list_data, function(i, node) {
@@ -1668,7 +1717,7 @@
 				}
 			});
 
-			// TOTALS kVAr
+			// TOTALS kVA
 			var kwh_total_day = ((Wh1_day + Wh2_day + Wh3_day) / 1000)
 			var kwh_total_night = ((Wh1_night + Wh2_night + Wh3_night) / 1000)
 			var kwh_total = kwh_total_day + kwh_total_night;
@@ -1690,24 +1739,24 @@
 				supply_cost_total += parseFloat(cost_total);
 				supply_cost_day += parseFloat(cost_total_day);
 				supply_cost_night += parseFloat(cost_total_night);
-				supply_kwvar_total += parseFloat(kwh_total);
+				supply_kva_total += parseFloat(kwh_total);
 			} else if (node.Category == 'Power Consumer 3 Phase') {
 				consumer_cost_total += parseFloat(cost_total);
 				consumer_cost_day += parseFloat(cost_total_day);
 				consumer_cost_night += parseFloat(cost_total_night);
-				consumer_kwvar_total += parseFloat(kwh_total);
+				consumer_kva_total += parseFloat(kwh_total);
 				// CREATE CHART DATA
 				chart_data.push({
 					ID: node.id, 
 					Node: node.Name, 
-					Value_kWVAr: kwh_total.toFixed(3),
+					Value_kVA: kwh_total.toFixed(3),
 				});
 			}
 			// PUSH
 			data.push({
 				ID: node.id, 
 				Node: node.Name, 
-				Value_kWVAr: kwh_total.toFixed(3),
+				Value_kVA: kwh_total.toFixed(3),
 				Value_Cost: cost_total.toFixed(3),
 			});
 		});
@@ -1715,15 +1764,15 @@
 		chart_data.push({
 			ID: 0, 
 			Node: 'Not Recorded', 
-			Value_kWVAr: (supply_kwvar_total-consumer_kwvar_total).toFixed(3),
+			Value_kVA: (supply_kva_total-consumer_kva_total).toFixed(3),
 		})
 
 		console.log(chart_data);
 		
 		// GET TOGGLE STATUS
 		if ($("#toggle_money_kwh").not(':checked')) {
-			chart_data = chart_data.map(function(element) {return {'ID': element.ID, 'Node': element.Node, 'Value_kWVAr': ((element.Value_kWVAr/supply_kwvar_total)*100).toFixed(1)};})
-			data = data.map(function(element) {return {'ID': element.ID, 'Node': element.Node, 'Value_kWVAr': ((element.Value_kWVAr/supply_kwvar_total)*100).toFixed(1)};})
+			chart_data = chart_data.map(function(element) {return {'ID': element.ID, 'Node': element.Node, 'Value_kVA': ((element.Value_kVA/supply_kva_total)*100).toFixed(1)};})
+			data = data.map(function(element) {return {'ID': element.ID, 'Node': element.Node, 'Value_kVA': ((element.Value_kVA/supply_kva_total)*100).toFixed(1)};})
 		}
 		
 		// PIE CHART DATA
@@ -1733,21 +1782,26 @@
 		$("#reporting_bar").dxChart("option", "dataSource", chart_data);
 		$("#reporting_bar").dxChart('instance').refresh();
 		// TEXT
+		$("#cost_total").text(consumer_cost_total.toFixed(2));
+		$("#cost_day").text(consumer_cost_day.toFixed(2));
+		$("#cost_night").text(consumer_cost_night.toFixed(2));
+		$("#consumed_total").text(consumer_kva_total.toFixed(3));
+
 		$("#report_period").text(((new Date(end).getTime() - new Date(start).getTime()) / (1000 * 3600 * 24)).toFixed(0));
 		$("#report_from").text(new Date(start).toDateString());
 		$("#report_to").text(new Date(end).toDateString());
 		if ($("#toggle_money_kwh").not(':checked')) {
 			$("#report_not_nodeed").text('€' + (supply_cost_total-consumer_cost_total).toFixed(2));
 		} else {
-			$("#report_not_nodeed").text((supply_kwvar_total-consumer_kwvar_total).toFixed(3) + ' kVAr');
+			$("#report_not_nodeed").text((supply_kva_total-consumer_kva_total).toFixed(3) + ' kVA');
 		}
 		// SET TOTALS TEXT
 		if ($("#toggle_money_kwh").not(':checked')) {
 			$("#report_supply_total_value").text('€' + (supply_cost_total).toFixed(2));
 			$("#report_consumer_total_value").text('€' + (consumer_cost_total).toFixed(2));
 		} else {
-			$("#report_supply_total_value").text(supply_kwvar_total.toFixed(3) + ' kVAr');
-			$("#report_consumer_total_value").text(consumer_kwvar_total.toFixed(3) + ' kVAr');
+			$("#report_supply_total_value").text(supply_kva_total.toFixed(3) + ' kVA');
+			$("#report_consumer_total_value").text(consumer_kva_total.toFixed(3) + ' kVA');
 		}		
 	}
 
@@ -1829,7 +1883,7 @@
 			},
 			series: [{
 				argumentField: 'Node',
-				valueField: 'Value_kWVAr',
+				valueField: 'Value_kVA',
 				label: {
 					visible: true,
 					connector: {
@@ -1839,11 +1893,11 @@
 					format: 'fixedPoint',
 					customizeText(point) {
 						// SET PREFIX
-						var prefix = ' kVAr';
+						var prefix = ' kVA';
 						if ($("#toggle_money_kwh").not(':checked')) {
 							prefix = ' %';
 						} else {
-							prefix = ' kVAr';
+							prefix = ' kVA';
 						}
 						return `${point.value} ` + prefix;
 					},
@@ -1856,7 +1910,7 @@
 			palette: 'red',
 			commonSeriesSettings: {
 				type: 'bar',
-				valueField: 'Value_kWVAr',
+				valueField: 'Value_kVA',
 				argumentField: 'Node',
 				ignoreEmptyPoints: true,
 			},
@@ -2000,16 +2054,20 @@
 			});
 
 			// SET CHART DATA
-			$("#node_chart_" + node.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.RealPower_L1), 'L2': Math.abs(element.RealPower_L2), 'L3': Math.abs(element.RealPower_L3)};}));
+			if (node.id == 1) {
+				$("#node_chart_" + node.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.Irms_L1*element.Vrms_L1), 'L2': Math.abs(element.Irms_L2*element.Vrms_L2), 'L3': Math.abs(element.Irms_L3*element.Vrms_L3)};}));
+			} else {
+				$("#node_chart_" + node.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.AppaPower_L1), 'L2': Math.abs(element.AppaPower_L2), 'L3': Math.abs(element.AppaPower_L3)};}));
+			}			
 			$("#node_chart_" + node.id).dxChart('instance').refresh();
 			// SET POLAR CHART DATA
-			$("#node_chart_polar_" + node.id).dxPolarChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.RealPower_L1), 'L2': Math.abs(element.RealPower_L2), 'L3': Math.abs(element.RealPower_L3)};}));
+			$("#node_chart_polar_" + node.id).dxPolarChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.AppaPower_L1), 'L2': Math.abs(element.AppaPower_L2), 'L3': Math.abs(element.AppaPower_L3)};}));
 			$("#node_chart_polar_" + node.id).dxPolarChart('instance').refresh();
 			// SET LOG VALUES
-			$("#log2_" + node.id).dxDataGrid("option", "dataSource", readings.map(function(element) {return {'ID': element.id, 'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.RealPower_L1), 'L2': Math.abs(element.RealPower_L2), 'L3': Math.abs(element.RealPower_L3)};}));
+			$("#log2_" + node.id).dxDataGrid("option", "dataSource", readings.map(function(element) {return {'ID': element.id, 'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.AppaPower_L1), 'L2': Math.abs(element.AppaPower_L2), 'L3': Math.abs(element.AppaPower_L3)};}));
 			$("#log2_" + node.id).dxDataGrid('instance').refresh();
 			// SET CHART DATA
-			$("#data_analysis_chart").dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.RealPower_L1), 'L2': Math.abs(element.RealPower_L2), 'L3': Math.abs(element.RealPower_L3)};}));
+			$("#data_analysis_chart").dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.AppaPower_L1), 'L2': Math.abs(element.AppaPower_L2), 'L3': Math.abs(element.AppaPower_L3)};}));
 			$("#data_analysis_chart").dxChart('instance').refresh();
 
 			// SET VALUES
@@ -2034,23 +2092,22 @@
 			if (node.id == id) {
 
 				var readings = node.history.filter((item) => item.Data_DateTime.getTime() >= start.getTime() && item.Data_DateTime.getTime() <= end.getTime());
-
-				var pulseSum = 0;
-				$.each(readings, function(i, reading) {
-					pulseSum += reading.Pulses
-				});				
 				
 				// SET CHART DATA
-				$("#node_chart_" + node.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.RealPower_L1), 'L2': Math.abs(element.RealPower_L2), 'L3': Math.abs(element.RealPower_L3)};}));
+				if (node.id == 1) {
+					$("#node_chart_" + node.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.Irms_L1*element.Vrms_L1), 'L2': Math.abs(element.Irms_L2*element.Vrms_L2), 'L3': Math.abs(element.Irms_L3*element.Vrms_L3)};}));
+				} else {
+					$("#node_chart_" + node.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.AppaPower_L1), 'L2': Math.abs(element.AppaPower_L2), 'L3': Math.abs(element.AppaPower_L3)};}));
+				}
 				$("#node_chart_" + node.id).dxChart('instance').refresh();
 				// SET POLAR CHART DATA
-				$("#node_chart_polar_" + node.id).dxPolarChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.RealPower_L1), 'L2': Math.abs(element.RealPower_L2), 'L3': Math.abs(element.RealPower_L3)};}));
+				$("#node_chart_polar_" + node.id).dxPolarChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.AppaPower_L1), 'L2': Math.abs(element.AppaPower_L2), 'L3': Math.abs(element.AppaPower_L3)};}));
 				$("#node_chart_polar_" + node.id).dxPolarChart('instance').refresh();
 				// SET LOG VALUES
-				$("#log2_" + node.id).dxDataGrid("option", "dataSource", readings.map(function(element) {return {'ID': element.id, 'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.RealPower_L1), 'L2': Math.abs(element.RealPower_L2), 'L3': Math.abs(element.RealPower_L3)};}));
+				$("#log2_" + node.id).dxDataGrid("option", "dataSource", readings.map(function(element) {return {'ID': element.id, 'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.AppaPower_L1), 'L2': Math.abs(element.AppaPower_L2), 'L3': Math.abs(element.AppaPower_L3)};}));
 				$("#log2_" + node.id).dxDataGrid('instance').refresh();
 				// SET CHART DATA
-				$("#data_analysis_chart").dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.RealPower_L1), 'L2': Math.abs(element.RealPower_L2), 'L3': Math.abs(element.RealPower_L3)};}));
+				$("#data_analysis_chart").dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.AppaPower_L1), 'L2': Math.abs(element.AppaPower_L2), 'L3': Math.abs(element.AppaPower_L3)};}));
 				$("#data_analysis_chart").dxChart('instance').refresh();
 
 				// SET VALUES
@@ -2128,13 +2185,17 @@
 		$("#total_kwh_value_" + id).text(kwh_total.toFixed(2));
 		$("#total_kwh_bar_" + id).attr('style', 'width: ' + getPercentage(kwh_total, 600).toFixed(0) + '%');
 		$("#total_kwh_info_" + id).text('@ ' + getPercentage(kwh_total, 600).toFixed(0) + '% of 600 kW.');
-		$("#total_kwh_day_" + id).text('Day: ' + (kwh_total_day).toFixed(2) + 'kVAr');
-		$("#total_kwh_night_" + id).text('Night: ' + (kwh_total_night).toFixed(2) + 'kVAr');
-		// real power
-		var rp_total = (Math.abs(data.RealPower_L1) + Math.abs(data.RealPower_L2) + Math.abs(data.RealPower_L3)) / 1000
-		$("#value_main_" + id).text(rp_total.toFixed(3));
-		$("#real_power_value_" + id).text(rp_total.toFixed(2));
-		$("#real_power_bar_" + id).attr('style', 'width: ' + getPercentage(rp_total, 600).toFixed(0) + '%');		
+		$("#total_kwh_day_" + id).text('Day: ' + (kwh_total_day).toFixed(2) + 'kVA');
+		$("#total_kwh_night_" + id).text('Night: ' + (kwh_total_night).toFixed(2) + 'kVA');
+		// Apparent Power
+		if (id == 1){
+			var ap_total = (Math.abs(data.Irms_L1*data.Vrms_L1) + Math.abs(data.Irms_L2*data.Vrms_L2) + Math.abs(data.Irms_L3*data.Vrms_L3)) / 1000
+		} else {
+			var ap_total = (Math.abs(data.AppaPower_L1) + Math.abs(data.AppaPower_L2) + Math.abs(data.AppaPower_L3)) / 1000
+		}		
+		$("#value_main_" + id).text(ap_total.toFixed(3));
+		$("#real_power_value_" + id).text(ap_total.toFixed(2));
+		$("#real_power_bar_" + id).attr('style', 'width: ' + getPercentage(ap_total, 600).toFixed(0) + '%');		
 		// current
 		var irms_total = (Math.abs(data.Irms_L1) + Math.abs(data.Irms_L2) + Math.abs(data.Irms_L3))
 		$("#irms_value_" + id).text(irms_total.toFixed(2));
