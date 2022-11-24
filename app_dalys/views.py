@@ -52,7 +52,7 @@ class Insert_ViewSet(viewsets.ModelViewSet):
         print(self.request.data)       
         
         msg_meter_readings = Node_Power.objects.create(
-            Node = Node_Power.objects.get(id = data['Meter_Id']),
+            Node = Node_List.objects.get(id = data['Meter_Id']),
             Data_DateTime = data['Data_DateTime'],
             RealPower_L1 = data['Realpower1'],
             RealPower_L2 = data['Realpower2'],
