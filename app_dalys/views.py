@@ -5,6 +5,8 @@ from django.http import HttpResponse
 from django import template
 import json
 
+from rest_framework import pagination
+
 from rest_framework import viewsets
 from rest_framework.response import Response
 
@@ -28,6 +30,48 @@ class Node_List_ViewSet(viewsets.ModelViewSet):
     def list(self, request):
         data = json.loads(get_nodes())
         return Response(data)
+
+# url = 'dalys/node_power/get_by_id_and_dates/?node_id=' + str(self.ID) + '&start_datetime=' + start_datetime + '&end_datetime=' + end_datetime + ''
+class GetPowerDataByIdAndDates_ViewSet(viewsets.ModelViewSet):
+    serializer_class = Power_Serializer
+    pagination.PageNumberPagination.page_size = 100000
+    def get_queryset(self):
+        node_id = self.request.query_params.get('node_id')
+        start_datetime = self.request.query_params.get('start_datetime')
+        end_datetime = self.request.query_params.get('end_datetime')
+
+        return Node_Power.objects.filter(Node = node_id, Data_DateTime__gte = start_datetime, Data_DateTime__lte = end_datetime).order_by('-id')
+
+class Insert_ViewSet(viewsets.ModelViewSet):
+    queryset = Node_Power.objects.all().order_by('Data_DateTime')
+    serializer_class = Power_Serializer
+
+    def create(self, request):
+        # Data Format: {'uplink_message': {'decoded_payload': {'Data_DateTime': '2022-09-13T13:18:25.903Z', 'Meter_Id': 1, 'Pulse_Count': 407, 'Pulses': 0}}}  
+        data = request.data['uplink_message']['decoded_payload']
+        print(self.request.data)       
+        
+        msg_meter_readings = Node_Power.objects.create(
+            Node = Node_Power.objects.get(id = data['Meter_Id']),
+            Data_DateTime = data['Data_DateTime'],
+            RealPower_L1 = data['Realpower1'],
+            RealPower_L2 = data['Realpower2'],
+            RealPower_L3 = data['Realpower3'],
+            AppaPower_L1 = data['ApparentPower1'],
+            AppaPower_L2 = data['ApparentPower2'],
+            AppaPower_L3 = data['ApparentPower3'],
+            Irms_L1 = data['Irms1'],
+            Irms_L2 = data['Irms2'],
+            Irms_L3 = data['Irms3'],
+            Vrms_L1 = data['Vrms1'],
+            Vrms_L2 = data['Vrms2'],
+            Vrms_L3 = data['Vrms3'],
+            PowerFact_L1 = data['PowerFactor1'],
+            PowerFact_L2 = data['PowerFactor2'],
+            PowerFact_L3 = data['PowerFactor3']
+        )
+        
+        return Response(data = "done")
 
 @login_required(login_url="/login/")
 def index(request):

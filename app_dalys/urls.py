@@ -4,6 +4,8 @@ from . import views
 
 routerNodePower = routers.DefaultRouter()
 routerNodePower.register(r'data', views.Node_Power_ViewSet)
+routerNodePower.register(r'get_by_id_and_dates', views.GetPowerDataByIdAndDates_ViewSet, basename="get_by_id_and_dates")
+routerNodePower.register(r'insert', views.Insert_ViewSet, basename="insert")
 
 routerNodes = routers.DefaultRouter()
 routerNodes.register(r'list', views.Node_List_ViewSet)
