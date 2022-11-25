@@ -206,15 +206,15 @@
 														
 														<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
 															<i class="bi bi-circle-fill fs-6px me-2 text-info"></i>
-															L1: 10.25 A
+															L1: <span id="irms_l1_{{ node.id }}"></span> A
 														</div>
 														<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
 															<i class="bi bi-circle-fill fs-6px me-2 text-red"></i>
-															L2: 12.24 A
+															L2: <span id="irms_l2_{{ node.id }}"></span> A
 														</div>
 														<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
 															<i class="bi bi-circle-fill fs-6px me-2 text-green"></i>
-															L3: 11.68 A
+															L3: <span id="irms_l3_{{ node.id }}"></span> A
 														</div>
 
 													</div>										
@@ -227,7 +227,7 @@
 														<div class="row align-items-center mb-0">
 															<div class="col-8">
 																<div class="fs-10px fw-bold text-white text-opacity-50 mb-0">POWER</div>
-																<h5>58.99 kVA</h5>
+																<h5><span id="power_total_{{ node.id }}"></span> kVA</h5>
 															</div>
 															<div class="col-4">
 																<i class="fa fa-chart-line fa-1x"></i>
@@ -236,50 +236,20 @@
 														
 														<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
 															<i class="bi bi-circle-fill fs-6px me-2 text-info"></i>
-															L1: 18.66 kVA
+															L1: <span id="power_l1_{{ node.id }}"></span> kVA
 														</div>
 														<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
 															<i class="bi bi-circle-fill fs-6px me-2 text-red"></i>
-															L2: 41.87 kVA
+															L2: <span id="power_l2_{{ node.id }}"></span> kVA
 														</div>
 														<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
 															<i class="bi bi-circle-fill fs-6px me-2 text-green"></i>
-															L3: 10.55 kVA
+															L3: <span id="power_l3_{{ node.id }}"></span> kVA
 														</div>
 
 													</div>										
 												</div>
-											</div>	
-											<div class="col-lg-3">
-												<div class="d-flex bg-white bg-opacity-15">
-													<div class="ps-3 m-5px flex-1">
-														
-														<div class="row align-items-center mb-0">
-															<div class="col-8">
-																<div class="fs-10px fw-bold text-white text-opacity-50 mb-0">POWER FACTOR</div>
-																<h5>0.92 PF</h5>
-															</div>
-															<div class="col-4">
-																<i class="fa fa-chart-line fa-1x"></i>
-															</div>
-														</div>
-														
-														<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
-															<i class="bi bi-circle-fill fs-6px me-2 text-info"></i>
-															L1: 0.95 PF 
-														</div>
-														<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
-															<i class="bi bi-circle-fill fs-6px me-2 text-red"></i>
-															L2: 0.96 PF
-														</div>
-														<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
-															<i class="bi bi-circle-fill fs-6px me-2 text-green"></i>
-															L3: 0.97 PF
-														</div>
-
-													</div>										
-												</div>
-											</div>	
+											</div>											
 										</div>
 										<!-- END row -->
 									</div>
@@ -623,59 +593,100 @@
 														<span id="total_kwh_night_{{ node.id }}"></span>
 													</div>
 												</div>
-												<!-- END CONSUMED -->
-
-												<!-- BEGIN Apparent Power -->
-												<div class="w-150px h-98px pt-1 ps-3">
-													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														APP POWER (kVA)
-													</div>
-													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="real_power_value_{{ node.id }}">0</span> </h4>
-													</div>
-													<div class="progress h-3px bg-white-transparent-2 mb-1">
-														<div class="progress-bar bg-theme" id="real_power_bar_{{ node.id }}" style="width: 0%"></div>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="real_power_info_{{ node.id }}">@ 0% of 600 kW.</span>
-													</div>
-												</div>
-												<!-- END Apparent Power -->
-												
-												<!-- BEGIN IRMS -->
-												<div class="w-150px h-98px pt-1 ps-3">
-													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														CURRENT (A)
-													</div>
-													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="irms_value_{{ node.id }}">0</span> </h4>
-													</div>
-													<div class="progress h-3px bg-white-transparent-2 mb-2">
-														<div class="progress-bar bg-theme" id="irms_bar_{{ node.id }}" style="width: 0%"></div>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="irms_info_{{ node.id }}">@ 0% of 200 A.</span>
-													</div>
-												</div>
-												<!-- END IRMS -->
-												
-												<!-- BEGIN POWER FACTOR
-												<div class="w-150px h-98px pt-1 ps-3">
-													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														POWER FACTOR
-													</div>
-													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="power_factor_value_{{ node.id }}">0</span> </h4>
-													</div>
-													<div class="progress h-3px bg-white-transparent-2 mb-1">
-														<div class="progress-bar bg-theme" id="power_factor_bar_{{ node.id }}" style="width: 0%"></div>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="power_factor_info_{{ node.id }}">@ 0%.</span>
-													</div>
-												</div>
-												END POWER FACTOR -->
+												<!-- END CONSUMED -->												
 											</div>
+										</div>
+										<div class="row">
+											<div class="col-lg-3 mb-3 mb-lg-0">
+												<div class="d-flex align-items-center bg-white bg-opacity-15">
+													<div class="ps-3 m-5px flex-1">
+
+														<div class="row align-items-center mb-0">
+															<div class="col-8">
+																<div class="fs-10px fw-bold text-white text-opacity-50 mb-0">VOLTAGE</div>
+																<h5><span id="vrms_total_{{ node.id }}"></span> V</h5>
+															</div>
+															<div class="col-4">
+																<i class="fa fa-chart-line fa-1x"></i>
+															</div>
+														</div>
+														
+														<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
+															<i class="bi bi-circle-fill fs-6px me-2 text-info"></i>
+															L1: <span id="vrms_l1_{{ node.id }}"></span> V
+														</div>
+														<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
+															<i class="bi bi-circle-fill fs-6px me-2 text-red"></i>
+															L2: <span id="vrms_l2_{{ node.id }}"></span> V
+														</div>
+														<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
+															<i class="bi bi-circle-fill fs-6px me-2 text-green"></i>
+															L3: <span id="vrms_l3_{{ node.id }}"></span> V
+														</div>
+
+													</div>
+												</div>
+											</div>										
+											<div class="col-lg-3">
+												<div class="d-flex bg-white bg-opacity-15">
+													<div class="ps-3 m-5px flex-1">
+
+														<div class="row align-items-center mb-0">
+															<div class="col-8">
+																<div class="fs-10px fw-bold text-white text-opacity-50 mb-0">CURRENT</div>
+																<h5><span id="irms_total_{{ node.id }}"></span> A</h5>
+															</div>
+															<div class="col-4">
+																<i class="fa fa-chart-line fa-1x"></i>
+															</div>
+														</div>
+														
+														<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
+															<i class="bi bi-circle-fill fs-6px me-2 text-info"></i>
+															L1: <span id="irms_l1_{{ node.id }}"></span> A
+														</div>
+														<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
+															<i class="bi bi-circle-fill fs-6px me-2 text-red"></i>
+															L2: <span id="irms_l2_{{ node.id }}"></span> A
+														</div>
+														<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
+															<i class="bi bi-circle-fill fs-6px me-2 text-green"></i>
+															L3: <span id="irms_l3_{{ node.id }}"></span> A
+														</div>
+
+													</div>										
+												</div>
+											</div>
+											<div class="col-lg-3">
+												<div class="d-flex bg-white bg-opacity-15">
+													<div class="ps-3 m-5px flex-1">
+														
+														<div class="row align-items-center mb-0">
+															<div class="col-8">
+																<div class="fs-10px fw-bold text-white text-opacity-50 mb-0">POWER</div>
+																<h5><span id="power_total_{{ node.id }}"></span> kVA</h5>
+															</div>
+															<div class="col-4">
+																<i class="fa fa-chart-line fa-1x"></i>
+															</div>
+														</div>
+														
+														<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
+															<i class="bi bi-circle-fill fs-6px me-2 text-info"></i>
+															L1: <span id="power_l1_{{ node.id }}"></span> kVA
+														</div>
+														<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
+															<i class="bi bi-circle-fill fs-6px me-2 text-red"></i>
+															L2: <span id="power_l2_{{ node.id }}"></span> kVA
+														</div>
+														<div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
+															<i class="bi bi-circle-fill fs-6px me-2 text-green"></i>
+															L3: <span id="power_l3_{{ node.id }}"></span> kVA
+														</div>
+
+													</div>										
+												</div>
+											</div>											
 										</div>
 										<!-- END row -->
 									</div>
@@ -2104,11 +2115,12 @@
 			});
 
 			// SET CHART DATA
-			if (node.id == 1) {
-				$("#node_chart_" + node.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.Irms_L1*element.Vrms_L1), 'L2': Math.abs(element.Irms_L2*element.Vrms_L2), 'L3': Math.abs(element.Irms_L3*element.Vrms_L3)};}));
-			} else {
-				$("#node_chart_" + node.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.AppaPower_L1), 'L2': Math.abs(element.AppaPower_L2), 'L3': Math.abs(element.AppaPower_L3)};}));
-			}			
+			if (node.id == 4) {
+
+			};
+
+			//$("#node_chart_" + node.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.Irms_L1*element.Vrms_L1/1000).toFixed(2), 'L2': Math.abs(element.Irms_L2*element.Vrms_L2/1000).toFixed(2), 'L3': Math.abs(element.Irms_L3*element.Vrms_L3/1000).toFixed(2)};}));
+			$("#node_chart_" + node.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.Irms_L1*element.Vrms_L1/1000), 'L2': Math.abs(element.Irms_L2*element.Vrms_L1/1000), 'L3': Math.abs(element.Irms_L3*element.Vrms_L1/1000)};}));			
 			$("#node_chart_" + node.id).dxChart('instance').refresh();
 			// SET POLAR CHART DATA
 			$("#node_chart_polar_" + node.id).dxPolarChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.AppaPower_L1), 'L2': Math.abs(element.AppaPower_L2), 'L3': Math.abs(element.AppaPower_L3)};}));
@@ -2148,11 +2160,7 @@
 				var readings = data.results;
 
 				// SET CHART DATA
-				if (id == 1) {
-					$("#node_chart_" + id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.Irms_L1*element.Vrms_L1), 'L2': Math.abs(element.Irms_L2*element.Vrms_L2), 'L3': Math.abs(element.Irms_L3*element.Vrms_L3)};}));
-				} else {
-					$("#node_chart_" + id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.AppaPower_L1), 'L2': Math.abs(element.AppaPower_L2), 'L3': Math.abs(element.AppaPower_L3)};}));
-				}
+				$("#node_chart_" + id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.Irms_L1*element.Vrms_L1/1000), 'L2': Math.abs(element.Irms_L2*element.Vrms_L1/1000), 'L3': Math.abs(element.Irms_L3*element.Vrms_L1/1000)};}));
 				$("#node_chart_" + id).dxChart('instance').refresh();
 				// SET POLAR CHART DATA
 				$("#node_chart_polar_" + id).dxPolarChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.AppaPower_L1), 'L2': Math.abs(element.AppaPower_L2), 'L3': Math.abs(element.AppaPower_L3)};}));
@@ -2178,11 +2186,7 @@
 				var readings = node.history.filter((item) => item.Data_DateTime.getTime() >= start.getTime() && item.Data_DateTime.getTime() <= end.getTime());
 				
 				// SET CHART DATA
-				if (node.id == 1) {
-					$("#node_chart_" + node.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.Irms_L1*element.Vrms_L1), 'L2': Math.abs(element.Irms_L2*element.Vrms_L2), 'L3': Math.abs(element.Irms_L3*element.Vrms_L3)};}));
-				} else {
-					$("#node_chart_" + node.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.AppaPower_L1), 'L2': Math.abs(element.AppaPower_L2), 'L3': Math.abs(element.AppaPower_L3)};}));
-				}
+				$("#node_chart_" + node.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.Irms_L1*element.Vrms_L1/1000), 'L2': Math.abs(element.Irms_L2*element.Vrms_L1/1000), 'L3': Math.abs(element.Irms_L3*element.Vrms_L1/1000)};}));
 				$("#node_chart_" + node.id).dxChart('instance').refresh();
 				// SET POLAR CHART DATA
 				$("#node_chart_polar_" + node.id).dxPolarChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.AppaPower_L1), 'L2': Math.abs(element.AppaPower_L2), 'L3': Math.abs(element.AppaPower_L3)};}));
@@ -2228,17 +2232,18 @@
 		
 		$.each(readings, function(i, reading) {
 
+			// correction
+			if (data.id == 4) {
+				reading.Irms_L1 = reading.Irms_L1/1000
+				reading.Irms_L2 = reading.Irms_L2/1000
+				reading.Irms_L3 = reading.Irms_L3/1000
+			};
+
 			var time = moment(reading.Data_DateTime.toLocaleTimeString([], {hourCycle: 'h23', hour: '2-digit', minute: '2-digit', second: '2-digit'}),'HH:mm:ss');
 
-			if (id == 1){
-				var P_CT1 = Math.abs(reading.Irms_L1) * Math.abs(reading.Vrms_L1);
-				var P_CT2 = Math.abs(reading.Irms_L2) * Math.abs(reading.Vrms_L2);
-				var P_CT3 = Math.abs(reading.Irms_L3) * Math.abs(reading.Vrms_L3);
-			} else {
-				var P_CT1 = Math.abs(reading.AppaPower_L1);
-				var P_CT2 = Math.abs(reading.AppaPower_L2);
-				var P_CT3 = Math.abs(reading.AppaPower_L3);
-			}
+			var P_CT1 = Math.abs(reading.Irms_L1) * Math.abs(reading.Vrms_L1);
+			var P_CT2 = Math.abs(reading.Irms_L2) * Math.abs(reading.Vrms_L1);
+			var P_CT3 = Math.abs(reading.Irms_L3) * Math.abs(reading.Vrms_L1);
 
 			P1_sum = prev_P1 + P_CT1;								
 			prev_P1 = P_CT1;		
@@ -2259,6 +2264,13 @@
 				Wh3_night += delta_T / 2 * P3_sum;
 			}
 		});
+
+		// correction
+		if (data.id == 4) {
+			data.Irms_L1 = data.Irms_L1/1000
+			data.Irms_L2 = data.Irms_L2/1000
+			data.Irms_L3 = data.Irms_L3/1000
+		};
 
 		// total
 		var kwh_total_day = ((Wh1_day + Wh2_day + Wh3_day) / 1000)
@@ -2281,41 +2293,27 @@
 
 		// voltage
 		var vrms_total = (Math.abs(data.Vrms_L1) + Math.abs(data.Vrms_L2) + Math.abs(data.Vrms_L3))/3
-		//$("#vrms_total_" + id).text(vrms_total.toFixed(2));
-		//$("#vrms_l1_" + id).text(data.Vrms_L1.toFixed(2));
-		//$("#vrms_l2_" + id).text(data.Vrms_L2.toFixed(2));
-		//$("#vrms_l3_" + id).text(data.Vrms_L3.toFixed(2));
+		$("#vrms_total_" + id).text(vrms_total.toFixed(2));
+		$("#vrms_l1_" + id).text(data.Vrms_L1.toFixed(2));
+		$("#vrms_l2_" + id).text(data.Vrms_L2.toFixed(2));
+		$("#vrms_l3_" + id).text(data.Vrms_L3.toFixed(2));
 
 		// current
-		var irms_total = (Math.abs(data.Irms_L1) + Math.abs(data.Irms_L2) + Math.abs(data.Irms_L3))
-		//$("#irms_total_" + id).text(irms_total.toFixed(2));
-		//$("#irms_l1_" + id).text(data.Irms_L1.toFixed(2));
-		//$("#irms_l2_" + id).text(data.Irms_L2.toFixed(2));
-		//$("#irms_l3_" + id).text(data.Irms_L3.toFixed(2));
+		var irms_total = (Math.abs(data.Irms_L1.toFixed(2)) + Math.abs(data.Irms_L2.toFixed(2)) + Math.abs(data.Irms_L3.toFixed(2)))
+		$("#irms_total_" + id).text(irms_total.toFixed(2));
+		$("#irms_l1_" + id).text(data.Irms_L1.toFixed(2));
+		$("#irms_l2_" + id).text(data.Irms_L2.toFixed(2));
+		$("#irms_l3_" + id).text(data.Irms_L3.toFixed(2));
 
 		// power
-		if (id == 1){
-			var ap_total = (Math.abs(data.Irms_L1*data.Vrms_L1) + Math.abs(data.Irms_L2*data.Vrms_L2) + Math.abs(data.Irms_L3*data.Vrms_L3)) / 1000
-			$("#ap_total_" + id).text(irms_total.toFixed(2));
-			//$("#ap_l1_" + id).text((data.Irms_L1*data.Vrms_L1).toFixed(2));
-			//$("#ap_l2_" + id).text((data.Irms_L2*data.Vrms_L2).toFixed(2));
-			//$("#ap_l3_" + id).text((data.Irms_L3*data.Vrms_L3).toFixed(2));
-		} else {
-			var ap_total = (Math.abs(data.AppaPower_L1) + Math.abs(data.AppaPower_L2) + Math.abs(data.AppaPower_L3)) / 1000
-			$("#ap_total_" + id).text(irms_total.toFixed(2));
-			//$("#ap_l1_" + id).text(data.AppaPower_L1.toFixed(2));
-			//$("#ap_l2_" + id).text(data.AppaPower_L2.toFixed(2));
-			//$("#ap_l3_" + id).text(data.AppaPower_L3.toFixed(2));
-		}
-		$("#value_main_" + id).text(ap_total.toFixed(3));
-		$("#real_power_value_" + id).text(ap_total.toFixed(2));
-
-		// power factor
-		var pf_total = (Math.abs(data.PowerFact_L1) + Math.abs(data.PowerFact_L2) + Math.abs(data.PowerFact_L3))/3
-		//$("#pf_total_" + id).text(pf_total.toFixed(2));
-		//$("#pf_l1_" + id).text(data.PowerFact_L1.toFixed(2));
-		//$("#pf_l2_" + id).text(data.PowerFact_L2.toFixed(2));
-		//$("#pf_l3_" + id).text(data.PowerFact_L3.toFixed(2));
+		var power_total = (Math.abs(data.Irms_L1*data.Vrms_L1) + Math.abs(data.Irms_L2*data.Vrms_L2) + Math.abs(data.Irms_L3*data.Vrms_L3)) / 1000
+		$("#power_total_" + id).text(power_total.toFixed(2));
+		$("#power_l1_" + id).text((data.Irms_L1*data.Vrms_L1/1000).toFixed(2));
+		$("#power_l2_" + id).text((data.Irms_L2*data.Vrms_L1/1000).toFixed(2));
+		$("#power_l3_" + id).text((data.Irms_L3*data.Vrms_L1/1000).toFixed(2));
+		
+		$("#value_main_" + id).text(power_total.toFixed(3));
+		$("#real_power_value_" + id).text(power_total.toFixed(2));		
 		
 	}
 	// percentage function
