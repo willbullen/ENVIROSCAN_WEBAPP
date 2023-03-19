@@ -633,13 +633,15 @@ sudo nginx -t && sudo systemctl restart nginx
 ip addr show                            # Show ip
 #####################################################
 
+python manage.py makemigrations
+python manage.py migrate
+python manage.py runserver
 
 ssh willbullen@20.229.97.149
 cd enviroscan
 git reset --hard
 git pull enviroscan main
 sudo reboot
-
 
 
 First try

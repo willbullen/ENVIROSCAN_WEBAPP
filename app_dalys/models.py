@@ -112,3 +112,15 @@ class Node_Power(models.Model):
 
     class Meta:
         ordering = ['Data_DateTime']
+
+class Node_Temperature(models.Model):
+    Node = models.ForeignKey(Node_List, on_delete=models.CASCADE)
+    Data_DateTime = models.DateTimeField('date published')
+    Battery_MV = models.FloatField()
+    Battery_Percent = models.FloatField()
+    Temperature = models.FloatField()
+
+    objects = DataFrameManager()
+
+    class Meta:
+        ordering = ['Data_DateTime']

@@ -13,10 +13,12 @@ from rest_framework.response import Response
 from .models import (
     Node_Power,
     Node_List,
+    Node_Temperature
 )
 
 from .serializers import (
     Power_Serializer,
+    Temperature_Serializer,
     Node_List_Serializer,
 )
 
@@ -24,13 +26,49 @@ class Node_Power_ViewSet(viewsets.ModelViewSet):
     queryset = Node_Power.objects.all().order_by('Data_DateTime')
     serializer_class = Power_Serializer
 
+class Node_Temperature_ViewSet(viewsets.ModelViewSet):
+    queryset = Node_Temperature.objects.all().order_by('Data_DateTime')
+    serializer_class = Temperature_Serializer
+
 class Node_List_ViewSet(viewsets.ModelViewSet):
     queryset = Node_List.objects.all()
     serializer_class = Node_List_Serializer
     def list(self, request):
         data = json.loads(get_nodes())
         return Response(data)
+    
+######### TEMPERATURE
+# url = 'dalys/node_temperature/get_by_id_and_dates/?node_id=' + str(self.ID) + '&start_datetime=' + start_datetime + '&end_datetime=' + end_datetime + ''
+class GetTemperatureDataByIdAndDates_ViewSet(viewsets.ModelViewSet):
+    serializer_class = Temperature_Serializer
+    pagination.PageNumberPagination.page_size = 100000
+    def get_queryset(self):
+        node_id = self.request.query_params.get('node_id')
+        start_datetime = self.request.query_params.get('start_datetime')
+        end_datetime = self.request.query_params.get('end_datetime')
 
+        return Node_Temperature.objects.filter(Node = node_id, Data_DateTime__gte = start_datetime, Data_DateTime__lte = end_datetime).order_by('-id')
+
+class Insert_Temperature_ViewSet(viewsets.ModelViewSet):
+    queryset = Node_Temperature.objects.all().order_by('Data_DateTime')
+    serializer_class = Temperature_Serializer
+
+    def create(self, request):
+        # Data Format: {'uplink_message': {'decoded_payload': {'Data_DateTime': '2022-09-13T13:18:25.903Z', 'Meter_Id': 1, 'Battery_MV': 4007, 'Battery_Percent': 88, 'Temperature': -14.98}}}  
+        data = request.data['uplink_message']['decoded_payload']
+        print(self.request.data)       
+        
+        msg_temperature_readings = Node_Temperature.objects.create(
+            Node = Node_List.objects.get(id = data['Meter_Id']),
+            Data_DateTime = data['Data_DateTime'],
+            Battery_MV = data['Battery_MV'],
+            Battery_Percent = data['Battery_Percent'],
+            Temperature = data['Temperature']
+        )
+        
+        return Response(data = "done")
+
+######### POWER
 # url = 'dalys/node_power/get_by_id_and_dates/?node_id=' + str(self.ID) + '&start_datetime=' + start_datetime + '&end_datetime=' + end_datetime + ''
 class GetPowerDataByIdAndDates_ViewSet(viewsets.ModelViewSet):
     serializer_class = Power_Serializer

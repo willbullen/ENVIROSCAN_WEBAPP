@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Node_List, Node_Water, Node_Power
+from .models import Node_List, Node_Water, Node_Power, Node_Temperature
 
 class Node_List_Serializer(serializers.ModelSerializer):
     class Meta:
@@ -14,6 +14,11 @@ class Water_Serializer(serializers.ModelSerializer):
 class Power_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Node_Power
+        fields = '__all__'
+
+class Temperature_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = Node_Temperature
         fields = '__all__'
 
 class GeneralSerializer(serializers.ModelSerializer):
