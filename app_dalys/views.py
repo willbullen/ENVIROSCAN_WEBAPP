@@ -22,6 +22,9 @@ from .serializers import (
     Node_List_Serializer,
 )
 
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
 class Node_Power_ViewSet(viewsets.ModelViewSet):
     queryset = Node_Power.objects.all().order_by('Data_DateTime')
     serializer_class = Power_Serializer
@@ -34,7 +37,7 @@ class Node_List_ViewSet(viewsets.ModelViewSet):
     queryset = Node_List.objects.all()
     serializer_class = Node_List_Serializer
     def list(self, request):
-        data = json.loads(get_nodes())
+        data = json.loads(get_power_nodes())
         return Response(data)
     
 ######### TEMPERATURE
@@ -56,7 +59,13 @@ class Insert_Temperature_ViewSet(viewsets.ModelViewSet):
     def create(self, request):
         # Data Format: {'uplink_message': {'decoded_payload': {'Data_DateTime': '2022-09-13T13:18:25.903Z', 'Meter_Id': 1, 'Battery_MV': 4007, 'Battery_Percent': 88, 'Temperature': -14.98}}}  
         data = request.data['uplink_message']['decoded_payload']
-        print(self.request.data)       
+        
+        print(self.request.data)        
+
+        channel_name = 'dalys'
+        jsonData = 'Whats up.'
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(channel_name, {"type": "stream.message", 'message': jsonData})
         
         msg_temperature_readings = Node_Temperature.objects.create(
             Node = Node_List.objects.get(id = data['Meter_Id']),
@@ -117,16 +126,31 @@ def index(request):
 
     print('trest')
 
-    context['node_list_data'] = get_nodes()
+    context['node_list_data'] = get_power_nodes()
     context['node_list_supply'] = Node_List.objects.filter(Category = 3)
     context['node_list_consumer'] = Node_List.objects.filter(Category = 1)
     context['node_list_distribution'] = Node_List.objects.filter(Category = 2)
-    #context['node_list'] = json.loads(get_nodes())
+    #context['node_list'] = json.loads(get_power_nodes())
     
     context['segment'] = 'index'
     html_template = loader.get_template('app_dalys/index.html')
     return HttpResponse(html_template.render(context, request))
 
+@login_required(login_url="/login/")
+def mobile(request):
+    context = {}
+
+    print('mobile')
+
+    context['node_list_data'] = get_power_nodes()
+    context['node_list_supply'] = Node_List.objects.filter(Category = 3)
+    context['node_list_consumer'] = Node_List.objects.filter(Category = 1)
+    context['node_list_distribution'] = Node_List.objects.filter(Category = 2)
+    #context['node_list'] = json.loads(get_power_nodes())
+    
+    context['segment'] = 'mobile'
+    html_template = loader.get_template('app_dalys/mobile.html')
+    return HttpResponse(html_template.render(context, request))
 
 @login_required(login_url="/login/")
 def pages(request):
@@ -164,10 +188,10 @@ def pages(request):
         html_template = loader.get_template('page_404_error.html')
         return HttpResponse(html_template.render(context, request))
 
-def get_nodes():
+def get_power_nodes():
     nodes = {}
     try:
-        nodes['Data'] = json.loads(Node_List.objects.all().order_by('Category').to_dataframe().to_json(orient="table"))['data']
+        nodes['Data'] = json.loads(Node_List.objects.filter(Type = 1).order_by('Category').to_dataframe().to_json(orient="table"))['data']
         for node in nodes['Data']:
             node.update(get_power(node['id']))
             #node.update(get_report(node['id']))            

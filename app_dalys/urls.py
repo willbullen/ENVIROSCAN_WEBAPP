@@ -21,6 +21,9 @@ urlpatterns = [
     path('node_temperature/', include(routerNodeTemperature.urls)),
     path('node/', include(routerNodes.urls)),
 
+    # mobile
+    path('mobile/', views.mobile, name='mobile'),
+
     # The home page
     path('', views.index, name='home'),
 
