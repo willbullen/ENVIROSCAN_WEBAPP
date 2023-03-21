@@ -62,7 +62,7 @@ class Insert_Temperature_ViewSet(viewsets.ModelViewSet):
 
         print(self.request.data)        
 
-        channel_name = 'dalys'
+        channel_name = 'temperature'
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(channel_name, {"type": "stream.message", 'message': data})
         
@@ -95,7 +95,12 @@ class Insert_ViewSet(viewsets.ModelViewSet):
     def create(self, request):
         # Data Format: {'uplink_message': {'decoded_payload': {'Data_DateTime': '2022-09-13T13:18:25.903Z', 'Meter_Id': 1, 'Pulse_Count': 407, 'Pulses': 0}}}  
         data = request.data['uplink_message']['decoded_payload']
-        print(self.request.data)       
+        
+        print(self.request.data)   
+
+        channel_name = 'power'
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(channel_name, {"type": "stream.message", 'message': data})    
         
         msg_meter_readings = Node_Power.objects.create(
             Node = Node_List.objects.get(id = data['Meter_Id']),

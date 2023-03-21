@@ -13,7 +13,7 @@ from django.urls import re_path
 
 from app.consumers import StatusConsumer, HomeConsumer, PicarroConsumer, SOXConsumer, NOXConsumer, AutosondeConsumer, TucsonConsumer, AethalometerConsumer, UPSConsumer, GeneratorConsumer, DAQCConsumer
 
-from app_dalys.consumers import DalysConsumer
+from app_dalys.consumers import DalysConsumer, TemperatureConsumer, PowerConsumer
 
 application = ProtocolTypeRouter({    
     "http": get_asgi_application(),
@@ -33,6 +33,8 @@ application = ProtocolTypeRouter({
             re_path(r'^generator/$', GeneratorConsumer.as_asgi()),
             re_path(r'^daqc/$', DAQCConsumer.as_asgi()),
             re_path(r'^dalys/$', DalysConsumer.as_asgi()),
+            re_path(r'^temperature/$', TemperatureConsumer.as_asgi()),
+            re_path(r'^power/$', PowerConsumer.as_asgi()),
         ])
     ),    
 })

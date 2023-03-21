@@ -1587,14 +1587,40 @@
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////// WESOCKET //////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////// WESOCKETS //////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// wesocket
-	var startWebSocket = function () {
+	// TEMPERATURE
+	var Temperature_WebSocket = function () {
 		var autosondeSocket;
 		var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-		var ws_path = ws_scheme + '://' + window.location.host + ':8001/dalys/';
-		var ws_path = 'wss://www.enviroscan.io:8001/dalys/';
+		var ws_path = ws_scheme + '://' + window.location.host + ':8001/temperature/';
+		var ws_path = 'wss://www.enviroscan.io:8001/temperature/';
+		console.log(ws_path)
+		autosondeSocket = new WebSocket(ws_path);
+
+		autosondeSocket.onmessage = function (e) {
+			json_data = JSON.parse(e.data).message;
+			console.log(json_data);
+			// process node
+			//process_node(json_data.Node_ID, json_data)
+			//set_text(json_data.Node_ID, json_data);
+			
+		};
+
+		autosondeSocket.onclose = function (e) {
+			console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+		};
+
+		autosondeSocket.onerror = function (err) {
+			console.error(err);
+		};
+	};
+	// POWER
+	var Power_WebSocket = function () {
+		var autosondeSocket;
+		var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+		var ws_path = ws_scheme + '://' + window.location.host + ':8001/power/';
+		var ws_path = 'wss://www.enviroscan.io:8001/power/';
 		console.log(ws_path)
 		autosondeSocket = new WebSocket(ws_path);
 
@@ -1662,7 +1688,8 @@
 		//renderReport();
 		//renderDataAnalysis();
 		data_setup();
-		startWebSocket();		
+		Power_WebSocket();
+		Temperature_WebSocket();
 		
 		//var interval_status = 60000; // 60 secs
 		//setInterval(ajax_call, interval_status);
