@@ -95,7 +95,7 @@ class Insert_ViewSet(viewsets.ModelViewSet):
     def create(self, request):
         # Data Format: {'uplink_message': {'decoded_payload': {'Data_DateTime': '2022-09-13T13:18:25.903Z', 'Meter_Id': 1, 'Pulse_Count': 407, 'Pulses': 0}}}  
         data = request.data['uplink_message']['decoded_payload']
-        
+
         print(self.request.data)   
 
         channel_name = 'power'
@@ -146,10 +146,8 @@ def mobile(request):
 
     print('mobile')
 
-    context['node_list_data'] = get_power_nodes()
-    context['node_list_supply'] = Node_List.objects.filter(Category = 3)
-    context['node_list_consumer'] = Node_List.objects.filter(Category = 1)
-    context['node_list_distribution'] = Node_List.objects.filter(Category = 2)
+    context['node_data'] = get_nodes()
+    context['node_list'] = Node_List.objects.all().order_by('-Type')
     #context['node_list'] = json.loads(get_power_nodes())
     
     context['segment'] = 'mobile'
@@ -197,10 +195,26 @@ def get_power_nodes():
     try:
         nodes['Data'] = json.loads(Node_List.objects.filter(Type = 1).order_by('Category').to_dataframe().to_json(orient="table"))['data']
         for node in nodes['Data']:
-            node.update(get_power(node['id']))
+            node.update(get_power_history(node['id']))
             #node.update(get_report(node['id']))            
-            node.update(get_latest(node['id']))
+            node.update(get_power_latest(node['id']))
             #node.update(get_baseline(node['id']))
+    except Exception as e:
+        print('{!r}; Get Nodes failed - '.format(e))
+    return json.dumps(nodes)
+
+def get_nodes():
+    nodes = {}
+    try:
+        nodes['Data'] = json.loads(Node_List.objects.all().order_by('Category').to_dataframe().to_json(orient="table"))['data']
+        for node in nodes['Data']:
+            print(node['Type'])
+            if node['Type'] == 'Temperature':
+                #node.update(get_temperature_history(node['id']))
+                node.update(get_temperature_latest(node['id']))
+            elif node['Type'] == 'Power':
+                #node.update(get_power_history(node['id']))    
+                node.update(get_power_latest(node['id']))
     except Exception as e:
         print('{!r}; Get Nodes failed - '.format(e))
     return json.dumps(nodes)
@@ -213,15 +227,31 @@ def get_report(node_id):
         return {'report': []}
     return report
 
-def get_power(node_id):
+def get_temperature_history(node_id):
     try:
-        history = {'history': json.loads(Node_Power.objects.filter(Node = node_id).order_by('-id')[:12000].to_dataframe(index='Data_DateTime').sort_index(ascending=True).resample('10Min').mean().fillna(method='backfill').to_json(orient="table"))['data']}
+        history = {'history': json.loads(Node_Temperature.objects.filter(Node = node_id).order_by('-id')[:12000].to_dataframe(index='Data_DateTime').sort_index(ascending=True).resample('10Min').mean().fillna(method='backfill').to_json(orient="table"))['data']}
     except Exception as e:
-        print('{!r}; Get history failed - '.format(e))
+        print('{!r}; Get temperature history failed - '.format(e))
         return {'history': []}
     return history
 
-def get_latest(node_id):
+def get_power_history(node_id):
+    try:
+        history = {'history': json.loads(Node_Power.objects.filter(Node = node_id).order_by('-id')[:12000].to_dataframe(index='Data_DateTime').sort_index(ascending=True).resample('10Min').mean().fillna(method='backfill').to_json(orient="table"))['data']}
+    except Exception as e:
+        print('{!r}; Get power history failed - '.format(e))
+        return {'history': []}
+    return history
+
+def get_temperature_latest(node_id):
+    try:
+        latest = json.loads(Node_Temperature.objects.filter(Node = node_id).values('Data_DateTime', 'Battery_MV', 'Battery_Percent', 'Temperature').order_by('-id')[:1].to_dataframe(index='Data_DateTime').sort_index(ascending=True).to_json(orient="table"))['data'][0]
+    except Exception as e:
+        print('{!r}; Get latest Readings failed - '.format(e))
+        return {'latest': []}
+    return latest
+
+def get_power_latest(node_id):
     try:
         latest = json.loads(Node_Power.objects.filter(Node = node_id).values('Data_DateTime', 'AppaPower_L1', 'AppaPower_L2', 'AppaPower_L3', 'Irms_L1', 'Irms_L2', 'Irms_L3', 'Vrms_L1', 'Vrms_L2', 'Vrms_L3', 'PowerFact_L1', 'PowerFact_L2', 'PowerFact_L3', 'RealPower_L1', 'RealPower_L2', 'RealPower_L3').order_by('-id')[:1].to_dataframe(index='Data_DateTime').sort_index(ascending=True).to_json(orient="table"))['data'][0]
     except Exception as e:
