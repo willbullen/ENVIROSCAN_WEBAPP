@@ -23,7 +23,7 @@
 				<div class="row">
 					<div class="col-xl-12">
 
-						{% for node in node_list %}
+					{% for node in node_list %}
 
 						<!-- BEGIN SUPPLY -->
 						{% ifchanged node.Type %}
@@ -47,13 +47,7 @@
 									</a>
 								</div>
 								<div class="opacity-10 px-3">									 
-									{% if node.Type == "Temperature" %}
-										<div class="fw-bold"><span id="value_main_{{ node.id }}">0</span> C
-									{% elif node.Type == "Power" %}
-										<div class="fw-bold"><span id="value_main_{{ node.id }}">0</span> kVA
-									{% else %}
-										<div class="fw-bold"><span id="value_main_{{ node.id }}">0</span> kVA
-									{% endif %}
+									<div class="fw-bold"><span id="value_main_{{ node.id }}">0</span>
 								</div>
 								</div>
 								<div class="opacity-10 px-3">
@@ -460,7 +454,7 @@
 							<!-- END NODE DETAILS -->
 						</div>
 						<!-- END SUPPLY -->
-						{% endfor %}
+					{% endfor %}
 					</div>					
 				</div>
 			</div>
@@ -891,174 +885,192 @@
 			}
 		}, function(start, end, label) {
 			$('#daterange_' + node.id + ' span').html(start.format('DD-MM-YYYY HH:00') + ' - ' + end.format('DD-MM-YYYY HH:00'));
-			change_chart_data(node.id, new Date(start.format()), new Date(end.format()));
+			if (node.Type == 'Power') {				
+				change_power_data(node.id, node, new Date(start.format()), new Date(end.format()), '10Min');				
+			} else if (node.Type == 'Temperature') {
+				change_temperature_data(node.id, node, new Date(start.format()), new Date(end.format()), '10Min');
+			}			
 		});
 	}
 	// SET UP PAGE, CREATE ALL CONTROLS
 	function data_setup() {
-		// CREATE
 		$.each(node_data, function(i, node) {
-			console.log(node.Type);
-			if (node.Type == 'Power') {
-				// READINGS
-				var readings = [];
-				var start = new Date(moment().subtract(24, 'hours').format());
-				var end =  new Date(moment().format());
-				//var readings = node.history.filter((item) => item.Data_DateTime.getTime() >= start.getTime() && item.Data_DateTime.getTime() <= end.getTime());
-				change_chart_data(node.id, start, end);
-				// SET MAP MARKERS
-				set_map_markers(node);
-				// SET STATUS MARKERS
-				set_status_markers(node);
+			var readings = [];
+			var start = new Date(moment().subtract(24, 'hours').format());
+			var end =  new Date(moment().format());				
+			set_status_markers(node);
+			if (node.Type == 'Power') {				
+				change_power_data(node.id, node, start, end, '10Min');				
+			} else if (node.Type == 'Temperature') {
+				change_temperature_data(node.id, node, start, end, '10Min');
 			}
 		});
-		// PUSH MAP MARKERS
-		$("#siteMap").dxMap({
-			//zoom: 5,
-			markers: markersData
-		});
 	}
-	// CHANGE CHART DATA
-	function change_chart_data(id, start, end) {
+
+	// CHANGE TEMPERATURE DATA
+	function change_temperature_data(id, data, start, end, resolution) {
 		// AJAX
 		$.ajax({
 			type: 'GET',
-			url: '../dalys/node_power/get_by_id_and_dates/?node_id=' + id + '&start_datetime=' + start.toISOString() + '&end_datetime=' + end.toISOString(),
+			url: '../node_temperature/get_by_id_and_dates/?node_id=' + id + '&start_datetime=' + start.toISOString() + '&end_datetime=' + end.toISOString() + '&resolution=' + resolution,
+			headers: {
+				"Authorization": "Basic " + btoa("admin" + ":" + "will1977"),
+				'Accept' : 'application/json'
+			},
+			success: function(data) {
+				var data_history = data;
+				var data_current = data[0];
+				if (data != '') {
+					
+					// SET LOG VALUES
+					//$("#log2_" + id).dxDataGrid("option", "dataSource", data_history.map(function(element) {return {'ID': element.id, 'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.AppaPower_L1), 'L2': Math.abs(element.AppaPower_L2), 'L3': Math.abs(element.AppaPower_L3)};}));
+					//$("#log2_" + id).dxDataGrid('instance').refresh();
+					
+					// SET TEXT VALUES
+					$("#value_main_" + id).text(Number(data_current.Temperature).toFixed(3) + ' °C');
+				}	
+			}
+		});
+	}	
+
+	// CHANGE POWER DATA
+	function change_power_data(id, data, start, end, resolution) {
+		// AJAX
+		$.ajax({
+			type: 'GET',
+			url: '../node_power/get_by_id_and_dates/?node_id=' + id + '&start_datetime=' + start.toISOString() + '&end_datetime=' + end.toISOString() + '&resolution=' + resolution,
 			headers: {
 				"Authorization": "Basic " + btoa("admin" + ":" + "will1977"),
 				'Accept' : 'application/json'
 			},
 			success: function(data) {	
-				console.log(data);
-				var readings = data.results;
-				// SET CHART DATA
-				$("#node_chart_" + id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.Irms_L1*element.Vrms_L1/1000), 'L2': Math.abs(element.Irms_L2*element.Vrms_L1/1000), 'L3': Math.abs(element.Irms_L3*element.Vrms_L1/1000)};}));
-				$("#node_chart_" + id).dxChart('instance').refresh();
-				// SET POLAR CHART DATA
-				$("#node_chart_polar_" + id).dxPolarChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.AppaPower_L1), 'L2': Math.abs(element.AppaPower_L2), 'L3': Math.abs(element.AppaPower_L3)};}));
-				$("#node_chart_polar_" + id).dxPolarChart('instance').refresh();
-				// SET LOG VALUES
-				$("#log2_" + id).dxDataGrid("option", "dataSource", readings.map(function(element) {return {'ID': element.id, 'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.AppaPower_L1), 'L2': Math.abs(element.AppaPower_L2), 'L3': Math.abs(element.AppaPower_L3)};}));
-				$("#log2_" + id).dxDataGrid('instance').refresh();
-				// SET VALUES
-				set_text(id, node, start, end);				
+				var data_history = data;
+				var data_current = data[0];
+				if (data != '') {
+					// SET CHART DATA
+					$("#node_chart_" + id).dxChart("option", "dataSource", data_history.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.Irms_L1*element.Vrms_L1/1000), 'L2': Math.abs(element.Irms_L2*element.Vrms_L1/1000), 'L3': Math.abs(element.Irms_L3*element.Vrms_L1/1000)};}));
+					$("#node_chart_" + id).dxChart('instance').refresh();
+					$("#node_chart_polar_" + id).dxPolarChart("option", "dataSource", data_history.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.AppaPower_L1), 'L2': Math.abs(element.AppaPower_L2), 'L3': Math.abs(element.AppaPower_L3)};}));
+					$("#node_chart_polar_" + id).dxPolarChart('instance').refresh();
+					// SET LOG VALUES
+					$("#log2_" + id).dxDataGrid("option", "dataSource", data_history.map(function(element) {return {'ID': element.id, 'Data_DateTime': element.Data_DateTime, 'L1': Math.abs(element.AppaPower_L1), 'L2': Math.abs(element.AppaPower_L2), 'L3': Math.abs(element.AppaPower_L3)};}));
+					$("#log2_" + id).dxDataGrid('instance').refresh();
+					// GET kW/h
+					var rate_day = 0.36;
+					var rate_night = 0.25;
+					var delta_T = 600/3600;							// Polling interval is 10 min
+					var day_start = moment('07:00:00', 'HH:mm:ss');
+					var day_end = moment('23:00:00', 'HH:mm:ss');
+					
+					var P1_sum = 0;									
+					var prev_P1 = 0;								
+					var Wh1_day = 0;
+					var Wh1_night = 0;
+
+					var P2_sum = 0;									
+					var prev_P2 = 0;								
+					var Wh2_day = 0;
+					var Wh2_night = 0;
+
+					var P3_sum = 0;									
+					var prev_P3 = 0;								
+					var Wh3_day = 0;
+					var Wh3_night = 0;
+
+					//console.log(data);
+
+					//var readings = data.history.filter((item) => item.Data_DateTime.getTime() >= start && item.Data_DateTime.getTime() <= end);
+					var readings = data_history;
+					
+					$.each(data_history, function(i, reading) {
+
+						// correction
+						if (data_current.id == 4) {
+							reading.Irms_L1 = reading.Irms_L1/1000
+							reading.Irms_L2 = reading.Irms_L2/1000
+							reading.Irms_L3 = reading.Irms_L3/1000
+						};
+
+						var time = moment(new Date(reading.Data_DateTime).toLocaleTimeString([], {hourCycle: 'h23', hour: '2-digit', minute: '2-digit', second: '2-digit'}),'HH:mm:ss');
+
+						var P_CT1 = Math.abs(reading.Irms_L1) * Math.abs(reading.Vrms_L1);
+						var P_CT2 = Math.abs(reading.Irms_L2) * Math.abs(reading.Vrms_L1);
+						var P_CT3 = Math.abs(reading.Irms_L3) * Math.abs(reading.Vrms_L1);
+
+						P1_sum = prev_P1 + P_CT1;								
+						prev_P1 = P_CT1;		
+									
+						P2_sum = prev_P2 + P_CT2;								
+						prev_P2 = P_CT2;
+									
+						P3_sum = prev_P3 + P_CT3;								
+						prev_P3 = P_CT3;
+
+						if (time.isBetween(day_start, day_end)) {
+							Wh1_day += delta_T / 2 * P1_sum;
+							Wh2_day += delta_T / 2 * P2_sum;
+							Wh3_day += delta_T / 2 * P3_sum;
+						} else {
+							Wh1_night += delta_T / 2 * P1_sum;
+							Wh2_night += delta_T / 2 * P2_sum;
+							Wh3_night += delta_T / 2 * P3_sum;
+						}
+					});
+
+					// correction
+					if (data_current.id == 4) {
+						data_current.Irms_L1 = data_current.Irms_L1/1000
+						data_current.Irms_L2 = data_current.Irms_L2/1000
+						data_current.Irms_L3 = data_current.Irms_L3/1000
+					};
+
+					// total
+					var kwh_total_day = ((Wh1_day + Wh2_day + Wh3_day) / 1000)
+					var kwh_total_night = ((Wh1_night + Wh2_night + Wh3_night) / 1000)
+					var kwh_total = kwh_total_day + kwh_total_night;
+
+					// cost
+					var total_cost = (kwh_total_day*rate_day) + (kwh_total_night*rate_night)
+					$("#cost_value_" + id).text(total_cost.toFixed(2));
+					$("#cost_bar_" + id).attr('style', 'width: ' + getPercentage(total_cost, 250).toFixed(0) + '%');
+					$("#cost_day_" + id).text('Day Cost: €' + (kwh_total_day*rate_day).toFixed(2));
+					$("#cost_night_" + id).text('Night Cost: €' + (kwh_total_night*rate_night).toFixed(2));
+
+					// kW/h
+					$("#total_kwh_value_" + id).text(kwh_total.toFixed(2));
+					$("#total_kwh_bar_" + id).attr('style', 'width: ' + getPercentage(kwh_total, 600).toFixed(0) + '%');
+					$("#total_kwh_info_" + id).text('@ ' + getPercentage(kwh_total, 600).toFixed(0) + '% of 600 kW.');
+					$("#total_kwh_day_" + id).text('Day: ' + (kwh_total_day).toFixed(2) + 'kVA');
+					$("#total_kwh_night_" + id).text('Night: ' + (kwh_total_night).toFixed(2) + 'kVA');
+
+					// voltage
+					var vrms_total = (Math.abs(Number(data_current.Vrms_L1)) + Math.abs(Number(data_current.Vrms_L2)) + Math.abs(Number(data_current.Vrms_L3)))/3
+					$("#vrms_total_" + id).text(Number(vrms_total).toFixed(2));
+					$("#vrms_l1_" + id).text(Number(data_current.Vrms_L1).toFixed(2));
+					$("#vrms_l2_" + id).text(Number(data_current.Vrms_L2).toFixed(2));
+					$("#vrms_l3_" + id).text(Number(data_current.Vrms_L3).toFixed(2));
+
+					// current
+					var irms_total = (Math.abs(Number(data_current.Irms_L1).toFixed(2)) + Math.abs(Number(data_current.Irms_L2).toFixed(2)) + Math.abs(Number(data_current.Irms_L3).toFixed(2)))
+					$("#irms_total_" + id).text(Number(irms_total).toFixed(2));
+					$("#irms_l1_" + id).text(Number(data_current.Irms_L1).toFixed(2));
+					$("#irms_l2_" + id).text(Number(data_current.Irms_L2).toFixed(2));
+					$("#irms_l3_" + id).text(Number(data_current.Irms_L3).toFixed(2));
+
+					// power
+					var power_total = (Math.abs(Number(data_current.Irms_L1)*Number(data_current.Vrms_L1)) + Math.abs(Number(data_current.Irms_L2)*Number(data_current.Vrms_L2)) + Math.abs(Number(data_current.Irms_L3)*Number(data_current.Vrms_L3))) / 1000
+					$("#power_total_" + id).text(Number(power_total).toFixed(2));
+					$("#power_l1_" + id).text((Number(data_current.Irms_L1)*Number(data_current.Vrms_L1)/1000).toFixed(2));
+					$("#power_l2_" + id).text((Number(data_current.Irms_L2)*Number(data_current.Vrms_L1)/1000).toFixed(2));
+					$("#power_l3_" + id).text((Number(data_current.Irms_L3)*Number(data_current.Vrms_L1)/1000).toFixed(2));
+					
+					$("#value_main_" + id).text(Number(power_total).toFixed(3) + ' kVA');
+					$("#real_power_value_" + id).text(Number(power_total).toFixed(2));
+				}	
 			}
 		});
-	}
+	}	
 
-	// set page text
-	function set_text(id, data, start, end) {
-
-		// GET kW/h
-		var rate_day = 0.36;
-		var rate_night = 0.25;
-		var delta_T = 600/3600;							// Polling interval is 10 min
-		var day_start = moment('07:00:00', 'HH:mm:ss');
-  		var day_end = moment('23:00:00', 'HH:mm:ss');
-		
-		var P1_sum = 0;									
-		var prev_P1 = 0;								
-		var Wh1_day = 0;
-		var Wh1_night = 0;
-
-		var P2_sum = 0;									
-		var prev_P2 = 0;								
-		var Wh2_day = 0;
-		var Wh2_night = 0;
-
-		var P3_sum = 0;									
-		var prev_P3 = 0;								
-		var Wh3_day = 0;
-		var Wh3_night = 0;
-
-		var readings = data.history.filter((item) => item.Data_DateTime.getTime() >= start && item.Data_DateTime.getTime() <= end);		
-		
-		$.each(readings, function(i, reading) {
-
-			// correction
-			if (data.id == 4) {
-				reading.Irms_L1 = reading.Irms_L1/1000
-				reading.Irms_L2 = reading.Irms_L2/1000
-				reading.Irms_L3 = reading.Irms_L3/1000
-			};
-
-			var time = moment(reading.Data_DateTime.toLocaleTimeString([], {hourCycle: 'h23', hour: '2-digit', minute: '2-digit', second: '2-digit'}),'HH:mm:ss');
-
-			var P_CT1 = Math.abs(reading.Irms_L1) * Math.abs(reading.Vrms_L1);
-			var P_CT2 = Math.abs(reading.Irms_L2) * Math.abs(reading.Vrms_L1);
-			var P_CT3 = Math.abs(reading.Irms_L3) * Math.abs(reading.Vrms_L1);
-
-			P1_sum = prev_P1 + P_CT1;								
-			prev_P1 = P_CT1;		
-						
-			P2_sum = prev_P2 + P_CT2;								
-			prev_P2 = P_CT2;
-						
-			P3_sum = prev_P3 + P_CT3;								
-			prev_P3 = P_CT3;
-
-			if (time.isBetween(day_start, day_end)) {
-				Wh1_day += delta_T / 2 * P1_sum;
-				Wh2_day += delta_T / 2 * P2_sum;
-				Wh3_day += delta_T / 2 * P3_sum;
-			} else {
-				Wh1_night += delta_T / 2 * P1_sum;
-				Wh2_night += delta_T / 2 * P2_sum;
-				Wh3_night += delta_T / 2 * P3_sum;
-			}
-		});
-
-		// correction
-		if (data.id == 4) {
-			data.Irms_L1 = data.Irms_L1/1000
-			data.Irms_L2 = data.Irms_L2/1000
-			data.Irms_L3 = data.Irms_L3/1000
-		};
-
-		// total
-		var kwh_total_day = ((Wh1_day + Wh2_day + Wh3_day) / 1000)
-		var kwh_total_night = ((Wh1_night + Wh2_night + Wh3_night) / 1000)
-		var kwh_total = kwh_total_day + kwh_total_night;
-
-		// cost
-		var total_cost = (kwh_total_day*rate_day) + (kwh_total_night*rate_night)
-		$("#cost_value_" + id).text(total_cost.toFixed(2));
-		$("#cost_bar_" + id).attr('style', 'width: ' + getPercentage(total_cost, 250).toFixed(0) + '%');
-		$("#cost_day_" + id).text('Day Cost: €' + (kwh_total_day*rate_day).toFixed(2));
-		$("#cost_night_" + id).text('Night Cost: €' + (kwh_total_night*rate_night).toFixed(2));
-
-		// kW/h
-		$("#total_kwh_value_" + id).text(kwh_total.toFixed(2));
-		$("#total_kwh_bar_" + id).attr('style', 'width: ' + getPercentage(kwh_total, 600).toFixed(0) + '%');
-		$("#total_kwh_info_" + id).text('@ ' + getPercentage(kwh_total, 600).toFixed(0) + '% of 600 kW.');
-		$("#total_kwh_day_" + id).text('Day: ' + (kwh_total_day).toFixed(2) + 'kVA');
-		$("#total_kwh_night_" + id).text('Night: ' + (kwh_total_night).toFixed(2) + 'kVA');
-
-		// voltage
-		var vrms_total = (Math.abs(data.Vrms_L1) + Math.abs(data.Vrms_L2) + Math.abs(data.Vrms_L3))/3
-		$("#vrms_total_" + id).text(vrms_total.toFixed(2));
-		$("#vrms_l1_" + id).text(data.Vrms_L1.toFixed(2));
-		$("#vrms_l2_" + id).text(data.Vrms_L2.toFixed(2));
-		$("#vrms_l3_" + id).text(data.Vrms_L3.toFixed(2));
-
-		// current
-		var irms_total = (Math.abs(data.Irms_L1.toFixed(2)) + Math.abs(data.Irms_L2.toFixed(2)) + Math.abs(data.Irms_L3.toFixed(2)))
-		$("#irms_total_" + id).text(irms_total.toFixed(2));
-		$("#irms_l1_" + id).text(data.Irms_L1.toFixed(2));
-		$("#irms_l2_" + id).text(data.Irms_L2.toFixed(2));
-		$("#irms_l3_" + id).text(data.Irms_L3.toFixed(2));
-
-		// power
-		var power_total = (Math.abs(data.Irms_L1*data.Vrms_L1) + Math.abs(data.Irms_L2*data.Vrms_L2) + Math.abs(data.Irms_L3*data.Vrms_L3)) / 1000
-		$("#power_total_" + id).text(power_total.toFixed(2));
-		$("#power_l1_" + id).text((data.Irms_L1*data.Vrms_L1/1000).toFixed(2));
-		$("#power_l2_" + id).text((data.Irms_L2*data.Vrms_L1/1000).toFixed(2));
-		$("#power_l3_" + id).text((data.Irms_L3*data.Vrms_L1/1000).toFixed(2));
-		
-		$("#value_main_" + id).text(power_total.toFixed(3));
-		$("#real_power_value_" + id).text(power_total.toFixed(2));		
-		
-	}
 	// percentage function
 	function getPercentage(act, max) {
 		return (act / max) * 100;
@@ -1113,6 +1125,7 @@
 		autosondeSocket.onmessage = function (e) {
 			json_data = JSON.parse(e.data).message;
 			console.log(json_data);
+			$("#value_main_" + json_data.Meter_Id).text(Number(json_data.Temperature).toFixed(3) + ' °C');
 			// process node
 			//process_node(json_data.Node_ID, json_data)
 			//set_text(json_data.Node_ID, json_data);

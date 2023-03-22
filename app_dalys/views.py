@@ -43,14 +43,21 @@ class Node_List_ViewSet(viewsets.ModelViewSet):
 ######### TEMPERATURE
 # url = 'dalys/node_temperature/get_by_id_and_dates/?node_id=' + str(self.ID) + '&start_datetime=' + start_datetime + '&end_datetime=' + end_datetime + ''
 class GetTemperatureDataByIdAndDates_ViewSet(viewsets.ModelViewSet):
-    serializer_class = Temperature_Serializer
-    pagination.PageNumberPagination.page_size = 100000
-    def get_queryset(self):
+    def list(self, request):
         node_id = self.request.query_params.get('node_id')
         start_datetime = self.request.query_params.get('start_datetime')
         end_datetime = self.request.query_params.get('end_datetime')
+        resolution = self.request.query_params.get('resolution')
 
-        return Node_Temperature.objects.filter(Node = node_id, Data_DateTime__gte = start_datetime, Data_DateTime__lte = end_datetime).order_by('-id')
+        print(node_id)
+
+        try:
+            node_history = json.loads(Node_Temperature.objects.filter(Node = node_id, Data_DateTime__gte = start_datetime, Data_DateTime__lte = end_datetime).order_by('-id').to_dataframe(index='Data_DateTime').sort_index(ascending=True).resample(resolution).mean().fillna(method='backfill').to_json(orient="table"))['data']
+        except Exception as e:
+            print('{!r} - Get Temperature Failed!'.format(e))
+            node_history = ''
+
+        return Response(node_history)
 
 class Insert_Temperature_ViewSet(viewsets.ModelViewSet):
     queryset = Node_Temperature.objects.all().order_by('Data_DateTime')
@@ -78,15 +85,19 @@ class Insert_Temperature_ViewSet(viewsets.ModelViewSet):
 
 ######### POWER
 # url = 'dalys/node_power/get_by_id_and_dates/?node_id=' + str(self.ID) + '&start_datetime=' + start_datetime + '&end_datetime=' + end_datetime + ''
-class GetPowerDataByIdAndDates_ViewSet(viewsets.ModelViewSet):
-    serializer_class = Power_Serializer
-    pagination.PageNumberPagination.page_size = 100000
-    def get_queryset(self):
+class GetPowerDataByIdAndDates_ViewSet(viewsets.ViewSet):
+    def list(self, request):
         node_id = self.request.query_params.get('node_id')
         start_datetime = self.request.query_params.get('start_datetime')
         end_datetime = self.request.query_params.get('end_datetime')
+        resolution = self.request.query_params.get('resolution')
+        try:
+            node_history = json.loads(Node_Power.objects.filter(Node = node_id, Data_DateTime__gte = start_datetime, Data_DateTime__lte = end_datetime).order_by('-id').to_dataframe(index='Data_DateTime').sort_index(ascending=True).resample(resolution).mean().fillna(method='backfill').to_json(orient="table"))['data']
+        except Exception as e:
+            print('{!r} - Get Power Failed!'.format(e))
+            node_history = ''
 
-        return Node_Power.objects.filter(Node = node_id, Data_DateTime__gte = start_datetime, Data_DateTime__lte = end_datetime).order_by('-id')
+        return Response(node_history)
 
 class Insert_ViewSet(viewsets.ModelViewSet):
     queryset = Node_Power.objects.all().order_by('Data_DateTime')
@@ -140,7 +151,7 @@ def index(request):
     html_template = loader.get_template('app_dalys/index.html')
     return HttpResponse(html_template.render(context, request))
 
-@login_required(login_url="/login/")
+#@login_required(login_url="/login/")
 def mobile(request):
     context = {}
 
@@ -148,7 +159,6 @@ def mobile(request):
 
     context['node_data'] = get_nodes()
     context['node_list'] = Node_List.objects.all().order_by('-Type')
-    #context['node_list'] = json.loads(get_power_nodes())
     
     context['segment'] = 'mobile'
     html_template = loader.get_template('app_dalys/mobile.html')
@@ -207,14 +217,14 @@ def get_nodes():
     nodes = {}
     try:
         nodes['Data'] = json.loads(Node_List.objects.all().order_by('Category').to_dataframe().to_json(orient="table"))['data']
-        for node in nodes['Data']:
-            print(node['Type'])
-            if node['Type'] == 'Temperature':
-                #node.update(get_temperature_history(node['id']))
-                node.update(get_temperature_latest(node['id']))
-            elif node['Type'] == 'Power':
-                #node.update(get_power_history(node['id']))    
-                node.update(get_power_latest(node['id']))
+        #for node in nodes['Data']:
+        #    print(node['Type'])
+        #    if node['Type'] == 'Temperature':
+        #        #node.update(get_temperature_history(node['id']))
+        #        node.update(get_temperature_latest(node['id']))
+        #    elif node['Type'] == 'Power':
+        #        #node.update(get_power_history(node['id']))    
+        #        node.update(get_power_latest(node['id']))
     except Exception as e:
         print('{!r}; Get Nodes failed - '.format(e))
     return json.dumps(nodes)
