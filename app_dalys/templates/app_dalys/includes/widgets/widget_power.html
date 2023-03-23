@@ -1,0 +1,423 @@
+<div class="list-group mb-1">
+    <!-- BEGIN NODE -->
+    <input type="hidden" id="hidden_Node_Status_{{ node.id }}" value="0">
+    <input type="hidden" id="hidden_Node_Status_{{ node.id }}" value="0">
+    <div class="list-group-item d-flex align-items-center">
+        <a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#collapse_{{ node.id }}" id="#go_map_{{ node.id }}">
+            <div id="Status_{{ node.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+                {{ node.Name|make_list|first }}
+            </div>
+        </a>
+        <div class="flex-fill px-3">									
+            <a href="#" class="text-white" data-bs-toggle="collapse" data-bs-target="#collapse_{{ node.id }}" id="slider_{{ node.id }}">							
+                <div class="fw-bold">{{ node.Name }}</div>
+            </a>
+        </div>
+        <div class="opacity-10 px-3">									 
+            <div class="fw-bold"><span id="value_main_{{ node.id }}">0</span>
+        </div>
+        </div>
+        <div class="opacity-10 px-3">
+            <span id="Node_Status_{{ node.id }}" class="badge bg-theme" data-bs-toggle="tooltip">M</span>
+            <span id="Node_Status_{{ node.id }}" class="badge bg-theme" data-bs-toggle="tooltip">N</span>
+        </div>
+    </div>
+    <!-- END NODE -->
+
+    <!-- BEGIN NODE DETAILS -->
+    <div class="collapse list-group-item" id="collapse_{{ node.id }}">
+
+        <!-- BEGIN nav-tabs -->
+        <ul class="nav nav-tabs nav-tabs">
+            <li class="nav-item me-3"><a href="#home_{{ node.id }}" class="nav-link active" data-bs-toggle="tab">Data</a></li>
+            <li class="nav-item me-3"><a href="#details_{{ node.id }}" class="nav-link" data-bs-toggle="tab">Details</a></li>
+            <li class="nav-item me-3"><a href="#logs_{{ node.id }}" class="nav-link" data-bs-toggle="tab">Logs</a></li>
+            <li class="nav-item me-3"><a href="#settings_{{ node.id }}" class="nav-link" data-bs-toggle="tab">Settings</a></li>
+        </ul>
+        <!-- END nav-tabs -->
+
+        <!-- BEGIN tab-content -->
+        <div class="tab-content pt-1">
+            <!-- BEGIN tab-pane -->
+            <div class="tab-pane fade show active" id="home_{{ node.id }}">
+                <!-- BEGIN TOOLBAR -->
+                <nav class="navbar navbar-expand-lg navbar-dark bg-opacity-25 rounded">
+                    <div class="container-fluid">
+                        <!-- BEGIN REFRESH BUTTON -->
+                        <div class="opacity-10 px-1">
+                            <button id="refresh_{{ node.id }}" type="button" class="btn btn-outline-theme btn-sm"><i class="fa fa-redo"></i></button>
+                        </div>
+                        <!-- END REFRESH BUTTON -->
+                        <!-- BEGIN DATE PICKER -->
+                        <div class="flex-fill px-1">
+                            <div id="daterange_{{ node.id }}" class="btn btn-outline-theme d-flex align-items-center text-start btn-sm">
+                                <span class="text-truncate">&nbsp;</span>
+                                <i class="fa fa-caret-down ms-auto"></i>
+                            </div>
+                        </div>
+                        <!-- END DATE PICKER -->
+                        <!-- BEGIN SELECT CHART TYPE -->
+                        <select id="select_chart_type_{{ node.id }}" class="form-select btn-outline-theme form-select-sm" style="width: 100px;">
+                            <option value="Bar"><i class="fa fa-bar-chart"></i>Bar</option>
+                            <option value="Line"><i class="fa fa-line-chart"></i>Line</option>
+                            <option value="Polar"><i class="fa fa-pie-chart"></i>Polar</option>
+                        </select>
+                        <!-- END SELECT CHART TYPE -->
+                        <!-- BEGIN FIND BUTTON -->
+                        <div class="opacity-10 px-1">
+                            <button id="find_{{ node.id }}" type="button" class="btn btn-outline-theme btn-sm"><i class="fa fa-search"></i></button>
+                        </div>
+                        <!-- END FIND BUTTON -->
+                    </div>
+                </nav>
+                <!-- END TOOLBAR -->
+                <!-- BEGIN row -->
+                <div class="row">
+                    <div class="col-9">												
+                        <!-- BEGIN CHART -->
+                        <div class="pt-1 flex-1">
+                            <div id="power_line_chart_{{ node.id }}" class="pt-1 flex-1"></div>
+                            <div id="power_polar_chart_{{ node.id }}" class="pt-1 flex-1"></div>												
+                        </div>
+                        <!-- END CHART -->
+                    </div>
+                    <div class="col-3">
+                        <!-- BEGIN COST -->
+                        <div class="w-150px h-98px pt-1 ps-3">
+                            <div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
+                                COST (€)
+                            </div>
+                            <div class="mb-2 fs-5 text-truncate">
+                                <h4 class="mb-0"><span id="cost_value_{{ node.id }}">0</span> </h4>
+                            </div>
+                            <div class="progress h-3px bg-white-transparent-2 mb-2">
+                                <div class="progress-bar bg-theme" id="cost_bar_{{ node.id }}" style="width: 0%"></div>
+                            </div>
+                            <div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
+                                <i class="bi bi-circle-fill fs-6px me-2 text-theme"></i>
+                                <span id="cost_day_{{ node.id }}"></span>
+                            </div>
+                            <div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+                                <i class="bi bi-circle-fill fs-6px me-2 text-theme"></i>
+                                <span id="cost_night_{{ node.id }}"></span>
+                            </div>
+                        </div>
+                        <!-- END COST -->
+                        <!-- BEGIN CONSUMED -->
+                        <div class="w-150px h-98px pt-1 ps-3">
+                            <div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
+                                CONSUMED (kVA/h)
+                            </div>													
+                            <div class="mb-2 fs-5 text-truncate">
+                                <h4 class="mb-0"><span id="total_kwh_value_{{ node.id }}">0</span></h4>
+                            </div>
+                            <div class="progress h-3px bg-white-transparent-2 mb-1">
+                                <div class="progress-bar bg-theme" id="total_kwh_bar_{{ node.id }}" style="width: 0%"></div>
+                            </div>
+                            <div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
+                                <i class="bi bi-circle-fill fs-6px me-2 text-theme"></i>
+                                <span id="total_kwh_day_{{ node.id }}"></span>
+                            </div>
+                            <div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
+                                <i class="bi bi-circle-fill fs-6px me-2 text-theme"></i>
+                                <span id="total_kwh_night_{{ node.id }}"></span>
+                            </div>
+                        </div>
+                        <!-- END CONSUMED -->												
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3 mb-3 mb-lg-0">
+                        <div class="d-flex align-items-center bg-white bg-opacity-15">
+                            <div class="ps-3 m-5px flex-1">
+
+                                <div class="row align-items-center mb-0">
+                                    <div class="col-8">
+                                        <div class="fs-10px fw-bold text-white text-opacity-50 mb-0">VOLTAGE</div>
+                                        <h5><span id="vrms_total_{{ node.id }}"></span> V</h5>
+                                    </div>
+                                    <div class="col-4">
+                                        <i class="fa fa-chart-line fa-1x"></i>
+                                    </div>
+                                </div>
+                                
+                                <div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
+                                    <i class="bi bi-circle-fill fs-6px me-2 text-info"></i>
+                                    L1: <span id="vrms_l1_{{ node.id }}"></span> V
+                                </div>
+                                <div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
+                                    <i class="bi bi-circle-fill fs-6px me-2 text-red"></i>
+                                    L2: <span id="vrms_l2_{{ node.id }}"></span> V
+                                </div>
+                                <div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
+                                    <i class="bi bi-circle-fill fs-6px me-2 text-green"></i>
+                                    L3: <span id="vrms_l3_{{ node.id }}"></span> V
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>										
+                    <div class="col-lg-3">
+                        <div class="d-flex bg-white bg-opacity-15">
+                            <div class="ps-3 m-5px flex-1">
+
+                                <div class="row align-items-center mb-0">
+                                    <div class="col-8">
+                                        <div class="fs-10px fw-bold text-white text-opacity-50 mb-0">CURRENT</div>
+                                        <h5><span id="irms_total_{{ node.id }}"></span> A</h5>
+                                    </div>
+                                    <div class="col-4">
+                                        <i class="fa fa-chart-line fa-1x"></i>
+                                    </div>
+                                </div>
+                                
+                                <div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
+                                    <i class="bi bi-circle-fill fs-6px me-2 text-info"></i>
+                                    L1: <span id="irms_l1_{{ node.id }}"></span> A
+                                </div>
+                                <div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
+                                    <i class="bi bi-circle-fill fs-6px me-2 text-red"></i>
+                                    L2: <span id="irms_l2_{{ node.id }}"></span> A
+                                </div>
+                                <div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
+                                    <i class="bi bi-circle-fill fs-6px me-2 text-green"></i>
+                                    L3: <span id="irms_l3_{{ node.id }}"></span> A
+                                </div>
+
+                            </div>										
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="d-flex bg-white bg-opacity-15">
+                            <div class="ps-3 m-5px flex-1">
+                                
+                                <div class="row align-items-center mb-0">
+                                    <div class="col-8">
+                                        <div class="fs-10px fw-bold text-white text-opacity-50 mb-0">POWER</div>
+                                        <h5><span id="power_total_{{ node.id }}"></span> kVA</h5>
+                                    </div>
+                                    <div class="col-4">
+                                        <i class="fa fa-chart-line fa-1x"></i>
+                                    </div>
+                                </div>
+                                
+                                <div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
+                                    <i class="bi bi-circle-fill fs-6px me-2 text-info"></i>
+                                    L1: <span id="power_l1_{{ node.id }}"></span> kVA
+                                </div>
+                                <div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
+                                    <i class="bi bi-circle-fill fs-6px me-2 text-red"></i>
+                                    L2: <span id="power_l2_{{ node.id }}"></span> kVA
+                                </div>
+                                <div class="fs-11px text-white text-opacity-50 mb-0 text-truncate">
+                                    <i class="bi bi-circle-fill fs-6px me-2 text-green"></i>
+                                    L3: <span id="power_l3_{{ node.id }}"></span> kVA
+                                </div>
+
+                            </div>										
+                        </div>
+                    </div>											
+                </div>
+                <!-- END row -->
+            </div>
+            <!-- END tab-pane -->
+            <!-- BEGIN tab-pane -->
+            <div class="tab-pane fade" id="details_{{ node.id }}">
+
+                <!-- BEGIN DETAILS ROW -->
+                <div class="d-flex pt-2 align-items-center">
+                    <div id="Status_{{ node.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+                    <div class="flex-fill fs-12px px-3">
+                        START OF LOGGING
+                    </div>			
+                    <div class="fs-12px ms-auto">
+                        {{ node.Start_Date }}
+                    </div>
+                </div>
+                <!-- END DETAILS ROW -->
+                <!-- BEGIN DETAILS ROW -->
+                <div class="d-flex pt-2 align-items-center">
+                    <div id="Status_{{ node.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+                    <div class="flex-fill fs-12px px-3">
+                        START INDEX
+                    </div>			
+                    <div class="fs-12px ms-auto">
+                        {{ node.Start_Index }} kW
+                    </div>
+                </div>
+                <!-- END DETAILS ROW -->
+                <!-- BEGIN DETAILS ROW -->
+                <div class="d-flex pt-2 align-items-center">
+                    <div id="Status_{{ node.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+                    <div class="flex-fill fs-12px px-3">
+                        TOTAL CONSUMPTION
+                    </div>			
+                    <div class="fs-12px ms-auto">
+                        {{ node.Start_Index }} kW
+                    </div>
+                </div>
+                <!-- END DETAILS ROW -->
+                <!-- BEGIN DETAILS ROW -->
+                <div class="d-flex pt-2 align-items-center">
+                    <div id="Status_{{ node.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+                    <div class="flex-fill fs-12px px-3">
+                        PULSE UNIT MEASUREMENT
+                    </div>			
+                    <div class="fs-12px ms-auto">
+                        {{ node.Pulse_Unit_Measurement }}
+                    </div>
+                </div>
+                <!-- END DETAILS ROW -->
+                <!-- BEGIN DETAILS ROW -->
+                <div class="d-flex pt-2 align-items-center">
+                    <div id="Status_{{ node.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+                    <div class="flex-fill fs-12px px-3">
+                        PULSE UNIT VALUE
+                    </div>			
+                    <div class="fs-12px ms-auto">
+                        {{ node.Pulse_Unit_Value }}
+                    </div>
+                </div>
+                <!-- END DETAILS ROW -->
+                <!-- BEGIN DETAILS ROW -->
+                <div class="d-flex pt-2 align-items-center">
+                    <div id="Status_{{ node.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+                    <div class="flex-fill fs-12px px-3">
+                        LOCATION LAT
+                    </div>			
+                    <div class="fs-12px ms-auto">
+                        {{ node.Lat }}
+                    </div>
+                </div>
+                <!-- END DETAILS ROW -->
+                <!-- BEGIN DETAILS ROW -->
+                <div class="d-flex pt-2 align-items-center">
+                    <div id="Status_{{ node.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+                    <div class="flex-fill fs-12px px-3">
+                        LOCATION LNG
+                    </div>			
+                    <div class="fs-12px ms-auto">
+                        {{ node.Lng }}
+                    </div>
+                </div>
+                <!-- END DETAILS ROW -->
+                <!-- BEGIN DETAILS ROW -->
+                <div class="d-flex pt-2 align-items-center">
+                    <div id="Status_{{ node.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+                    <div class="flex-fill fs-12px px-3">
+                        NODE TYPE
+                    </div>			
+                    <div class="fs-12px ms-auto">
+                        {{ node.Type }}
+                    </div>
+                </div>
+                <!-- END DETAILS ROW -->
+                <!-- BEGIN DETAILS ROW -->
+                <div class="d-flex pt-2 align-items-center">
+                    <div id="Status_{{ node.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+                    <div class="flex-fill fs-12px px-3">
+                        REGION
+                    </div>			
+                    <div class="fs-12px ms-auto">
+                        {{ node.Region }}
+                    </div>
+                </div>
+                <!-- END DETAILS ROW -->
+                <!-- BEGIN DETAILS ROW -->
+                <div class="d-flex pt-2 align-items-center">
+                    <div id="Status_{{ node.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+                    <div class="flex-fill fs-12px px-3">
+                        CATEGORY
+                    </div>			
+                    <div class="fs-12px ms-auto">
+                        {{ node.Category }}
+                    </div>
+                </div>
+                <!-- END DETAILS ROW -->
+
+            </div>
+            <!-- END tab-pane -->
+            <!-- BEGIN tab-pane -->
+            <div class="tab-pane fade" id="logs_{{ node.id }}">
+                <!-- BEGIN DATATABLE -->
+                <div class="pt-2 align-items-center">
+                    <table id="power_log_{{ node.id }}"></table>
+                </div>
+                <!-- END DATATABLE -->
+            </div>
+            <!-- END tab-pane -->
+
+            <!-- BEGIN SETTINGS -->
+            <div class="tab-pane fade" id="settings_{{ node.id }}">
+                <!-- BEGIN DATATABLE -->
+                <div class="pt-2 align-items-center">
+                    <!-- BEGIN #notifications -->
+                    <div id="notifications" class="mb-5">
+                        <h6><i class="far fa-bell fa-fw text-theme"></i> Notifications</h6>
+                        <p>Enable or disable what notifications you want to receive.</p>
+                        <div class="card">
+                            <div class="list-group list-group-flush">
+                                <div class="list-group-item d-flex align-items-center">
+                                    <div class="flex-1 text-break">
+                                        <div>Comments</div>
+                                        <div class="text-white text-opacity-50 d-flex align-items-center">
+                                            <i class="fa fa-circle fs-8px fa-fw text-success me-1"></i> Enabled (Push, SMS)
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
+                                    </div>
+                                </div>
+                                <div class="list-group-item d-flex align-items-center">
+                                    <div class="flex-1 text-break">
+                                        <div>Tags</div>
+                                        <div class="text-white text-opacity-50 d-flex align-items-center">
+                                            <i class="fa fa-circle fs-8px fa-fw me-1"></i> Disabled
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
+                                    </div>
+                                </div>
+                                <div class="list-group-item d-flex align-items-center">
+                                    <div class="flex-1 text-break">
+                                        <div>Reminders</div>
+                                        <div class="text-white text-opacity-50 d-flex align-items-center">
+                                            <i class="fa fa-circle fs-8px fa-fw text-success me-1"></i> Enabled (Push, Email, SMS)
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
+                                    </div>
+                                </div>
+                                <div class="list-group-item d-flex align-items-center">
+                                    <div class="flex-1 text-break">
+                                        <div>New orders</div>
+                                        <div class="text-white text-opacity-50 d-flex align-items-center">
+                                            <i class="fa fa-circle fs-8px fa-fw text-success me-1"></i> Enabled (Push, Email, SMS)
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-arrow">
+                                <div class="card-arrow-top-left"></div>
+                                <div class="card-arrow-top-right"></div>
+                                <div class="card-arrow-bottom-left"></div>
+                                <div class="card-arrow-bottom-right"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END #notifications -->
+                </div>
+                <!-- END DATATABLE -->
+            </div>
+            <!-- END SETTINGS -->
+        </div>
+        <!-- END tab-content -->								
+    </div>
+    <!-- END NODE DETAILS -->
+</div>
+<!-- END SUPPLY -->
