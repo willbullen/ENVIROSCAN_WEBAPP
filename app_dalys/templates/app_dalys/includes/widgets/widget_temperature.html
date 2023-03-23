@@ -18,8 +18,9 @@
         </div>
         </div>
         <div class="opacity-10 px-3">
-            <span id="Node_Status_{{ node.id }}" class="badge bg-theme" data-bs-toggle="tooltip">M</span>
-            <span id="Node_Status_{{ node.id }}" class="badge bg-theme" data-bs-toggle="tooltip">N</span>
+            <i id="Node_Status_{{ node.id }}" class="fas fa-lg fa-fw me-2 fa-exchange-alt text-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Data transmission status."></i>
+            <i id="Signal_Status_{{ node.id }}" class="fas fa-lg fa-fw me-2 fa-signal text-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Signal strength status."></i>
+            <i id="Battery_Status_{{ node.id }}" class="fas fa-lg fa-fw me-2 fa-battery-full text-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Battery status."></i>
         </div>
     </div>
     <!-- END NODE -->

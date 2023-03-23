@@ -27,7 +27,7 @@
 
 							<!-- BEGIN SUPPLY -->
 							{% ifchanged node.Type %}
-							<div class="text-white small mb-2"><b>{{ node.Type }}</b></div>
+							<div class="text-white mb-2"><b>{{ node.Type }}</b></div>
 							{% endifchanged %}
 							<!-- INSERT WIDGETS -->
 							{% if node.Type|lower == "power" %}
