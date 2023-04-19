@@ -1,0 +1,59 @@
+{% extends "app_dalys/layouts/base.html" %}
+
+
+{% block content %}
+<!-- BEGIN #content -->
+<div id="content" class="app-content">
+	<!-- BEGIN page-header -->
+	<div class="d-flex fw-bold small">
+		<span class="flex-grow-1">
+			<h1 class="page-header">
+				<i class="bi bi-power"></i> Reports 3D
+			</h1>
+            <!-- BEGIN SELECT PROJECT -->
+            <select id="select_project" class="form-select btn-outline-theme form-select-sm" style="width: 100px;">
+                {% for project in project_list_html %}
+                    <option value="Bar"><i class="fa fa-bar-chart"></i>{{ project.Project_Name }}</option>
+                {% endfor %}
+            </select>
+            <!-- END SELECT PROJECT -->            
+			<div class="text-white small mb-2"><b></b></div>
+		</span>
+	</div>
+	<!-- END page-header -->
+	<!-- BEGIN #listWidget -->
+	<div id="listWidget" class="mb-5">
+		<div class="card">
+			<div class="card-body">
+				<div class="row">
+					<div class="col-xl-12">
+                        {% include 'app_dalys/includes/widgets/widget_reports_3d.html' %}
+					</div>					
+				</div>
+			</div>
+			<div class="card-arrow">
+				<div class="card-arrow-top-left"></div>
+				<div class="card-arrow-top-right"></div>
+				<div class="card-arrow-bottom-left"></div>
+				<div class="card-arrow-bottom-right"></div>
+			</div>
+		</div>
+	</div>
+	<!-- END -->
+</div>
+<!-- END #content -->
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script>
+	// GET DATA
+	function review_data(key, value) {
+		if (key === 'Model_DateTime') {
+			return new Date(value);
+		}
+		return value;
+	}
+	var project_list = JSON.parse('{{project_list|escapejs}}', review_data).Projects;
+</script>
+{% endblock javascripts %}

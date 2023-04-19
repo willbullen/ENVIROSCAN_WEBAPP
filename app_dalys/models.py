@@ -124,3 +124,86 @@ class Node_Temperature(models.Model):
 
     class Meta:
         ordering = ['Data_DateTime']
+
+
+
+#########################################
+######## 3D REPORTS
+class Reports_Scans(models.Model):
+    Scan_Name = models.CharField(max_length=50)
+    Scan_PID = models.CharField(max_length=50, blank=True, null=True)
+    Scan_Value = models.CharField(max_length=50, blank=True, null=True)
+    Scan_Title = models.CharField(max_length=50, blank=True, null=True)
+    Scan_Xpos = models.CharField(max_length=50, blank=True, null=True)
+    Scan_Zpos = models.CharField(max_length=50, blank=True, null=True)
+    Scan_Show =  models.IntegerField(blank=True, null=True)
+    Scan_Color = models.CharField(max_length=50, blank=True, null=True)
+    Scan_Number =  models.IntegerField(blank=True, null=True)
+    Scan_Kwargs = models.CharField(max_length=200, blank=True, null=True)
+    Scan_Args = models.CharField(max_length=200, blank=True, null=True)
+
+    objects = DataFrameManager()
+
+    def __str__(self):
+        return self.Scan_Name
+
+    class Meta:
+        ordering = ['Scan_Name']
+
+class Reports_Levels(models.Model):
+    Level_Name = models.CharField(max_length=50)
+    Level_ID =  models.IntegerField(blank=True, null=True)
+    Level_LevelImagePath = models.CharField(max_length=50, blank=True, null=True)
+    Level_xOffset = models.FloatField(blank=True, null=True)
+    Level_xConst = models.FloatField(blank=True, null=True)
+    Level_zOffset = models.FloatField(blank=True, null=True)
+    Level_zConst = models.FloatField(blank=True, null=True)
+    Level_meXOffset = models.FloatField(blank=True, null=True)
+    Level_meXConst = models.FloatField(blank=True, null=True)
+    Level_meZOffset = models.FloatField(blank=True, null=True)
+    Level_meZConst = models.FloatField(blank=True, null=True)
+    Level_Rotate = models.IntegerField(blank=True, null=True)
+    Level_FlipMe = models.IntegerField(blank=True, null=True)
+    Scan = models.ForeignKey(Reports_Scans, on_delete=models.CASCADE)
+    Level_Kwargs = models.CharField(max_length=200, blank=True, null=True)
+    Level_Args = models.CharField(max_length=200, blank=True, null=True)
+
+    objects = DataFrameManager()
+
+    def __str__(self):
+        return self.Level_Name
+
+    class Meta:
+        ordering = ['Level_Name']
+
+class Reports_Models(models.Model):
+    Model_Name = models.CharField(max_length=50)
+    Model_MportID = models.CharField(max_length=200, blank=True, null=True)
+    Model_DateTime = models.DateTimeField('date published')
+    Level = models.ForeignKey(Reports_Levels, on_delete=models.CASCADE)
+    Model_Kwargs = models.CharField(max_length=200, blank=True, null=True)
+    Model_Args = models.CharField(max_length=200, blank=True, null=True)
+
+    objects = DataFrameManager()
+
+    def __str__(self):
+        return self.Model_Name
+
+    class Meta:
+        ordering = ['Model_Name']
+
+class Reports_Project(models.Model):
+    Project_Name = models.CharField(max_length=50)
+    Project_Description = models.CharField(max_length=200, blank=True, null=True)
+    Project_Status =  models.IntegerField()
+    Model = models.ForeignKey(Reports_Models, on_delete=models.CASCADE, blank=True, null=True)
+    Project_Kwargs = models.CharField(max_length=200, blank=True, null=True)
+    Project_Args = models.CharField(max_length=200, blank=True, null=True)
+
+    objects = DataFrameManager()
+
+    def __str__(self):
+        return self.Project_Name
+
+    class Meta:
+        ordering = ['Project_Name']

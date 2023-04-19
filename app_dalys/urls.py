@@ -24,6 +24,9 @@ urlpatterns = [
     # mobile
     path('mobile/', views.mobile, name='mobile'),
 
+    # reports
+    path('reports/', views.reports, name='reports'),
+
     # The home page
     path('', views.index, name='home'),
 

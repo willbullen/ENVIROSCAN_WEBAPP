@@ -4,53 +4,43 @@
 {% block content %}
 <!-- BEGIN #content -->
 <div id="content" class="app-content">
-	<!-- BEGIN page-header -->
-	<div class="d-flex fw-bold small">
-		<span class="flex-grow-1">
-			<h1 class="page-header">
-				<i class="bi bi-power"></i> Mobile
-			</h1>
-			<div class="text-white small mb-2"><b></b></div>
-		</span>
-	</div>
-	<!-- END page-header -->
+	
+	<!-- start tabs -->
+			<ul class="nav nav-pills mb-3" id="pills-tab">
+				<li class="nav-item">
+					<a class="nav-link active" id="pills-refrigeration-tab" data-bs-toggle="pill" href="#pills-refrigeration">Refrigeration</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" id="pills-power-tab" data-bs-toggle="pill" href="#pills-power">Power</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" id="pills-reporting-tab" data-bs-toggle="pill" href="#pills-reporting">Reporting</a>
+				</li>
+			</ul>
+			<div class="tab-content" id="pills-tabContent">
 
-	<!-- BEGIN -->
-	<!-- BEGIN #listWidget -->
-	<div id="listWidget" class="mb-5">
-		<div class="card">
-			<div class="card-body">
-				<div class="row">
-					<div class="col-xl-12">
-
-						{% for node in node_list %}
-
-							<!-- BEGIN SUPPLY -->
-							{% ifchanged node.Type %}
-							<div class="text-white mb-2"><b>{{ node.Type }}</b></div>
-							{% endifchanged %}
-							<!-- INSERT WIDGETS -->
-							{% if node.Type|lower == "power" %}
-								{% include 'app_dalys/includes/widgets/widget_power.html' %}
-							{% elif node.Type|lower == "temperature" %}
-								{% include 'app_dalys/includes/widgets/widget_temperature.html' %}
-							{% endif %}
-							
-						{% endfor %}
-
-					</div>					
+				<div class="tab-pane fade show active" id="pills-refrigeration">
+					{% for node in node_list %}
+						<!-- INSERT WIDGETS -->
+						{% if node.Type|lower == "temperature" %}
+							{% include 'app_dalys/includes/widgets/widget_temperature.html' %}
+						{% endif %}					
+					{% endfor %}
 				</div>
+				<div class="tab-pane fade" id="pills-power">
+					{% for node in node_list %}
+						<!-- INSERT WIDGETS -->
+						{% if node.Type|lower == "power" %}
+							{% include 'app_dalys/includes/widgets/widget_power.html' %}
+						{% endif %}					
+					{% endfor %}
+				</div>
+				<div class="tab-pane fade" id="pills-reporting">
+					Coming soonish.......
+				</div>
+
 			</div>
-			<div class="card-arrow">
-				<div class="card-arrow-top-left"></div>
-				<div class="card-arrow-top-right"></div>
-				<div class="card-arrow-bottom-left"></div>
-				<div class="card-arrow-bottom-right"></div>
-			</div>
-		</div>
-	</div>
-	<!-- END -->
-</div>
+	<!-- end tabs -->
 <!-- END #content -->
 {% endblock content %}
 

@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.forms.utils import ErrorList
 from django.http import HttpResponse
-from .forms import LoginForm, SignUpForm, UserUpdateForm, ProfileUpdateForm
+from .forms import LoginForm, SignUpForm, UserUpdateForm, ProfileUpdateForm 
 
 from .models import Organization
 import json

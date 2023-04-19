@@ -1,0 +1,375 @@
+
+
+
+
+
+
+
+<!-- BEGIN TOOLBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-opacity-25 rounded">
+    <div class="container-fluid">
+        <!-- BEGIN REFRESH BUTTON -->
+        <div class="opacity-10 px-1">
+            <button id="refresh" type="button" class="btn btn-outline-theme btn-sm"><i class="fa fa-redo"></i></button>
+        </div>
+        <!-- END REFRESH BUTTON -->
+        <!-- BEGIN PROJECTS -->
+        <div class="opacity-10 px-1">
+            <input type="text" id="tourURL" value="https://my.matterport.com/show/?m=Hq7K5oZJjTE&utm_source=sdkdebug" class="btn-outline-theme" />
+            <button id="loadTour" class="btn btn-outline-theme btn-sm">Load</button>
+            <button type="button" class="btn btn-outline-theme btn-sm" data-bs-toggle="modal" data-bs-target="#project_form">New Project</button>            
+        </div>
+        <!-- END PROJECTS -->
+        <!-- BEGIN MATTERPORT CONTROLS -->
+        <div class="opacity-10 px-1">            
+            <button data-balloon-pos="up-left" data-balloon="mpSdk.Camera.moveInDirection('LEFT')" class="b_moveInDirection" data-val="LEFT"><i class="fa fa-arrow-left" aria-hidden="true"></i></button>
+            <button data-balloon-pos="up-left" data-balloon="mpSdk.Camera.moveInDirection('RIGHT')" class="b_moveInDirection" data-val="RIGHT"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
+            <button data-balloon-pos="up-left" data-balloon="mpSdk.Camera.moveInDirection('FORWARD')" class="b_moveInDirection" data-val="FORWARD"><i class="fa fa-arrow-up" aria-hidden="true"></i></button>
+            <button data-balloon-pos="up-left" data-balloon="mpSdk.Camera.moveInDirection('BACK')" class="b_moveInDirection" data-val="BACK"><i class="fa fa-arrow-down" aria-hidden="true"></i></button>
+            <button data-balloon-pos="up-left" data-balloon="mpSdk.Camera.moveInDirection('UP')" class="b_moveInDirection" data-val="UP"><i class="fas fa-level-up-alt"></i></button>
+            <button data-balloon-pos="up-left" data-balloon="mpSdk.Camera.moveInDirection('DOWN')" class="b_moveInDirection" data-val="DOWN"><i class="fas fa-level-down-alt"></i></button>
+            <button data-balloon-pos="up-left" data-balloon="mpSdk.Tour.start() / mpSdk.Tour.stop()" class="b_tour" id="tourToggle"><i class="icon icon-tour-play" aria-hidden="true"></i></button>
+            <button data-balloon-pos="up-left" data-balloon="mpSdk.Tour.prev()" class="b_tour_prev"><i class="fa fa-step-backward" aria-hidden="true"></i></button>
+            <button data-balloon-pos="up-left" data-balloon="mpSdk.Tour.next()" class="b_tour_next"><i class="fa fa-step-forward" aria-hidden="true"></i></button>
+            <button data-balloon-pos="up-left" data-balloon="mpSdk.Mode.moveTo('mode.inside')" class="b_moveTo xtour b_inside" data-val="mode.inside"><i class="icon icon-panorama"></i></button>
+            <button data-balloon-pos="up-left" data-balloon="mpSdk.Mode.moveTo('mode.dollhouse')" class="b_moveTo xtour b_dollhouse" data-val="mode.dollhouse"><i class="icon icon-dollhouse"></i></button>
+            <button data-balloon-pos="up-left" data-balloon="mpSdk.Mode.moveTo('mode.floorplan')" class="b_moveTo xtour b_floorplan" data-val="mode.floorplan"><i class="icon icon-floorplan"></i></button>
+            <button data-balloon-pos="up-left" data-balloon="mpSdk.Camera.rotate(-40,0)" class="b_rotateInDirection" data-val="LEFT"><i class="fas fa-undo"></i></button>
+            <button data-balloon-pos="up-left" data-balloon="mpSdk.Camera.rotate(0,40)" class="b_rotateInDirection" data-val="RIGHT"><i class="fas fa-redo"></i></button>
+            <button data-balloon-pos="up-left" data-balloon="mpSdk.Camera.rotate(0,20)" class="b_rotateInDirection" data-val="UP"><i class="fa fa-angle-up" aria-hidden="true"></i></button>
+            <button data-balloon-pos="up-left" data-balloon="mpSdk.Camera.rotate(0,-20)" class="b_rotateInDirection" data-val="DOWN"><i class="fa fa-angle-down" aria-hidden="true"></i></button>
+            <button data-balloon-pos="up-left" data-balloon="mpSdk.getPose()" class="b_getPose"><i class="fa fa-map-marker" aria-hidden="true"></i></button>
+            <button data-balloon-pos="up-left" data-balloon="mpSdk.moveTo()" class="b_home"><i class="fa fa-home" aria-hidden="true"></i></button>
+            <button data-balloon-pos="up-left" data-balloon="mpSdk.Camera.takeScreenShot( {width: 640, height: 160},{mattertags: false, sweeps: true})" class="b_takeScreenshot"><i class="fa fa-camera" aria-hidden="true"></i></button>
+            <button data-balloon-pos="up-left" data-balloon="mpSdk.Renderer.takeEquirectangular( {width: 4096, height: 2048},{mattertags: false, sweeps: true})" class="b_takePano"><i class="fas fa-drum-steelpan"></i></button>
+            <button data-balloon-pos="up-left" data-balloon="mpSdk.Label.getData()" class="b_LabelgetData"><i class="fa fa-tags" aria-hidden="true"></i></button>
+            <button data-balloon-pos="up-left" data-balloon="mpSdk.Mattertag.navigateToTag(sid) (See debug console)" class="b_Mattertag"><i class="icon icon-mattertag"></i></button>
+            <button data-balloon-pos="up-left" data-balloon="mpSdk.Floor.getData()" class="b_Floors"><i class="floor-number">{}</i><i class="icon icon-floor-controls"></i></button>
+            <span id="floors"></span>
+        </div>
+        <!-- END MATTERPORT CONTROLS -->
+        <!-- BEGIN DATE PICKER -->
+        <div class="flex-fill px-1">
+            <div id="daterange" class="btn btn-outline-theme d-flex align-items-center text-start btn-sm">
+                <span class="text-truncate">&nbsp;</span>
+                <i class="fa fa-caret-down ms-auto"></i>
+            </div>
+        </div>
+        <!-- END DATE PICKER -->
+        <!-- BEGIN SELECT CHART TYPE -->
+        <select id="select_chart_type" class="form-select btn-outline-theme form-select-sm" style="width: 100px;">
+            <option value="Bar"><i class="fa fa-bar-chart"></i>Bar</option>
+            <option value="Line"><i class="fa fa-line-chart"></i>Line</option>
+            <option value="Polar"><i class="fa fa-pie-chart"></i>Polar</option>
+        </select>
+        <!-- END SELECT CHART TYPE -->
+        <!-- BEGIN FIND BUTTON -->
+        <div class="opacity-10 px-1">
+            <button id="find" type="button" class="btn btn-outline-theme btn-sm"><i class="fa fa-search"></i></button>
+        </div>
+        <!-- END FIND BUTTON -->
+    </div>
+</nav>
+<!-- END TOOLBAR -->
+<!-- BEGIN ROW -->
+<div class="row">
+    <div class="col-10">										
+        <!-- BEGIN 3D IFRAME -->
+        <div class="pt-1 flex-1">
+            <div id="showcase" class="pt-1 flex-1">
+                <iframe width="100%" height="680" src="" frameborder="0" allowfullscreen="allowfullscreen" id="showcase_iframe"></iframe>
+            </div>										
+        </div>
+        <!-- END 3D IFRAME -->
+    </div>
+    <div class="col-2">
+        <!-- BEGIN DECK -->
+        <div class="h-98px pt-1 ps-3">
+            <div id="deck" class="pt-1 flex-1">
+                <img id="imageMap" src="/staticfiles/app_dalys/img/decks/owners_deck.png" alt="Workplace" usemap="#workmap">
+            </div>
+        </div>
+        <!-- END DECK -->        
+    </div>
+</div>
+<!-- END ROW -->
+
+
+
+
+
+<!-- BEGIN NODE DETAILS -->
+<div class="list-group-item" id="collapse">
+    <!-- BEGIN nav-tabs -->
+    <ul class="nav nav-tabs nav-tabs">
+        <li class="nav-item me-3"><a href="#home" class="nav-link active" data-bs-toggle="tab">Data</a></li>
+        <li class="nav-item me-3"><a href="#settings" class="nav-link" data-bs-toggle="tab">Settings</a></li>
+        <li class="nav-item me-3"><a href="#details" class="nav-link" data-bs-toggle="tab">Details</a></li>
+        <li class="nav-item me-3"><a href="#logs" class="nav-link" data-bs-toggle="tab">Logs</a></li>        
+    </ul>
+    <!-- END nav-tabs -->
+    <!-- BEGIN tab-content -->
+    <div class="tab-content pt-1">
+        <!-- BEGIN tab-pane -->
+        <div class="tab-pane fade show active" id="home">            
+            <!-- BEGIN ROW -->
+            <div class="row">
+                <div class="col-6">												
+                    <!-- BEGIN CONTENT -->
+                    <div class="pt-1 flex-1 h-300px overflow-auto">
+                        <div id="commands" class="pt-1 flex-1">
+                            <dl>
+                                <dt>Actionsssss Console Activated</dt>
+                            </dl>
+                        </div>										
+                    </div>
+                    <!-- END CONTENT -->
+                </div>
+                <div class="col-6">
+                    <!-- BEGIN LISTNER -->
+                    <div class="pt-1 flex-1 h-300px overflow-auto">
+                        <div id="listeners" class="pt-1 flex-1">
+                            <dl>
+                                <dt>Events Console Activated</dt>
+                            </dl>
+                        </div>
+                    </div>
+                    <!-- END LISTNER -->        
+                </div>
+            </div>
+            <!-- END ROW -->
+        </div>
+        <!-- END tab-pane -->
+        <!-- BEGIN SETTINGS -->
+        <div class="tab-pane fade" id="settings">
+            <!-- BEGIN row -->
+            <div class="row">
+                <div class="col-4">                                       
+                    <div class="options">
+                        <div class="option">
+                            <div id="settingsPriorityCheckbox"></div> 
+                        </div>
+                        <div class="option">
+                            <span>Project Name
+                                <div id="settingsProjectTitle"></div>
+                            </span>
+                        </div>
+                        <div class="option">
+                            <span>Level Title
+                                <div id="settingsTitleTextbox"></div>
+                            </span>
+                        </div>
+                        <div class="option">
+                            <span>Level Matterport ID
+                                <div id="settingsMattCode"></div>
+                            </span>
+                        </div>
+                        <div class="option"><span>Level Image
+                            <div id="levelSettingsDropdown"></div></span>
+                        </div>
+                        <div class="option">
+                            <span>Level Text
+                                <div id="settingsHtmlEditor"></div>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">                                       
+                    <div class="option">
+                        <div id="settings90DegOffset"></div> 
+                    </div>
+                    <div class="option">
+                        <div id="settingsFlipMe"></div> 
+                    </div>
+                    <div class="option">
+                        <div class="card mb-3 border-light">
+                            <div class="card-body">
+                                <div class="options">
+                                    <div style="display: flex; align-items: center; justify-content: center;">
+                                        <span>Quick Links</span>
+                                    </div>
+                                    <div class="option">
+                                        <span>X Position
+                                            <div id="xOffset"></div>
+                                        </span>
+                                    </div>
+                                    <div class="option">
+                                        <span>X Spacing
+                                            <div id="xConst"></div>
+                                        </span>
+                                    </div>
+                                    <div class="option">
+                                        <span>Y Position
+                                            <div id="zOffset"></div>
+                                        </span>
+                                    </div>
+                                    <div class="option">
+                                        <span>Y Spacing
+                                            <div id="zConst"></div>
+                                        </span>
+                                    </div>
+                                    <div class="option">
+                                        <span>Rotation Offset
+                                            <div id="qlRotOffset"></div>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">                                       
+                    <div class="option">
+                        <div class="card mb-3 border-light">
+                            <div class="card-body">
+                                <div class="options">
+                                    <div style="display: flex; align-items: center; justify-content: center;">
+                                        <span>Viewer Icon</span>
+                                    </div>
+                                    <div class="option">
+                                        <span>X Position
+                                            <div id="meXOffset"></div>
+                                        </span>
+                                    </div>
+                                    <div class="option">
+                                        <span>X Spacing
+                                            <div id="meXConst"></div>
+                                        </span>
+                                    </div>
+                                    <div class="option">
+                                        <span>Y Position
+                                            <div id="meZOffset"></div>
+                                        </span>
+                                    </div>
+                                    <div class="option">
+                                        <span>Y Spacing
+                                            <div id="meZConst"></div>
+                                        </span>
+                                    </div>
+                                    <div class="option">
+                                        <span>Rotation Offset
+                                            <div id="meRotOffset"></div>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>                
+            <!-- END row -->
+        </div>
+        <!-- END SETTINGS -->
+        <!-- BEGIN tab-pane -->
+        <div class="tab-pane fade" id="details">
+            <!-- BEGIN row -->
+            <div class="row">
+                <div class="col-12">												
+                    
+                </div>
+            </div>                
+            <!-- END row -->
+        </div>
+        <!-- END tab-pane -->
+        <!-- BEGIN tab-pane -->
+        <div class="tab-pane fade" id="logs">
+            <!-- BEGIN row -->
+            <div class="row">
+                <div class="col-12">												
+                    
+                </div>
+            </div>                
+            <!-- END row -->
+        </div>
+        <!-- END tab-pane -->
+    </div>
+    <!-- END tab-content -->								
+</div>
+<!-- END NODE DETAILS -->
+
+
+
+
+
+
+
+
+<!-- BEGIN #modalCover -->
+<div id="modalCover" class="mb-5">
+    <h4>Modal Cover</h4>
+    <p>Modal cover is an extended feature from Bootstrap modal. It provide the same background color as the modal content. Place a <code>.modal-cover</code> css class on <code>.modal</code> for full cover modal.</p>
+    <div class="card">
+        <div class="card-body">
+            <!-- modal-cover -->
+            <button type="button" class="btn btn-outline-theme me-2" data-bs-toggle="modal" data-bs-target="#modalCoverExample">Modal Cover</button>
+        </div>
+        <div class="card-arrow">
+            <div class="card-arrow-top-left"></div>
+            <div class="card-arrow-top-right"></div>
+            <div class="card-arrow-bottom-left"></div>
+            <div class="card-arrow-bottom-right"></div>
+        </div>        
+    </div>
+</div>
+<!-- END #modalCover -->
+
+
+
+<!-- BEGIN PROJECT FORM -->
+<div class="modal-cover" id="modalCoverExample">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Project</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form role="form" method="post" action="">
+					{% csrf_token %}
+					<p class="text-white text-opacity-50 text-center">						
+						{% if msg %}
+							<span class="text-danger">{{ msg | safe }}</span>
+						{% else %}  
+							Sign up to your organizations dashboard, an activation email will be sent to you once the account is activated.
+						{% endif %}
+					</p>
+					<div class="mb-3">
+						<label class="form-label">Name <span class="text-danger">*</span></label>
+						<input id="id_project_name" name="Project_Name" type="text" class="form-control form-control-sm bg-white bg-opacity-5" placeholder="e.g MY Tis" value="" />
+						<span class="text-danger">{{ form.project_name.errors }}</span>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">Description</label>
+						<input id="id_project_description" name="Project_Description" type="text" class="form-control form-control-sm bg-white bg-opacity-5" value="" />
+						<span class="text-danger">{{ form.project_description.errors }}</span>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">Status</label>
+						<input id="id_project_status" name="Project_Status" type="text" class="form-control form-control-sm bg-white bg-opacity-5" value="" />
+						<span class="text-danger">{{ form.project_status.errors }}</span>
+					</div>
+                    <div class="mb-3">
+						<label class="form-label">Matterport ID</label>
+                        <input type="text" id="project_setup_matp_id" value="Hq7K5oZJjTE" class="form-control form-control-sm bg-white bg-opacity-5" />
+                        <button type="button" id="load_project_setup" class="btn btn-outline-theme btn-sm">Load</button>
+                        <iframe width="100%" src="" frameborder="0" allowfullscreen="allowfullscreen" id="project_setup_iframe"></iframe>
+                        <span class="text-danger">{{ form.project_status.errors }}</span>
+					</div>
+					<div class="mb-3">
+						<button type="submit" class="btn btn-outline-theme btn-sm d-block w-100">Submit</button>
+					</div>
+				</form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- BEGIN PROJECT FORM -->
+
+
+
+
+
+
+
+
+

@@ -13,7 +13,8 @@ from rest_framework.response import Response
 from .models import (
     Node_Power,
     Node_List,
-    Node_Temperature
+    Node_Temperature,
+    Reports_Project
 )
 
 from .serializers import (
@@ -24,6 +25,8 @@ from .serializers import (
 
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+
+from .forms import ProjectCreateForm
 
 class Node_Power_ViewSet(viewsets.ModelViewSet):
     queryset = Node_Power.objects.all().order_by('Data_DateTime')
@@ -154,14 +157,40 @@ def index(request):
 #@login_required(login_url="/login/")
 def mobile(request):
     context = {}
-
     print('mobile')
-
     context['node_data'] = get_nodes()
     context['node_list'] = Node_List.objects.all().order_by('-Type')
-    
     context['segment'] = 'mobile'
     html_template = loader.get_template('app_dalys/mobile.html')
+    return HttpResponse(html_template.render(context, request))
+
+#@login_required(login_url="/login/")
+def reports(request):
+    msg     = None
+    success = False
+    projects = {}    
+    if request.method == "POST":
+        print(request.POST)
+        p_form = ProjectCreateForm(request.POST)        
+        if p_form.is_valid():
+            project = p_form.save(commit=False)
+            project.save()
+            msg = 'Project created.'
+            success = True            
+            return redirect("app_dalys/reports.html")
+        else:
+            msg = 'Form is not valid.'
+    else:
+        p_form = ProjectCreateForm()
+
+    context = {}   
+    context['segment'] = 'reports'
+    context['form'] = p_form
+    context['msg'] = msg
+    context['success'] = success
+    context['project_list'] = get_projects()
+    context['project_list_html'] = Reports_Project.objects.all().order_by('Project_Name')
+    html_template = loader.get_template('app_dalys/reports.html')
     return HttpResponse(html_template.render(context, request))
 
 @login_required(login_url="/login/")
@@ -199,6 +228,14 @@ def pages(request):
         print('{!r} - Load Template Failed!'.format(e))
         html_template = loader.get_template('page_404_error.html')
         return HttpResponse(html_template.render(context, request))
+    
+def get_projects():
+    projects = {}
+    try:
+        projects['Projects'] = json.loads(Reports_Project.objects.all().order_by('Project_Name').to_dataframe().to_json(orient="table"))['data']
+    except Exception as e:
+        print('{!r}; Get Projects failed - '.format(e))
+    return json.dumps(projects)
 
 def get_power_nodes():
     nodes = {}

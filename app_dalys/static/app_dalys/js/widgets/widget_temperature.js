@@ -281,6 +281,22 @@
 					
 					// SET TEXT VALUES
 					$("#value_main_" + id).text(Number(data_current.Temperature).toFixed(2) + ' °C');
+					$("#node_status_value_" + id).text('OK');
+					$("#signal_status_value_" + id).text('99.8 dB');
+					$("#battery_status_value_" + id).text(Number(data_current.Battery_Percent).toFixed(2) + ' %');
+					$('#battery_status_' + data_current.Meter_Id).removeClass('text-success');
+					$('#battery_status_' + data_current.Meter_Id).removeClass('text-warning');
+					$('#battery_status_' + data_current.Meter_Id).removeClass('text-danger');
+					if (Number(data_current.Battery_Percent) > 80) {
+						$('#battery_status_' + id).addClass('text-success');
+						$('#battery_status_' + id).attr('title', 'Battery good.');
+					} else if (Number(data_current.Battery_Percent) < 80 && Number(data_current.Battery_Percent) > 40) {
+						$('#battery_status_' + id).addClass('text-warning');
+						$('#battery_status_' + id).attr('title', 'Under charged.');
+					} else {
+						$('#battery_status_' + id).addClass('text-danger');
+						$('#battery_status_' + id).attr('title', 'Battery needs to be replaced.');
+					}
 
 					// SET STATUS
 					if (parseInt(Math.abs(new Date()-new Date(data_current.Last_Updated)) / (1000 * 60)) > 2) {
@@ -309,6 +325,22 @@
 			json_data = JSON.parse(e.data).message;
 			console.log(json_data);
 			$("#value_main_" + json_data.Meter_Id).text(Number(json_data.Temperature).toFixed(2) + ' °C');
+			$("#node_status_value_" + json_data.Meter_Id).text('OK');
+			$("#signal_status_value_" + json_data.Meter_Id).text('99.8 dB');
+			$("#battery_status_value_" + json_data.Meter_Id).text(Number(json_data.Battery_Percent).toFixed(2) + ' %');
+			$('#battery_status_' + json_data.Meter_Id).removeClass('text-success');
+			$('#battery_status_' + json_data.Meter_Id).removeClass('text-warning');
+			$('#battery_status_' + json_data.Meter_Id).removeClass('text-danger');
+			if (Number(json_data.Battery_Percent) > 80) {				
+				$('#battery_status_' + json_data.Meter_Id).addClass('text-success');
+				$('#battery_status_' + json_data.Meter_Id).attr('title', 'Battery good.');
+			} else if (Number(json_data.Battery_Percent) < 80 && Number(json_data.Battery_Percent) > 40) {
+				$('#battery_status_' + json_data.Meter_Id).addClass('text-warning');
+				$('#battery_status_' + json_data.Meter_Id).attr('title', 'Under charged.');
+			} else {
+				$('#battery_status_' + json_data.Meter_Id).addClass('text-danger');
+				$('#battery_status_' + json_data.Meter_Id).attr('title', 'Battery needs to be replaced.');
+			}
 		};
 
 		autosondeSocket.onclose = function (e) {
