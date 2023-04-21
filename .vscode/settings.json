@@ -17,5 +17,6 @@
             "priority": 4
         }
     ],
-    "python.pythonPath": "c:\\Projects\\ENVIROSCAN_WEBAPP\\venv\\Scripts\\python.exe"
+    "python.pythonPath": "c:\\Projects\\ENVIROSCAN_WEBAPP\\venv\\Scripts\\python.exe",
+    "git.ignoreLimitWarning": true
 }
