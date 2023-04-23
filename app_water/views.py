@@ -33,6 +33,28 @@ class Meter_Readings_Ave_WDH_ViewSet(viewsets.ModelViewSet):
     queryset = Meter_Readings_Ave_WDH.objects.all().order_by('Last_Updated')
     serializer_class = Meter_Readings_Ave_WDH_Serializer
 
+class Pulses_ViewSet(viewsets.ModelViewSet):
+    queryset = Meter_Readings.objects.all().order_by('Data_DateTime')
+    serializer_class = Meter_Readings_Serializer
+
+    def create(self, request):
+        data = request.data['uplink_message']['decoded_payload']
+        print(self.request.data)
+        pulse_count = data['Pulse_Count'] 
+        
+        print(pulse_count)
+        
+        if (pulse_count >= 0):            
+            msg_water_meter = Water_Meter.objects.create(
+                Meter = Meter_List.objects.get(id = data['Meter_Id']),
+                Data_DateTime = data['Data_DateTime'],
+                Pulses = pulse_count, 
+                Battery_Level = 100,
+                Battery_Voltage = 3.3,
+            )
+        
+        return Response(data = "done")
+
 class Meter_Readings_ViewSet(viewsets.ModelViewSet):
     queryset = Meter_Readings.objects.all().order_by('Data_DateTime')
     serializer_class = Meter_Readings_Serializer

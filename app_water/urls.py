@@ -11,6 +11,9 @@ routerReadings.register(r'data', views.Readings_ViewSet)
 routerMeterReadings = routers.DefaultRouter()
 routerMeterReadings.register(r'readings', views.Meter_Readings_ViewSet)
 
+routerPulses = routers.DefaultRouter()
+routerPulses.register(r'readings', views.Pulses_ViewSet)
+
 routerMeterReadingsAveWDH = routers.DefaultRouter()
 routerMeterReadingsAveWDH.register(r'avewdh', views.Meter_Readings_Ave_WDH_ViewSet)
 
@@ -23,6 +26,8 @@ urlpatterns = [
     path('meter_readings/', include(routerMeterReadings.urls)),
 
     path('meter_readings_ave_wdh/', include(routerMeterReadingsAveWDH.urls)),
+
+    path('pulses/', include(routerPulses.urls)),
 
     # The home page
     path('', views.index, name='home'),

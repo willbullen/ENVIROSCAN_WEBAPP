@@ -56,7 +56,7 @@ INSTALLED_APPS = [
     #'pinax.invitations',            # Required by pinax-teams
     #'pinax.teams',                  # Team support
     #'reversion',                    # Required by pinax-teams
-    'helpdesk',                    # This is us!
+    #'helpdesk',                    # This is us!
 ]
 
 MIDDLEWARE = [
