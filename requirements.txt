@@ -15,7 +15,7 @@ Pillow==9.0.0
 django-crispy-forms==1.13.0
 balena-sdk==11.0.0
 
-django-model-utils
+django-model-utils==4.3.1
 akismet==1.2.1 
 beautifulsoup4==4.12.2 
 django-bootstrap4-form==4.0.1 
