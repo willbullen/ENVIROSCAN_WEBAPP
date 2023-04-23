@@ -39,8 +39,8 @@ class Pulses_ViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         print(self.request.data)
-        
-        data = request.data['data']        
+
+        data = request.data      
         pulse_count = data['Pulse_Count'] 
         
         print(pulse_count)
