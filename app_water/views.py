@@ -44,15 +44,15 @@ class Pulses_ViewSet(viewsets.ModelViewSet):
         pulse_count = data['Pulse_Count'] 
         
         print(pulse_count)
-        
-        if (pulse_count >= 0):            
-            msg_water_meter = Water_Meter.objects.create(
-                Meter = Meter_List.objects.get(id = data['Meter_Id']),
-                Data_DateTime = data['Data_DateTime'],
-                Pulses = pulse_count, 
-                Battery_Level = 100,
-                Battery_Voltage = 3.3,
-            )
+        print(type(pulse_count))
+                   
+        msg_water_meter = Water_Meter.objects.create(
+            Meter = Meter_List.objects.get(id = data['Meter_Id']),
+            Data_DateTime = data['Data_DateTime'],
+            Pulses = int(pulse_count), 
+            Battery_Level = 100,
+            Battery_Voltage = 3.3,
+        )
         
         return Response(data = "done")
 
