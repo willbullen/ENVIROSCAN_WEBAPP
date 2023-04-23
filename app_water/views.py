@@ -38,8 +38,9 @@ class Pulses_ViewSet(viewsets.ModelViewSet):
     serializer_class = Meter_Readings_Serializer
 
     def create(self, request):
-        data = request.data['uplink_message']['decoded_payload']
         print(self.request.data)
+        
+        data = request.data['data']        
         pulse_count = data['Pulse_Count'] 
         
         print(pulse_count)
