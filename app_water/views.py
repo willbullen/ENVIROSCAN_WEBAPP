@@ -105,7 +105,7 @@ class Readings_ViewSet(viewsets.ModelViewSet):
     serializer_class = Readings_Serializer
     
 class Meter_List_ViewSet(viewsets.ModelViewSet):
-    queryset = Meter_List.objects.all()
+    queryset = Meter_List.objects.filter(Status = 0)
     serializer_class = Meter_List_Serializer
 
     def list(self, request):
@@ -166,7 +166,7 @@ def get_data_analysis():
 def get_meters():
     meters = {}
     try:
-        meters['Data'] = json.loads(Meter_List.objects.all().order_by('Category').to_dataframe().to_json(orient="table"))['data']
+        meters['Data'] = json.loads(Meter_List.objects.filter(Status = 0).order_by('Category').to_dataframe().to_json(orient="table"))['data']
         for meter in meters['Data']:
             meter.update(get_readings(meter['id']))
             #meter.update(get_report(meter['id']))
