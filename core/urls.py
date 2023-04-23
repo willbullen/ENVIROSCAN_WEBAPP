@@ -13,7 +13,7 @@ urlpatterns = [
     path('dalys/', include('app_dalys.urls')),
     path('water/', include('app_water.urls')),
     path('front/', include('app_front.urls')),
-    #path('helpdesk/', include('helpdesk.urls')),
+    path('helpdesk/', include('helpdesk.urls')),
     path('', include('app_front.urls')),
     path('', include('app.urls')),    
 ]
