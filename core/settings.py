@@ -51,7 +51,7 @@ INSTALLED_APPS = [
 
     'django.contrib.sites',         # Required for determining domain url for use in emails
     'django.contrib.humanize',      # Required for elapsed time formatting
-    'bootstrap4form',               # Required for nicer formatting of forms with the default templates
+    #'bootstrap4form',               # Required for nicer formatting of forms with the default templates
     #'account',                      # Required by pinax-teams
     #'pinax.invitations',            # Required by pinax-teams
     #'pinax.teams',                  # Team support
