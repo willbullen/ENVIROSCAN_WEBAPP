@@ -169,7 +169,7 @@ def get_meters():
         meters['Data'] = json.loads(Meter_List.objects.filter(Status = 0).order_by('Category').to_dataframe().to_json(orient="table"))['data']
         for meter in meters['Data']:
             meter.update(get_readings(meter['id']))
-            meter.update(get_report(meter['id']))
+            #meter.update(get_report(meter['id']))
             meter.update(get_averages(meter['id']))
     except Exception as e:
         print('{!r}; Get Meters failed - '.format(e))
