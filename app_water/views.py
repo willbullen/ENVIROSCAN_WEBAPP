@@ -5,6 +5,8 @@ from django.http import HttpResponse
 from django import template
 import json
 import pandas as pd
+import numpy as np
+import tensorflow as tf
 
 from datetime import timedelta, datetime, date
 
@@ -120,6 +122,8 @@ def index(request):
 
     context = {}
 
+    #predict(4)
+
     context['meter_list_data'] = get_meters()
     context['meter_list_supply'] = Meter_List.objects.filter(Category = 1, Status = 0)
     context['meter_list_consumer'] = Meter_List.objects.filter(Category = 2, Status = 0)
@@ -193,52 +197,120 @@ def get_readings(meter_id):
 
 def get_averages(meter_id):    
     try:
-        result = abs(Meter_Readings_Ave_WDH.objects.only('Last_Updated').get(Meter_Id=Meter_List.objects.get(id = meter_id)).Last_Updated - datetime.now().astimezone())
-        print(result.days)
+        # Print a header indicating which meter is being processed
+        print('####### ' + str(meter_id) + ' #########')
+        one_month_ago = datetime.now() - timedelta(days=30)
+        # Check if there are records in the Meter_Readings_Ave_WDH table
+        if Meter_Readings_Ave_WDH.objects.filter(Meter_Id=Meter_List.objects.get(id=meter_id), Last_Updated__lte=one_month_ago).exists():
+            baseline = {'baseline': json.loads(Meter_Readings_Ave_WDH.objects.filter(Meter_Id=Meter_List.objects.get(id=meter_id)).to_dataframe(index='Last_Updated').to_json(orient="table"))['data'][0]}
+        else: 
+            # Load and preprocess data from Water_Meter model
+            df = pd.DataFrame(Water_Meter.objects.all().values('Data_DateTime', 'Pulses').filter(Meter=meter_id).order_by('-id')[:6000])
+            df_new = df.set_index('Data_DateTime')
+            data = []  # List to store daily average water usage data
+            day_array = []  # List to store hourly average water usage data for each day
+            # Loop through each day of the week and hour of the day
+            for day in range(7):
+                for hour in range(24):
+                    # Filter the DataFrame to include only rows with the specified hour and day of the week
+                    filtered_df = df_new[(df_new.index.hour == hour) & (df_new.index.dayofweek == day)]
+                    day_array.append([round(filtered_df['Pulses'].mean()*4, 3), round(filtered_df['Pulses'].min(), 3), round(filtered_df['Pulses'].max(), 3)])
+                data.append(day_array)  # Add the last day's data to daily data
+                day_array = []
 
-        if (result.days >= 0):
-            df = pd.DataFrame(Water_Meter.objects.all().values('Data_DateTime', 'Pulses', 'Meter__Pulse_Unit_Value').filter(Meter = meter_id).order_by('-id'))
-            df["Water"] = df["Pulses"] * df["Meter__Pulse_Unit_Value"]
-            df = df.set_index('Data_DateTime').rename_axis('DayTime')
-            df = df.drop(columns=['Meter__Pulse_Unit_Value', 'Pulses'])
-            #df = df.groupby([df.index.dayofweek, df.index.hour]).mean()
-            df = df.groupby([df.index.dayofweek, df.index.hour]).agg({'Water': ['mean', 'min', 'max']})
-            #print(df)
-            #df = df.round({'Water': 3})
+            #print(df_new[(df_new.index.hour == 16) & (df_new.index.dayofweek == 1)])
 
-            print('################')
-            data = []
-            day = 0
-            day_array = []
-            for index, row in df.iterrows():
-                if day == index[0]:
-                    day_array.append([round(row[0], 3), round(row[1], 3), round(row[2], 3)])
-                else:
-                    #print(str(day) + ' - ' + str(day_array))
-                    data.append(day_array)
-                    day_array = []
-                    day_array.append([round(row[0], 3), round(row[1], 3), round(row[2], 3)])  
-                day = index[0]
-            #print(str(day) + ' - ' + str(day_array))
-            data.append(day_array)
-            print(data[0])
-
+            # Store daily average water usage data in Meter_Readings_Ave_WDH model
             Meter_Readings_Ave_WDH.objects.update_or_create(
-                Meter_Id=Meter_List.objects.get(id = meter_id), defaults={                    
-                    'Last_Updated': datetime.now(), 
+                Meter_Id = Meter_List.objects.get(id=meter_id),
+                defaults={
+                    'Last_Updated': datetime.now(),
                     'Day_0': str(data[0]), 
                     'Day_1': str(data[1]), 
                     'Day_2': str(data[2]), 
                     'Day_3': str(data[3]), 
                     'Day_4': str(data[4]), 
                     'Day_5': str(data[5]), 
-                    'Day_6': str(data[6]),                    
+                    'Day_6': str(data[6]),
                 }
             )
-            baseline = {'baseline': json.loads(Meter_Readings_Ave_WDH.objects.filter(Meter_Id=Meter_List.objects.get(id = meter_id)).to_dataframe(index='Last_Updated').to_json(orient="table"))['data']}
-        else:
-            baseline = {'baseline': json.loads(Meter_Readings_Ave_WDH.objects.filter(Meter_Id=Meter_List.objects.get(id = meter_id)).to_dataframe(index='Last_Updated').to_json(orient="table"))['data']}
+            # Retrieve the latest baseline data for the meter and return as a dictionary object
+            baseline = {'baseline': json.loads(Meter_Readings_Ave_WDH.objects.filter(Meter_Id=Meter_List.objects.get(id=meter_id)).to_dataframe(index='Last_Updated').to_json(orient="table"))['data'][0]}
     except Exception as e:
         print('{!r}; Get baseline failed - '.format(e))
         return {'baseline': []}
     return baseline
+
+
+def predict(meter_id):   
+    
+    # Load and preprocess data from Water_Meter model
+    df = pd.DataFrame(Water_Meter.objects.all().values('Data_DateTime', 'Pulses', 'Meter__Pulse_Unit_Value').filter(Meter=meter_id).order_by('-id'))
+    df_new = df.set_index('Data_DateTime')
+    
+    # Define features (hour of day, day of week) and labels (water consumption in pulses)
+    features = ['hour_of_day', 'day_of_week']
+    labels = ['pulses']
+    
+    # Create a new DataFrame with the features and labels
+    df_features = pd.DataFrame(columns=features)
+    df_labels = pd.DataFrame(columns=labels)
+    
+    # Loop through each day of the week and hour of the day
+    for day in range(7):
+        for hour in range(24):
+            # Filter the DataFrame to include only rows with the specified hour and day of the week
+            filtered_df = df_new[(df_new.index.hour == hour) & (df_new.index.dayofweek == day)]
+    
+            # Calculate the mean and total water consumption for the current hour and day
+            mean_water_consumption = filtered_df['Pulses'].mean()
+            total_water_consumption = filtered_df['Pulses'].sum()
+    
+            # Add the features and labels for the current hour and day to the new DataFrames
+            df_features = df_features.append(pd.DataFrame([[hour, day]], columns=features), ignore_index=True)
+            df_labels = df_labels.append(pd.DataFrame([[total_water_consumption]], columns=labels), ignore_index=True)
+    
+    # Convert the DataFrames to NumPy arrays
+    X = df_features.values.astype(np.float32)
+    y = df_labels.values.astype(np.float32)
+    
+    # Split the data into training and testing sets
+    train_size = int(0.8 * len(X))
+    X_train, X_test = X[:train_size], X[train_size:]
+    y_train, y_test = y[:train_size], y[train_size:]
+    
+    # Define the TensorFlow model
+    model = tf.keras.Sequential([
+        tf.keras.layers.Dense(64, activation='relu', input_dim=2),
+        tf.keras.layers.Dense(1)
+    ])
+    
+    # Compile the model
+    model.compile(optimizer='adam', loss='mse')
+    
+    # Train the model
+    model.fit(X_train, y_train, epochs=100)
+    
+    # Evaluate the model on the testing set
+    loss = model.evaluate(X_test, y_test)
+    print(f"Test loss: {loss}")
+    
+    # Use the model to make predictions for a given day and hour
+    day = 2  # Wednesday
+    hour = 5  # Noon
+    features_for_prediction = np.array([[hour, day]])
+    predicted_water_consumption = model.predict(features_for_prediction)[0][0]
+    #print(f"Predicted water consumption at {hour}:00 on Wednesday: {predicted_water_consumption} pulses")
+
+    data = []  # List to store daily average water usage data
+    day_array = []  # List to store hourly average water usage data for each day
+    # Loop through each day of the week and hour of the day
+    for day in range(7):
+        for hour in range(24):
+            # Filter the DataFrame to include only rows with the specified hour and day of the week
+            features_for_prediction = np.array([[hour, day]])
+            predicted_water_consumption = model.predict(features_for_prediction)[0][0]
+            day_array.append([round(predicted_water_consumption, 3)])
+        data.append(day_array)  # Add the last day's data to daily data
+        day_array = []
+    print(data)
