@@ -7,6 +7,7 @@ routerMeters.register(r'list', views.Meter_List_ViewSet)
 
 routerReadings = routers.DefaultRouter()
 routerReadings.register(r'data', views.Readings_ViewSet)
+routerReadings.register(r'get_by_id_and_dates', views.GetWaterDataByIdAndDates_ViewSet, basename="get_by_id_and_dates")
 
 routerMeterReadings = routers.DefaultRouter()
 routerMeterReadings.register(r'readings', views.Meter_Readings_ViewSet)

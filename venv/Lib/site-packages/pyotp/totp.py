@@ -2,7 +2,7 @@ import calendar
 import datetime
 import hashlib
 import time
-from typing import Any, Union, Optional
+from typing import Any, Optional, Union
 
 from . import utils
 from .otp import OTP
@@ -12,16 +12,27 @@ class TOTP(OTP):
     """
     Handler for time-based OTP counters.
     """
-    def __init__(self, s: str, digits: int = 6, digest: Any = hashlib.sha1, name: Optional[str] = None,
-                 issuer: Optional[str] = None, interval: int = 30) -> None:
+
+    def __init__(
+        self,
+        s: str,
+        digits: int = 6,
+        digest: Any = None,
+        name: Optional[str] = None,
+        issuer: Optional[str] = None,
+        interval: int = 30,
+    ) -> None:
         """
         :param s: secret in base32 format
         :param interval: the time interval in seconds for OTP. This defaults to 30.
         :param digits: number of integers in the OTP. Some apps expect this to be 6 digits, others support more.
-        :param digest: digest function to use in the HMAC (expected to be sha1)
+        :param digest: digest function to use in the HMAC (expected to be SHA1)
         :param name: account name
         :param issuer: issuer
         """
+        if digest is None:
+            digest = hashlib.sha1
+
         self.interval = interval
         super().__init__(s=s, digits=digits, digest=digest, name=name, issuer=issuer)
 
@@ -29,7 +40,9 @@ class TOTP(OTP):
         """
         Accepts either a Unix timestamp integer or a datetime object.
 
-        To get the time until the next timecode change (seconds until the current OTP expires), use this instead::
+        To get the time until the next timecode change (seconds until the current OTP expires), use this instead:
+
+        .. code:: python
 
             totp = pyotp.TOTP(...)
             time_remaining = totp.interval - datetime.datetime.now().timestamp() % totp.interval
@@ -70,8 +83,9 @@ class TOTP(OTP):
 
         return utils.strings_equal(str(otp), str(self.at(for_time)))
 
-    def provisioning_uri(self, name: Optional[str] = None, issuer_name: Optional[str] = None,
-                         image: Optional[str] = None) -> str:
+    def provisioning_uri(
+        self, name: Optional[str] = None, issuer_name: Optional[str] = None, image: Optional[str] = None
+    ) -> str:
 
         """
         Returns the provisioning URI for the OTP.  This can then be
@@ -82,10 +96,15 @@ class TOTP(OTP):
             https://github.com/google/google-authenticator/wiki/Key-Uri-Format
 
         """
-        return utils.build_uri(self.secret, name if name else self.name,
-                               issuer=issuer_name if issuer_name else self.issuer,
-                               algorithm=self.digest().name,
-                               digits=self.digits, period=self.interval, image=image)
+        return utils.build_uri(
+            self.secret,
+            name if name else self.name,
+            issuer=issuer_name if issuer_name else self.issuer,
+            algorithm=self.digest().name,
+            digits=self.digits,
+            period=self.interval,
+            image=image,
+        )
 
     def timecode(self, for_time: datetime.datetime) -> int:
         """

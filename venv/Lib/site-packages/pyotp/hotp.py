@@ -9,16 +9,27 @@ class HOTP(OTP):
     """
     Handler for HMAC-based OTP counters.
     """
-    def __init__(self, s: str, digits: int = 6, digest: Any = hashlib.sha1, name: Optional[str] = None,
-                 issuer: Optional[str] = None, initial_count: int = 0) -> None:
+
+    def __init__(
+        self,
+        s: str,
+        digits: int = 6,
+        digest: Any = None,
+        name: Optional[str] = None,
+        issuer: Optional[str] = None,
+        initial_count: int = 0,
+    ) -> None:
         """
         :param s: secret in base32 format
         :param initial_count: starting HMAC counter value, defaults to 0
         :param digits: number of integers in the OTP. Some apps expect this to be 6 digits, others support more.
-        :param digest: digest function to use in the HMAC (expected to be sha1)
+        :param digest: digest function to use in the HMAC (expected to be SHA1)
         :param name: account name
         :param issuer: issuer
         """
+        if digest is None:
+            digest = hashlib.sha1
+
         self.initial_count = initial_count
         super().__init__(s=s, digits=digits, digest=digest, name=name, issuer=issuer)
 
@@ -41,11 +52,12 @@ class HOTP(OTP):
         return utils.strings_equal(str(otp), str(self.at(counter)))
 
     def provisioning_uri(
-            self,
-            name: Optional[str] = None,
-            initial_count: Optional[int] = None,
-            issuer_name: Optional[str] = None,
-            image: Optional[str] = None) -> str:
+        self,
+        name: Optional[str] = None,
+        initial_count: Optional[int] = None,
+        issuer_name: Optional[str] = None,
+        image: Optional[str] = None,
+    ) -> str:
         """
         Returns the provisioning URI for the OTP.  This can then be
         encoded in a QR Code and used to provision an OTP app like

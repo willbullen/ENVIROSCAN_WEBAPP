@@ -1,0 +1,128 @@
+<!-- BEGIN TAB-PANE -->
+<div class="tab-pane fade show active" id="reporting">
+								
+    <!-- BEGIN TOOLBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-opacity-25 rounded">
+        <div class="container-fluid">
+
+            <!-- BEGIN REFRESH BUTTON -->
+            <div class="opacity-10 px-1">
+                <button id="refresh_reporting" type="button" class="btn btn-outline-theme btn-sm"><i class="fa fa-redo"></i></button>
+            </div>
+            <!-- END REFRESH BUTTON -->
+
+            <!-- BEGIN DATE PICKER -->
+            <div class="flex-fill px-1">
+                <div id="daterange_reporting" class="btn btn-outline-theme d-flex align-items-center text-start btn-sm">
+                    <span class="text-truncate">&nbsp;</span>
+                    <i class="fa fa-caret-down ms-auto"></i>
+                </div>
+            </div>
+            <!-- END DATE PICKER -->
+
+            <!-- BEGIN SELECT CHART TYPE -->
+            <select id="select_chart_type_reporting" class="form-select btn-outline-theme form-select-sm" style="width: 100px;">											
+                <option value="Pie"><i class="fa fa-pie-chart"></i>Pie</option>
+                <option value="Bar"><i class="fa fa-bar-chart"></i>Bar</option>
+            </select>
+            <!-- END SELECT CHART TYPE -->
+
+            <!-- BEGIN PRINT PDF -->
+            <div class="opacity-10 px-1">
+                <button data-target="reporting" class="btn btn-outline-theme btn-sm pdf">
+                    PDF
+                </button>
+            </div>
+            <!-- END PRINT PDF -->
+        </div>
+    </nav>
+    <!-- END TOOLBAR -->
+    <div class="pt-1 mb-1">
+        <p>Totals for a <span id="report_period"></span> day period from <span id="report_from"></span> to the <span id="report_to"></span>, a total of <span id="report_not_metered"></span> of supply water was not metered. The waste water total for this period was <span id="report_waste"></span></p>
+    </div>
+    <!-- BEGIN PIE -->
+    <div class="pt-1 mb-1" id="reporting_pie"></div>
+    <!-- END PIE -->
+    <!-- BEGIN PIE -->
+    <div class="pt-1 mb-1" id="reporting_bar"></div>
+    <!-- END PIE -->
+    <!-- BEGIN GAUGE -->
+    <div class="pt-1 mb-1" id="reporting_gauge"></div>
+    <!-- END GAUGE -->
+
+    <!-- BEGIN TABLE -->
+    <div class="pt-1 mb-1">
+        <table class="table">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Meter</th>
+                    <th scope="col">Supply</th>
+                    <th scope="col">Consumers</th>
+                    <th scope="col">Wastewater</th>
+                    <th scope="col">
+                        <div class="form-check form-switch px-1">
+                            <input type="checkbox" class="form-check-input" id="toggle_value_percentage">
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for meter in meter_list_supply %}
+                <tr>
+                    <td>
+                        <div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+                            {{ meter.Name|make_list|first }}
+                        </div>
+                    </td>
+                    <td>{{ meter.Name }}</td>
+                    <td><span id="report_table_value_{{ meter.id }}"></span></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                {% endfor %}
+
+                {% for meter in meter_list_consumer %}
+                <tr>
+                    <td>
+                        <div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+                            {{ meter.Name|make_list|first }}
+                        </div>
+                    </td>
+                    <td>{{ meter.Name }}</td>
+                    <td></td>
+                    <td><span id="report_table_value_{{ meter.id }}"></span></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                {% endfor %}
+                
+                {% for meter in meter_list_waste %}
+                <tr>
+                    <td>
+                        <div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
+                            {{ meter.Name|make_list|first }}
+                        </div>
+                    </td>
+                    <td>{{ meter.Name }}</td>
+                    <td></td>
+                    <td></td>
+                    <td><span id="report_table_value_{{ meter.id }}"></span></td>
+                    <td></td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td></td>
+                    <td>TOTALS</td>
+                    <td><span id="report_supply_total_value"></span></td>
+                    <td><span id="report_consumer_total_value"></span></td>
+                    <td><span id="report_waste_total_value"></span></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- END TABLE -->
+</div>
+<!-- END TAB-PANE -->

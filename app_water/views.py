@@ -31,6 +31,87 @@ from data.models import (
     SOX_Data,
 )
 
+########################################################################################
+################################### GET Readings API ###################################
+class GetWaterDataByIdAndDates_ViewSet(viewsets.ModelViewSet):
+    def list(self, request):
+        meter_id = self.request.query_params.get('meter_id')
+        start_datetime = self.request.query_params.get('start_datetime')
+        end_datetime = self.request.query_params.get('end_datetime')
+        resolution = self.request.query_params.get('resolution')
+
+        print(meter_id)
+        print(start_datetime)
+        print(end_datetime)
+        print(resolution)
+
+        meters = {}
+        try:
+            meters['Data'] = json.loads(Meter_List.objects.filter(id = meter_id, Status = 0).order_by('Category').to_dataframe().to_json(orient="table"))['data']
+            for meter in meters['Data']:
+                meter.update(get_meter_readings_by_id_resolution_date(meter['id'], resolution, start_datetime, end_datetime))
+                meter.update(get_average_readings_by_id_resolution_date(meter['id'], resolution, start_datetime, end_datetime))
+        except Exception as e:
+            print('{!r}; Get Meters failed - '.format(e))
+            Response({})
+        return Response(json.dumps(meters))
+
+def get_meter_readings_by_id_resolution_date(meter_id, resolution, start_datetime, end_datetime):    
+    try:
+        readings = {'readings': json.loads(Water_Meter.objects.filter(Meter = meter_id, Data_DateTime__gte = start_datetime, Data_DateTime__lte = end_datetime).order_by('-id').to_dataframe(index='Data_DateTime').sort_index(ascending=True).resample(resolution).sum().fillna(method='backfill').to_json(orient="table"))['data']}
+    except Exception as e:
+        print('{!r}; Get Readings failed - '.format(e))
+        return {'readings': []}
+    return readings
+
+def get_average_readings_by_id_resolution_date(meter_id, resolution, start_datetime, end_datetime):    
+    try:
+        # Print a header indicating which meter is being processed
+        print('####### ' + str(meter_id) + ' #########')
+        one_month_ago = datetime.now() - timedelta(days=30)
+        # Check if there are records in the Meter_Readings_Ave_WDH table
+        if Meter_Readings_Ave_WDH.objects.filter(Meter_Id=Meter_List.objects.get(id=meter_id), Last_Updated__lte=one_month_ago).exists():
+            baseline = {'baseline': json.loads(Meter_Readings_Ave_WDH.objects.filter(Meter_Id=Meter_List.objects.get(id=meter_id)).to_dataframe(index='Last_Updated').to_json(orient="table"))['data'][0]}
+        else: 
+            # Load and preprocess data from Water_Meter model
+            df = pd.DataFrame(Water_Meter.objects.all().values('Data_DateTime', 'Pulses').filter(Meter=meter_id).order_by('-id')[:6000])
+            df_new = df.set_index('Data_DateTime')
+            data = []  # List to store daily average water usage data
+            day_array = []  # List to store hourly average water usage data for each day
+            # Loop through each day of the week and hour of the day
+            for day in range(7):
+                for hour in range(24):
+                    # Filter the DataFrame to include only rows with the specified hour and day of the week
+                    filtered_df = df_new[(df_new.index.hour == hour) & (df_new.index.dayofweek == day)]
+                    day_array.append([round(filtered_df['Pulses'].mean()*4, 3), round(filtered_df['Pulses'].min(), 3), round(filtered_df['Pulses'].max(), 3)])
+                data.append(day_array)  # Add the last day's data to daily data
+                day_array = []
+
+            #print(df_new[(df_new.index.hour == 16) & (df_new.index.dayofweek == 1)])
+
+            # Store daily average water usage data in Meter_Readings_Ave_WDH model
+            Meter_Readings_Ave_WDH.objects.update_or_create(
+                Meter_Id = Meter_List.objects.get(id=meter_id),
+                defaults={
+                    'Last_Updated': datetime.now(),
+                    'Day_0': str(data[0]), 
+                    'Day_1': str(data[1]), 
+                    'Day_2': str(data[2]), 
+                    'Day_3': str(data[3]), 
+                    'Day_4': str(data[4]), 
+                    'Day_5': str(data[5]), 
+                    'Day_6': str(data[6]),
+                }
+            )
+            # Retrieve the latest baseline data for the meter and return as a dictionary object
+            baseline = {'baseline': json.loads(Meter_Readings_Ave_WDH.objects.filter(Meter_Id=Meter_List.objects.get(id=meter_id)).to_dataframe(index='Last_Updated').to_json(orient="table"))['data'][0]}
+    except Exception as e:
+        print('{!r}; Get baseline failed - '.format(e))
+        return {'baseline': []}
+    return baseline
+################################### GET Readings API ###################################
+########################################################################################
+
 class Meter_Readings_Ave_WDH_ViewSet(viewsets.ModelViewSet):
     queryset = Meter_Readings_Ave_WDH.objects.all().order_by('Last_Updated')
     serializer_class = Meter_Readings_Ave_WDH_Serializer
@@ -58,6 +139,8 @@ class Pulses_ViewSet(viewsets.ModelViewSet):
         
         return Response(data = "done")
 
+################################################################################################
+################################### PUT LoraWAN Readings API ###################################
 class Meter_Readings_ViewSet(viewsets.ModelViewSet):
     queryset = Meter_Readings.objects.all().order_by('Data_DateTime')
     serializer_class = Meter_Readings_Serializer
@@ -101,6 +184,8 @@ class Meter_Readings_ViewSet(viewsets.ModelViewSet):
             )
         
         return Response(data = "done")
+################################### PUT LoraWAN Readings API ###################################
+################################################################################################
         
 class Readings_ViewSet(viewsets.ModelViewSet):
     queryset = Water_Meter.objects.all().order_by('Data_DateTime')
@@ -157,6 +242,8 @@ def pages(request):
         html_template = loader.get_template('page_404_error.html')
         return HttpResponse(html_template.render(context, request))
 
+#############################################################################################
+################################### GET Data Analysis API ###################################
 def get_data_analysis():
     try:
         df = pd.DataFrame(Water_Meter.objects.all().values('id', 'Data_DateTime', 'Pulses', 'Meter', 'Meter__Pulse_Unit_Value').order_by('-id')[:5000])
@@ -166,6 +253,20 @@ def get_data_analysis():
     except Exception as e:
         print('{!r}; Get data analysis data failed - '.format(e))
     return json.dumps(data)
+################################### GET Data Analysis API ###################################
+#############################################################################################
+
+#############################################################################################
+#################################### GET Report Data API ####################################
+def get_report(meter_id):
+    try:
+        report = {'report': json.loads(Water_Meter.objects.filter(Meter = meter_id).order_by('-id').to_dataframe(index='Data_DateTime').sort_index(ascending=True).resample('1D').sum().fillna(method='backfill').to_json(orient="table"))['data']}
+    except Exception as e:
+        print('{!r}; Get Report failed - '.format(e))
+        return {'report': []}
+    return report
+#################################### GET Report Data API ####################################
+#############################################################################################
 
 def get_meters():
     meters = {}
@@ -178,14 +279,6 @@ def get_meters():
     except Exception as e:
         print('{!r}; Get Meters failed - '.format(e))
     return json.dumps(meters)
-
-def get_report(meter_id):
-    try:
-        report = {'report': json.loads(Water_Meter.objects.filter(Meter = meter_id).order_by('-id').to_dataframe(index='Data_DateTime').sort_index(ascending=True).resample('1D').sum().fillna(method='backfill').to_json(orient="table"))['data']}
-    except Exception as e:
-        print('{!r}; Get Report failed - '.format(e))
-        return {'report': []}
-    return report
 
 def get_readings(meter_id):    
     try:

@@ -1,6 +1,5 @@
 {% extends "app_water/layouts/base.html" %}
 
-
 {% block content %}
 <!-- BEGIN #content -->
 <div id="content" class="app-content">
@@ -8,1395 +7,30 @@
 	<div class="d-flex fw-bold small">
 		<span class="flex-grow-1">
 			<h1 class="page-header">
-				<i class="bi bi-water"></i> Cork University Hospital
+				<i class="bi bi-water"></i> CUH Water
 			</h1>
-			<div class="text-white small mb-2"><b>CUH Water Management System, below you will se a list of meters and readings.</b></div>
 		</span>
 	</div>
 	<!-- END page-header -->
-
 	<!-- BEGIN -->
-	<!-- BEGIN #listWidget -->
 	<div id="listWidget" class="mb-5">
 		<div class="card">
 			<div class="card-body">
 				<div class="row">
 					<div class="col-xl-6">
-
-<!-- 
-						BEGIN NAV-TABS
-						<ul id="tabs" class="nav nav-tabs nav-tabs">
-							<li class="nav-item me-3"><a href="#readings" class="nav-link active" data-bs-toggle="tab">Readings</a></li>					
-						</ul>
-						END NAV-TABS
-
-						BEGIN tab-content
-						<div class="tab-content">
-							BEGIN TAB-PANE
-							<div class="tab-pane fade show active" id="readings">								
-
-							</div>
-							END TAB-PANE
-						</div>
-						END tab-content
- -->
-
-						<!-- BEGIN SUPPLY -->
-						<div class="text-white small mb-2"><b>SUPPLY</b></div>
-						<div class="list-group mb-3">							
-						{% for meter in meter_list_supply %}
-							<!-- BEGIN METER -->
-							<input type="hidden" id="hidden_Node_Status_{{ meter.id }}" value="0">
-							<input type="hidden" id="hidden_Meter_Status_{{ meter.id }}" value="0">
-							<div class="list-group-item d-flex align-items-center">
-								<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}" id="#go_map_{{ meter.id }}">
-									<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
-										{{ meter.Name|make_list|first }}
-									</div>
-								</a>
-								<div class="flex-fill px-3">									
-									<a href="#" class="text-white" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}" id="slider_{{ meter.id }}">
-										<div class="fw-bold">{{ meter.Name }}</div>
-									</a>
-								</div>								
-
-								<!-- <div class="flex-fill px-3">
-									<div class="small text-white text-opacity-50">Last Updated: {{ meter.Last_Updated|timesince }}</div>
-								</div> -->
-
-								<div class="opacity-10 px-3">
-									<div class="fw-bold"><span id="value_main_{{ meter.id }}">0</span> m³</div>
-								</div>
-
-								<div class="opacity-10 px-3">
-									<span id="Meter_Status_{{ meter.id }}" class="badge bg-theme" data-bs-toggle="tooltip">M</span>
-									<span id="Node_Status_{{ meter.id }}" class="badge bg-theme" data-bs-toggle="tooltip">N</span>
-								</div>
-							</div>
-							<!-- END METER -->
-
-							<!-- BEGIN METER DETAILS -->
-							<div class="collapse list-group-item" id="collapse_{{ meter.id }}">
-
-								<!-- BEGIN nav-tabs -->
-								<ul class="nav nav-tabs nav-tabs">
-									<li class="nav-item me-3"><a href="#home_{{ meter.id }}" class="nav-link active" data-bs-toggle="tab">Data</a></li>
-									<li class="nav-item me-3"><a href="#details_{{ meter.id }}" class="nav-link" data-bs-toggle="tab">Details</a></li>
-									<li class="nav-item me-3"><a href="#logs_{{ meter.id }}" class="nav-link" data-bs-toggle="tab">Logs</a></li>
-									<li class="nav-item me-3"><a href="#settings_{{ meter.id }}" class="nav-link" data-bs-toggle="tab">Settings</a></li>
-								</ul>
-								<!-- END nav-tabs -->
-
-								<!-- BEGIN tab-content -->
-								<div class="tab-content pt-1">
-									<!-- BEGIN tab-pane -->
-									<div class="tab-pane fade show active" id="home_{{ meter.id }}">
-										<!-- BEGIN TOOLBAR -->
-										<nav class="navbar navbar-expand-lg navbar-dark bg-opacity-25 rounded">
-											<div class="container-fluid">
-												<!-- BEGIN REFRESH BUTTON -->
-												<div class="opacity-10 px-1">
-													<button id="refresh_{{ meter.id }}" type="button" class="btn btn-outline-theme btn-sm"><i class="fa fa-redo"></i></button>
-												</div>
-												<!-- END REFRESH BUTTON -->
-												<!-- BEGIN DATE PICKER -->
-												<div class="flex-fill px-1">
-													<div id="daterange_{{ meter.id }}" class="btn btn-outline-theme d-flex align-items-center text-start btn-sm">
-														<span class="text-truncate">&nbsp;</span>
-														<i class="fa fa-caret-down ms-auto"></i>
-													</div>
-												</div>
-												<!-- END DATE PICKER -->
-												<!-- BEGIN SELECT CHART TYPE -->
-												<select id="select_chart_type_{{ meter.id }}" class="form-select btn-outline-theme form-select-sm" style="width: 100px;">
-													<option value="Bar"><i class="fa fa-bar-chart"></i>Bar</option>
-													<option value="Line"><i class="fa fa-line-chart"></i>Line</option>
-													<option value="Polar"><i class="fa fa-pie-chart"></i>Polar</option>
-												</select>
-												<!-- END SELECT CHART TYPE -->
-												<!-- BEGIN FIND BUTTON -->
-												<div class="opacity-10 px-1">
-													<button id="find_{{ meter.id }}" type="button" class="btn btn-outline-theme btn-sm"><i class="fa fa-search"></i></button>
-												</div>
-												<!-- END FIND BUTTON -->
-											</div>
-										</nav>
-										<!-- END TOOLBAR -->
-										<!-- BEGIN row -->
-										<div class="row">
-											<div class="col-9">												
-												<!-- BEGIN CHART -->
-												<div class="pt-1 flex-1">
-													<div id="meter_chart_bar_{{ meter.id }}" class="pt-1 flex-1"></div>
-													<div id="meter_chart_polar_{{ meter.id }}" class="pt-1 flex-1"></div>
-													<div id="meter_chart_line_{{ meter.id }}" class="pt-1 flex-1"></div>
-												</div>
-												<!-- END CHART -->
-											</div>
-											<div class="col-3">
-												<!-- BEGIN DAILY AVE -->
-												<div class="w-150px h-98px pt-1 ps-3">
-													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														TOTAL (m³)
-													</div>
-													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="total_valuel_{{ meter.id }}">0</span></h4>
-													</div>
-													<div class="progress h-3px bg-white-transparent-2 mb-1">
-														<div class="progress-bar bg-theme" id="total_bar_{{ meter.id }}" style="width: 0%"></div>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="total_info_{{ meter.id }}">@ 0% of max DA recorded.</span>
-													</div>
-												</div>
-												<!-- END DAILY AVE -->
-												<!-- BEGIN HOURLY AVE -->
-												<div class="w-150px h-98px pt-1 ps-3">
-													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														HOURLY AVE (m³/h)
-													</div>
-													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="hourly_ave_value_{{ meter.id }}">0</span> </h4>
-													</div>
-													<div class="progress h-3px bg-white-transparent-2 mb-1">
-														<div class="progress-bar bg-theme" id="hourly_ave_bar_{{ meter.id }}" style="width: 0%"></div>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="hourly_ave_info_{{ meter.id }}">@ 0% of max HA recorded.</span>
-													</div>
-												</div>
-												<!-- END HOURLY AVE -->
-												<!-- BEGIN MAX FLOW -->
-												<div class="w-150px h-98px pt-1 ps-3">
-													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														MAX FLOW (m³/h)
-													</div>
-													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="max_flow_value_{{ meter.id }}">0</span> </h4>
-													</div>
-													<div class="progress h-3px bg-white-transparent-2 mb-1">
-														<div class="progress-bar bg-theme" id="max_flow_bar_{{ meter.id }}" style="width: 0%"></div>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="max_flow_info_{{ meter.id }}">@ 0% of max max fr.</span>
-													</div>
-												</div>
-												<!-- END MAX FLOW -->
-												<!-- BEGIN MIN FLOW -->
-												<div class="w-150px h-98px pt-1 ps-3">
-													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														MIN FLOW (m³/h)
-													</div>
-													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="min_flow_value_{{ meter.id }}">0</span> </h4>
-													</div>
-													<div class="progress h-3px bg-white-transparent-2 mb-1">
-														<div class="progress-bar bg-theme" id="min_flow_bar_{{ meter.id }}" style="width: 0%"></div>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="min_flow_info_{{ meter.id }}">@ 0% of min fr.</span>
-													</div>
-												</div>
-												<!-- END MIN FLOW -->
-											</div>
-										</div>
-										<!-- END row -->
-									</div>
-									<!-- END tab-pane -->
-									<!-- BEGIN tab-pane -->
-									<div class="tab-pane fade" id="details_{{ meter.id }}">
-
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												START OF LOGGING
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Start_Date }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												START INDEX
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Start_Index }} m³
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												TOTAL CONSUMPTION
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Start_Index }} m³
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												PULSE UNIT MEASUREMENT
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Pulse_Unit_Measurement }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												PULSE UNIT VALUE
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Pulse_Unit_Value }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												LOCATION LAT
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Lat }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												LOCATION LNG
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Lng }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												METER TYPE
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Type }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												REGION
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Region }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												CATEGORY
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Category }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-
-									</div>
-									<!-- END tab-pane -->
-									<!-- BEGIN tab-pane -->
-									<div class="tab-pane fade" id="logs_{{ meter.id }}">
-										<!-- BEGIN DATATABLE -->
-										<div class="pt-2 align-items-center">
-											<table id="log2_{{ meter.id }}"></table>
-										</div>
-										<!-- END DATATABLE -->
-									</div>
-									<!-- END tab-pane -->
-
-									<!-- BEGIN SETTINGS -->
-									<div class="tab-pane fade" id="settings_{{ meter.id }}">
-										<!-- BEGIN DATATABLE -->
-										<div class="pt-2 align-items-center">
-											<!-- BEGIN #notifications -->
-											<div id="notifications" class="mb-5">
-												<h6><i class="far fa-bell fa-fw text-theme"></i> Notifications</h6>
-												<p>Enable or disable what notifications you want to receive.</p>
-												<div class="card">
-													<div class="list-group list-group-flush">
-														<div class="list-group-item d-flex align-items-center">
-															<div class="flex-1 text-break">
-																<div>Comments</div>
-																<div class="text-white text-opacity-50 d-flex align-items-center">
-																	<i class="fa fa-circle fs-8px fa-fw text-success me-1"></i> Enabled (Push, SMS)
-																</div>
-															</div>
-															<div>
-																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
-															</div>
-														</div>
-														<div class="list-group-item d-flex align-items-center">
-															<div class="flex-1 text-break">
-																<div>Tags</div>
-																<div class="text-white text-opacity-50 d-flex align-items-center">
-																	<i class="fa fa-circle fs-8px fa-fw me-1"></i> Disabled
-																</div>
-															</div>
-															<div>
-																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
-															</div>
-														</div>
-														<div class="list-group-item d-flex align-items-center">
-															<div class="flex-1 text-break">
-																<div>Reminders</div>
-																<div class="text-white text-opacity-50 d-flex align-items-center">
-																	<i class="fa fa-circle fs-8px fa-fw text-success me-1"></i> Enabled (Push, Email, SMS)
-																</div>
-															</div>
-															<div>
-																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
-															</div>
-														</div>
-														<div class="list-group-item d-flex align-items-center">
-															<div class="flex-1 text-break">
-																<div>New orders</div>
-																<div class="text-white text-opacity-50 d-flex align-items-center">
-																	<i class="fa fa-circle fs-8px fa-fw text-success me-1"></i> Enabled (Push, Email, SMS)
-																</div>
-															</div>
-															<div>
-																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
-															</div>
-														</div>
-													</div>
-													<div class="card-arrow">
-														<div class="card-arrow-top-left"></div>
-														<div class="card-arrow-top-right"></div>
-														<div class="card-arrow-bottom-left"></div>
-														<div class="card-arrow-bottom-right"></div>
-													</div>
-												</div>
-											</div>
-											<!-- END #notifications -->
-										</div>
-										<!-- END DATATABLE -->
-									</div>
-									<!-- END SETTINGS -->
-
-								</div>
-								<!-- END tab-content -->
-								
-							</div>
-							<!-- END METER DETAILS -->
-						{% endfor %}
-						</div>
-						<!-- END SUPPLY -->
-
-
-
-						<!-- BEGIN consumer -->
-						<div class="text-white small mb-2"><b>CONSUMERS</b></div>
-						<div class="list-group mb-3">							
-						{% for meter in meter_list_consumer %}
-							<!-- BEGIN METER -->
-							<input type="hidden" id="hidden_Node_Status_{{ meter.id }}" value="0">
-							<input type="hidden" id="hidden_Meter_Status_{{ meter.id }}" value="0">
-							<div class="list-group-item d-flex align-items-center">
-								<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}" id="#go_map_{{ meter.id }}">
-									<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
-										{{ meter.Name|make_list|first }}
-									</div>
-								</a>
-								<div class="flex-fill px-3">									
-									<a href="#" class="text-white" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}" id="slider_{{ meter.id }}">							
-										<div class="fw-bold">{{ meter.Name }}</div>
-									</a>
-								</div>								
-
-								<!-- <div class="flex-fill px-3">
-									<div class="small text-white text-opacity-50">Last Updated: {{ meter.Last_Updated|timesince }}</div>
-								</div> -->
-
-								<div class="opacity-10 px-3">
-									<div class="fw-bold"><span id="value_main_{{ meter.id }}">0</span> m³</div>
-								</div>
-
-								<div class="opacity-10 px-3">
-									<span id="Meter_Status_{{ meter.id }}" class="badge bg-theme" data-bs-toggle="tooltip">M</span>
-									<span id="Node_Status_{{ meter.id }}" class="badge bg-theme" data-bs-toggle="tooltip">N</span>
-								</div>
-							</div>
-							<!-- END METER -->
-
-							<!-- BEGIN METER DETAILS -->
-							<div class="collapse list-group-item" id="collapse_{{ meter.id }}">
-
-								<!-- BEGIN nav-tabs -->
-								<ul class="nav nav-tabs nav-tabs">
-									<li class="nav-item me-3"><a href="#home_{{ meter.id }}" class="nav-link active" data-bs-toggle="tab">Data</a></li>
-									<li class="nav-item me-3"><a href="#details_{{ meter.id }}" class="nav-link" data-bs-toggle="tab">Details</a></li>
-									<li class="nav-item me-3"><a href="#logs_{{ meter.id }}" class="nav-link" data-bs-toggle="tab">Logs</a></li>
-									<li class="nav-item me-3"><a href="#settings_{{ meter.id }}" class="nav-link" data-bs-toggle="tab">Settings</a></li>
-								</ul>
-								<!-- END nav-tabs -->
-
-								<!-- BEGIN tab-content -->
-								<div class="tab-content pt-1">
-									<!-- BEGIN tab-pane -->
-									<div class="tab-pane fade show active" id="home_{{ meter.id }}">
-										<!-- BEGIN TOOLBAR -->
-										<nav class="navbar navbar-expand-lg navbar-dark bg-opacity-25 rounded">
-											<div class="container-fluid">
-												<!-- BEGIN REFRESH BUTTON -->
-												<div class="opacity-10 px-1">
-													<button id="refresh_{{ meter.id }}" type="button" class="btn btn-outline-theme btn-sm"><i class="fa fa-redo"></i></button>
-												</div>
-												<!-- END REFRESH BUTTON -->
-												<!-- BEGIN DATE PICKER -->
-												<div class="flex-fill px-1">
-													<div id="daterange_{{ meter.id }}" class="btn btn-outline-theme d-flex align-items-center text-start btn-sm">
-														<span class="text-truncate">&nbsp;</span>
-														<i class="fa fa-caret-down ms-auto"></i>
-													</div>
-												</div>
-												<!-- END DATE PICKER -->
-												<!-- BEGIN SELECT CHART TYPE -->
-												<select id="select_chart_type_{{ meter.id }}" class="form-select btn-outline-theme form-select-sm" style="width: 100px;">
-													<option>Bar</option>
-													<option>Line</option>
-													<option>Polar</option>
-												</select>
-												<!-- END SELECT CHART TYPE -->
-												<!-- BEGIN FIND BUTTON -->
-												<div class="opacity-10 px-1">
-													<button id="find_{{ meter.id }}" type="button" class="btn btn-outline-theme btn-sm">Find</button>
-												</div>
-												<!-- END FIND BUTTON -->
-											</div>
-										</nav>
-										<!-- END TOOLBAR -->
-										<!-- BEGIN row -->
-										<div class="row">
-											<div class="col-9">												
-												<!-- BEGIN CHART -->
-												<div class="pt-1 flex-1">
-													<div id="meter_chart_bar_{{ meter.id }}" class="pt-1 flex-1"></div>
-													<div id="meter_chart_polar_{{ meter.id }}" class="pt-1 flex-1"></div>
-													<div id="meter_chart_line_{{ meter.id }}" class="pt-1 flex-1"></div>
-												</div>
-												<!-- END CHART -->
-											</div>
-											<div class="col-3">
-												<!-- BEGIN DAILY AVE -->
-												<div class="w-150px h-98px pt-1 ps-3">
-													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														TOTAL (m³)
-													</div>
-													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="total_valuel_{{ meter.id }}">0</span></h4>
-													</div>
-													<div class="progress h-3px bg-white-transparent-2 mb-1">
-														<div class="progress-bar bg-theme" id="total_bar_{{ meter.id }}" style="width: 0%"></div>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="total_info_{{ meter.id }}">@ 0% of max DA recorded.</span>
-													</div>
-												</div>
-												<!-- END DAILY AVE -->
-												<!-- BEGIN HOURLY AVE -->
-												<div class="w-150px h-98px pt-1 ps-3">
-													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														HOURLY AVE (m³/h)
-													</div>
-													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="hourly_ave_value_{{ meter.id }}">0</span> </h4>
-													</div>
-													<div class="progress h-3px bg-white-transparent-2 mb-1">
-														<div class="progress-bar bg-theme" id="hourly_ave_bar_{{ meter.id }}" style="width: 0%"></div>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="hourly_ave_info_{{ meter.id }}">@ 0% of max HA recorded.</span>
-													</div>
-												</div>
-												<!-- END HOURLY AVE -->
-												<!-- BEGIN MAX FLOW -->
-												<div class="w-150px h-98px pt-1 ps-3">
-													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														MAX FLOW (m³/h)
-													</div>
-													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="max_flow_value_{{ meter.id }}">0</span> </h4>
-													</div>
-													<div class="progress h-3px bg-white-transparent-2 mb-1">
-														<div class="progress-bar bg-theme" id="max_flow_bar_{{ meter.id }}" style="width: 0%"></div>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="max_flow_info_{{ meter.id }}">@ 0% of max max fr.</span>
-													</div>
-												</div>
-												<!-- END MAX FLOW -->
-												<!-- BEGIN MIN FLOW -->
-												<div class="w-150px h-98px pt-1 ps-3">
-													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														MIN FLOW (m³/h)
-													</div>
-													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="min_flow_value_{{ meter.id }}">0</span> </h4>
-													</div>
-													<div class="progress h-3px bg-white-transparent-2 mb-1">
-														<div class="progress-bar bg-theme" id="min_flow_bar_{{ meter.id }}" style="width: 0%"></div>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="min_flow_info_{{ meter.id }}">@ 0% of min fr.</span>
-													</div>
-												</div>
-												<!-- END MIN FLOW -->
-											</div>
-										</div>
-										<!-- END row -->
-									</div>
-									<!-- END tab-pane -->
-									<!-- BEGIN tab-pane -->
-									<div class="tab-pane fade" id="details_{{ meter.id }}">
-
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												START OF LOGGING
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Start_Date }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												START INDEX
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Start_Index }} m³
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												TOTAL CONSUMPTION
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Start_Index }} m³
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												PULSE UNIT MEASUREMENT
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Pulse_Unit_Measurement }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												PULSE UNIT VALUE
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Pulse_Unit_Value }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												LOCATION LAT
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Lat }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												LOCATION LNG
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Lng }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												METER TYPE
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Type }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												REGION
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Region }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												CATEGORY
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Category }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-
-									</div>
-									<!-- END tab-pane -->
-									<!-- BEGIN tab-pane -->
-									<div class="tab-pane fade" id="logs_{{ meter.id }}">
-										<!-- BEGIN DATATABLE -->
-										<div class="pt-2 align-items-center">
-											<table id="log2_{{ meter.id }}"></table>
-										</div>
-										<!-- END DATATABLE -->
-									</div>
-									<!-- END tab-pane -->
-
-									<!-- BEGIN SETTINGS -->
-									<div class="tab-pane fade" id="settings_{{ meter.id }}">
-										<!-- BEGIN DATATABLE -->
-										<div class="pt-2 align-items-center">
-											<!-- BEGIN #notifications -->
-											<div id="notifications" class="mb-5">
-												<h6><i class="far fa-bell fa-fw text-theme"></i> Notifications</h6>
-												<p>Enable or disable what notifications you want to receive.</p>
-												<div class="card">
-													<div class="list-group list-group-flush">
-														<div class="list-group-item d-flex align-items-center">
-															<div class="flex-1 text-break">
-																<div>Comments</div>
-																<div class="text-white text-opacity-50 d-flex align-items-center">
-																	<i class="fa fa-circle fs-8px fa-fw text-success me-1"></i> Enabled (Push, SMS)
-																</div>
-															</div>
-															<div>
-																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
-															</div>
-														</div>
-														<div class="list-group-item d-flex align-items-center">
-															<div class="flex-1 text-break">
-																<div>Tags</div>
-																<div class="text-white text-opacity-50 d-flex align-items-center">
-																	<i class="fa fa-circle fs-8px fa-fw me-1"></i> Disabled
-																</div>
-															</div>
-															<div>
-																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
-															</div>
-														</div>
-														<div class="list-group-item d-flex align-items-center">
-															<div class="flex-1 text-break">
-																<div>Reminders</div>
-																<div class="text-white text-opacity-50 d-flex align-items-center">
-																	<i class="fa fa-circle fs-8px fa-fw text-success me-1"></i> Enabled (Push, Email, SMS)
-																</div>
-															</div>
-															<div>
-																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
-															</div>
-														</div>
-														<div class="list-group-item d-flex align-items-center">
-															<div class="flex-1 text-break">
-																<div>New orders</div>
-																<div class="text-white text-opacity-50 d-flex align-items-center">
-																	<i class="fa fa-circle fs-8px fa-fw text-success me-1"></i> Enabled (Push, Email, SMS)
-																</div>
-															</div>
-															<div>
-																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
-															</div>
-														</div>
-													</div>
-													<div class="card-arrow">
-														<div class="card-arrow-top-left"></div>
-														<div class="card-arrow-top-right"></div>
-														<div class="card-arrow-bottom-left"></div>
-														<div class="card-arrow-bottom-right"></div>
-													</div>
-												</div>
-											</div>
-											<!-- END #notifications -->
-										</div>
-										<!-- END DATATABLE -->
-									</div>
-									<!-- END SETTINGS -->
-
-								</div>
-								<!-- END tab-content -->
-								
-							</div>
-							<!-- END METER DETAILS -->
-						{% endfor %}
-						</div>
-						<!-- END consumer -->
-
-
-
-
-
-						<!-- BEGIN waste -->
-						<div class="text-white small mb-2"><b>WASTEWATER</b></div>
-						<div class="list-group mb-3">							
-						{% for meter in meter_list_waste %}
-							<!-- BEGIN METER -->
-							<input type="hidden" id="hidden_Node_Status_{{ meter.id }}" value="0">
-							<input type="hidden" id="hidden_Meter_Status_{{ meter.id }}" value="0">
-							<div class="list-group-item d-flex align-items-center">
-								<a href="#" class="text-white text-opacity-50" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}" id="#go_map_{{ meter.id }}">
-									<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
-										{{ meter.Name|make_list|first }}
-									</div>
-								</a>
-								<div class="flex-fill px-3">									
-									<a href="#" class="text-white" data-bs-toggle="collapse" data-bs-target="#collapse_{{ meter.id }}" id="slider_{{ meter.id }}">							
-										<div class="fw-bold">{{ meter.Name }}</div>
-									</a>
-								</div>								
-
-								<!-- <div class="flex-fill px-3">
-									<div class="small text-white text-opacity-50">Last Updated: {{ meter.Last_Updated|timesince }}</div>
-								</div> -->
-
-								<div class="opacity-10 px-3">
-									<div class="fw-bold"><span id="value_main_{{ meter.id }}">0</span> m³</div>
-								</div>
-
-								<div class="opacity-10 px-3">
-									<span id="Meter_Status_{{ meter.id }}" class="badge bg-theme" data-bs-toggle="tooltip">M</span>
-									<span id="Node_Status_{{ meter.id }}" class="badge bg-theme" data-bs-toggle="tooltip">N</span>
-								</div>
-							</div>
-							<!-- END METER -->
-
-							<!-- BEGIN METER DETAILS -->
-							<div class="collapse list-group-item" id="collapse_{{ meter.id }}">
-
-								<!-- BEGIN nav-tabs -->
-								<ul class="nav nav-tabs nav-tabs">
-									<li class="nav-item me-3"><a href="#home_{{ meter.id }}" class="nav-link active" data-bs-toggle="tab">Data</a></li>
-									<li class="nav-item me-3"><a href="#details_{{ meter.id }}" class="nav-link" data-bs-toggle="tab">Details</a></li>
-									<li class="nav-item me-3"><a href="#logs_{{ meter.id }}" class="nav-link" data-bs-toggle="tab">Logs</a></li>
-									<li class="nav-item me-3"><a href="#settings_{{ meter.id }}" class="nav-link" data-bs-toggle="tab">Settings</a></li>
-								</ul>
-								<!-- END nav-tabs -->
-
-								<!-- BEGIN tab-content -->
-								<div class="tab-content pt-1">
-									<!-- BEGIN tab-pane -->
-									<div class="tab-pane fade show active" id="home_{{ meter.id }}">
-										<!-- BEGIN TOOLBAR -->
-										<nav class="navbar navbar-expand-lg navbar-dark bg-opacity-25 rounded">
-											<div class="container-fluid">
-												<!-- BEGIN REFRESH BUTTON -->
-												<div class="opacity-10 px-1">
-													<button id="refresh_{{ meter.id }}" type="button" class="btn btn-outline-theme btn-sm"><i class="fa fa-redo"></i></button>
-												</div>
-												<!-- END REFRESH BUTTON -->
-												<!-- BEGIN DATE PICKER -->
-												<div class="flex-fill px-1">
-													<div id="daterange_{{ meter.id }}" class="btn btn-outline-theme d-flex align-items-center text-start btn-sm">
-														<span class="text-truncate">&nbsp;</span>
-														<i class="fa fa-caret-down ms-auto"></i>
-													</div>
-												</div>
-												<!-- END DATE PICKER -->
-												<!-- BEGIN SELECT CHART TYPE -->
-												<select id="select_chart_type_{{ meter.id }}" class="form-select btn-outline-theme form-select-sm" style="width: 100px;">
-													<option>Bar</option>
-													<option>Line</option>
-													<option>Polar</option>
-												</select>
-												<!-- END SELECT CHART TYPE -->
-												<!-- BEGIN FIND BUTTON -->
-												<div class="opacity-10 px-1">
-													<button id="find_{{ meter.id }}" type="button" class="btn btn-outline-theme btn-sm">Find</button>
-												</div>
-												<!-- END FIND BUTTON -->
-											</div>
-										</nav>
-										<!-- END TOOLBAR -->
-										<!-- BEGIN row -->
-										<div class="row">
-											<div class="col-9">												
-												<!-- BEGIN CHART -->
-												<div class="pt-1 flex-1">
-													<div id="meter_chart_bar_{{ meter.id }}" class="pt-1 flex-1"></div>
-													<div id="meter_chart_polar_{{ meter.id }}" class="pt-1 flex-1"></div>
-													<div id="meter_chart_line_{{ meter.id }}" class="pt-1 flex-1"></div>
-												</div>
-												<!-- END CHART -->
-											</div>
-											<div class="col-3">
-												<!-- BEGIN DAILY AVE -->
-												<div class="w-150px h-98px pt-1 ps-3">
-													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														TOTAL (m³)
-													</div>
-													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="total_valuel_{{ meter.id }}">0</span></h4>
-													</div>
-													<div class="progress h-3px bg-white-transparent-2 mb-1">
-														<div class="progress-bar bg-theme" id="total_bar_{{ meter.id }}" style="width: 0%"></div>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="total_info_{{ meter.id }}">@ 0% of max DA recorded.</span>
-													</div>
-												</div>
-												<!-- END DAILY AVE -->
-												<!-- BEGIN HOURLY AVE -->
-												<div class="w-150px h-98px pt-1 ps-3">
-													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														HOURLY AVE (m³/h)
-													</div>
-													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="hourly_ave_value_{{ meter.id }}">0</span> </h4>
-													</div>
-													<div class="progress h-3px bg-white-transparent-2 mb-1">
-														<div class="progress-bar bg-theme" id="hourly_ave_bar_{{ meter.id }}" style="width: 0%"></div>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="hourly_ave_info_{{ meter.id }}">@ 0% of max HA recorded.</span>
-													</div>
-												</div>
-												<!-- END HOURLY AVE -->
-												<!-- BEGIN MAX FLOW -->
-												<div class="w-150px h-98px pt-1 ps-3">
-													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														MAX FLOW (m³/h)
-													</div>
-													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="max_flow_value_{{ meter.id }}">0</span> </h4>
-													</div>
-													<div class="progress h-3px bg-white-transparent-2 mb-1">
-														<div class="progress-bar bg-theme" id="max_flow_bar_{{ meter.id }}" style="width: 0%"></div>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="max_flow_info_{{ meter.id }}">@ 0% of max max fr.</span>
-													</div>
-												</div>
-												<!-- END MAX FLOW -->
-												<!-- BEGIN MIN FLOW -->
-												<div class="w-150px h-98px pt-1 ps-3">
-													<div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
-														MIN FLOW (m³/h)
-													</div>
-													<div class="mb-2 fs-5 text-truncate">
-														<h4 class="mb-0"><span id="min_flow_value_{{ meter.id }}">0</span> </h4>
-													</div>
-													<div class="progress h-3px bg-white-transparent-2 mb-1">
-														<div class="progress-bar bg-theme" id="min_flow_bar_{{ meter.id }}" style="width: 0%"></div>
-													</div>
-													<div class="fs-11px text-white text-opacity-50 mb-2 text-truncate">
-														<span id="min_flow_info_{{ meter.id }}">@ 0% of min fr.</span>
-													</div>
-												</div>
-												<!-- END MIN FLOW -->
-											</div>
-										</div>
-										<!-- END row -->
-									</div>
-									<!-- END tab-pane -->
-									<!-- BEGIN tab-pane -->
-									<div class="tab-pane fade" id="details_{{ meter.id }}">
-
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												START OF LOGGING
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Start_Date }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												START INDEX
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Start_Index }} m³
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												TOTAL CONSUMPTION
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Start_Index }} m³
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												PULSE UNIT MEASUREMENT
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Pulse_Unit_Measurement }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												PULSE UNIT VALUE
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Pulse_Unit_Value }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												LOCATION LAT
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Lat }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												LOCATION LNG
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Lng }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												METER TYPE
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Type }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												REGION
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Region }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-										<!-- BEGIN DETAILS ROW -->
-										<div class="d-flex pt-2 align-items-center">
-											<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
-											<div class="flex-fill fs-12px px-3">
-												CATEGORY
-											</div>			
-											<div class="fs-12px ms-auto">
-												{{ meter.Category }}
-											</div>
-										</div>
-										<!-- END DETAILS ROW -->
-
-									</div>
-									<!-- END tab-pane -->
-									<!-- BEGIN tab-pane -->
-									<div class="tab-pane fade" id="logs_{{ meter.id }}">
-										<!-- BEGIN DATATABLE -->
-										<div class="pt-2 align-items-center">
-											<table id="log2_{{ meter.id }}"></table>
-										</div>
-										<!-- END DATATABLE -->
-									</div>
-									<!-- END tab-pane -->
-
-									<!-- BEGIN SETTINGS -->
-									<div class="tab-pane fade" id="settings_{{ meter.id }}">
-										<!-- BEGIN DATATABLE -->
-										<div class="pt-2 align-items-center">
-											<!-- BEGIN #notifications -->
-											<div id="notifications" class="mb-5">
-												<h6><i class="far fa-bell fa-fw text-theme"></i> Notifications</h6>
-												<p>Enable or disable what notifications you want to receive.</p>
-												<div class="card">
-													<div class="list-group list-group-flush">
-														<div class="list-group-item d-flex align-items-center">
-															<div class="flex-1 text-break">
-																<div>Comments</div>
-																<div class="text-white text-opacity-50 d-flex align-items-center">
-																	<i class="fa fa-circle fs-8px fa-fw text-success me-1"></i> Enabled (Push, SMS)
-																</div>
-															</div>
-															<div>
-																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
-															</div>
-														</div>
-														<div class="list-group-item d-flex align-items-center">
-															<div class="flex-1 text-break">
-																<div>Tags</div>
-																<div class="text-white text-opacity-50 d-flex align-items-center">
-																	<i class="fa fa-circle fs-8px fa-fw me-1"></i> Disabled
-																</div>
-															</div>
-															<div>
-																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
-															</div>
-														</div>
-														<div class="list-group-item d-flex align-items-center">
-															<div class="flex-1 text-break">
-																<div>Reminders</div>
-																<div class="text-white text-opacity-50 d-flex align-items-center">
-																	<i class="fa fa-circle fs-8px fa-fw text-success me-1"></i> Enabled (Push, Email, SMS)
-																</div>
-															</div>
-															<div>
-																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
-															</div>
-														</div>
-														<div class="list-group-item d-flex align-items-center">
-															<div class="flex-1 text-break">
-																<div>New orders</div>
-																<div class="text-white text-opacity-50 d-flex align-items-center">
-																	<i class="fa fa-circle fs-8px fa-fw text-success me-1"></i> Enabled (Push, Email, SMS)
-																</div>
-															</div>
-															<div>
-																<a href="#modalEdit" data-bs-toggle="modal" class="btn btn-outline-default w-100px">Edit</a>
-															</div>
-														</div>
-													</div>
-													<div class="card-arrow">
-														<div class="card-arrow-top-left"></div>
-														<div class="card-arrow-top-right"></div>
-														<div class="card-arrow-bottom-left"></div>
-														<div class="card-arrow-bottom-right"></div>
-													</div>
-												</div>
-											</div>
-											<!-- END #notifications -->
-										</div>
-										<!-- END DATATABLE -->
-									</div>
-									<!-- END SETTINGS -->
-
-								</div>
-								<!-- END tab-content -->
-								
-							</div>
-							<!-- END METER DETAILS -->
-						{% endfor %}
-						</div>
-						<!-- END waste -->		
-
-
-
-
-
-
+						{% include 'app_water/includes/widgets/widget_water_nodes.html' %}					
 					</div>
 					<div class="col-xl-6">
-
 						<!-- BEGIN NAV-TABS -->
 						<ul id="tabs" class="nav nav-tabs nav-tabs">
 							<li class="nav-item me-3"><a href="#reporting" class="nav-link active" data-bs-toggle="tab">Reporting</a></li>
-							<li class="nav-item me-3"><a href="#data_analysis" class="nav-link" data-bs-toggle="tab">Data Analysis</a></li>
-							<li class="nav-item me-3"><a href="#map" class="nav-link" data-bs-toggle="tab">Map</a></li>
-							<!-- <li class="nav-item me-3"><a href="#schematics" class="nav-link" data-bs-toggle="tab">Schematics</a></li> -->							
+							<li class="nav-item me-3"><a href="#data_analysis" class="nav-link" data-bs-toggle="tab">Data Analysis</a></li>						
 						</ul>
 						<!-- END NAV-TABS -->
-
 						<!-- BEGIN tab-content -->
-						<div class="tab-content">
-							<!-- BEGIN TAB-PANE -->
-							<div class="tab-pane fade" id="map">
-								<!-- BEGIN MAP -->
-								<div class="pt-1 mb-1" id="siteMap"></div>
-								<!-- END MAP -->
-							</div>
-							<!-- END TAB-PANE -->
-
-							<!-- BEGIN TAB-PANE
-							<div class="tab-pane fade" id="schematics">
-								<div id="schematics_toolbar"></div>
-							</div>
-							END TAB-PANE -->
-
-							<!-- BEGIN TAB-PANE -->
-							<div class="tab-pane fade" id="data_analysis">
-								<!-- BEGIN TOOLBAR -->
-								<nav class="navbar navbar-expand-lg navbar-dark bg-opacity-25 rounded">
-									<div class="container-fluid">
-										<!-- BEGIN REFRESH BUTTON -->
-										<div class="opacity-10 px-1">
-											<button id="refresh_da" type="button" class="btn btn-outline-theme btn-sm"><i class="fa fa-redo"></i></button>
-										</div>
-										<!-- END REFRESH BUTTON -->
-										<!-- BEGIN DATE PICKER -->
-										<div class="flex-fill px-1">
-											<div id="daterange_da" class="btn btn-outline-theme d-flex align-items-center text-start btn-sm">
-												<span class="text-truncate">&nbsp;</span>
-												<i class="fa fa-caret-down ms-auto"></i>
-											</div>
-										</div>
-										<!-- END DATE PICKER -->
-										<!-- BEGIN SELECT CHART TYPE -->
-										<select id="select_chart_type_da" class="form-select btn-outline-theme form-select-sm" style="width: 100px;">
-											<option value="Bar"><i class="fa fa-bar-chart"></i>Bar</option>
-											<option value="Line"><i class="fa fa-line-chart"></i>Line</option>
-											<option value="Polar"><i class="fa fa-pie-chart"></i>Polar</option>
-										</select>
-										<!-- END SELECT CHART TYPE -->
-										<!-- BEGIN FIND BUTTON -->
-										<div class="opacity-10 px-1">
-											<button id="find_da" type="button" class="btn btn-outline-theme btn-sm"><i class="fa fa-search"></i></button>
-										</div>
-										<!-- END FIND BUTTON -->
-									</div>
-								</nav>
-								<!-- END TOOLBAR -->
-								<!-- BEGIN CHART -->
-								<div class="pt-1 flex-1">
-									<div class="pt-1 mb-1" id="data_analysis_chart" style="width: 100%;"></div>
-								</div>
-								<!-- END CHART -->
-								<!-- BEGIN TABLE -->
-								<table class="table">
-									<thead class="table-dark">
-										<tr>
-											<th scope="col"></th>
-											<th scope="col">Meter</th>
-											<th scope="col">Location</th>
-											<th scope="col">Show</th>
-										</tr>
-									</thead>
-									<tbody>
-										{% for meter in meter_list_supply %}
-										<tr>
-											<td>
-												<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-{{ meter.Kwargs }} text-white rounded-2 ms-n1">
-													{{ meter.Name|make_list|first }}
-												</div>
-											</td>
-											<td>{{ meter.Name }}</td>
-											<td>{{ meter.Region }}</td>
-											<td>
-												<div class="form-check form-switch">
-													<input type="checkbox" class="form-check-input" value='{"name": "{{ meter.Name }}", "color": "{{ meter.Kwargs }}"}' id="show_da_chart_{{ meter.id }}">
-												</div>
-											</td>
-										</tr>
-										{% endfor %}
-										{% for meter in meter_list_consumer %}
-										<tr>
-											<td>
-												<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-{{ meter.Kwargs }} text-white rounded-2 ms-n1">
-													{{ meter.Name|make_list|first }}
-												</div>
-											</td>
-											<td>{{ meter.Name }}</td>
-											<td>{{ meter.Region }}</td>
-											<td>
-												<div class="form-check form-switch">
-													<input type="checkbox" class="form-check-input" value='{"name": "{{ meter.Name }}", "color": "{{ meter.Kwargs }}"}' id="show_da_chart_{{ meter.id }}">
-												</div>
-											</td>
-										</tr>
-										{% endfor %}
-										{% for meter in meter_list_waste %}
-										<tr>
-											<td>
-												<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-{{ meter.Kwargs }} text-white rounded-2 ms-n1">
-													{{ meter.Name|make_list|first }}
-												</div>
-											</td>
-											<td>{{ meter.Name }}</td>
-											<td>{{ meter.Region }}</td>
-											<td>
-												<div class="form-check form-switch">
-													<input type="checkbox" class="form-check-input" value='{"name": "{{ meter.Name }}", "color": "{{ meter.Kwargs }}"}' id="show_da_chart_{{ meter.id }}">
-												</div>
-											</td>
-										</tr>
-										{% endfor %}
-									</tbody>
-								</table>
-								<!-- END TABLE -->
-							</div>
-							<!-- END TAB-PANE -->
-
-							<!-- BEGIN TAB-PANE -->
-							<div class="tab-pane fade show active" id="reporting">
-								<!-- BEGIN TOOLBAR -->
-								<nav class="navbar navbar-expand-lg navbar-dark bg-opacity-25 rounded">
-									<div class="container-fluid">
-										<!-- BEGIN REFRESH BUTTON -->
-										<div class="opacity-10 px-1">
-											<button id="refresh_reporting" type="button" class="btn btn-outline-theme btn-sm"><i class="fa fa-redo"></i></button>
-										</div>
-										<!-- END REFRESH BUTTON -->
-										<!-- BEGIN DATE PICKER -->
-										<div class="flex-fill px-1">
-											<div id="daterange_reporting" class="btn btn-outline-theme d-flex align-items-center text-start btn-sm">
-												<span class="text-truncate">&nbsp;</span>
-												<i class="fa fa-caret-down ms-auto"></i>
-											</div>
-										</div>
-										<!-- END DATE PICKER -->
-										<!-- BEGIN SELECT CHART TYPE -->
-										<select id="select_chart_type_reporting" class="form-select btn-outline-theme form-select-sm" style="width: 100px;">											
-											<option value="Pie"><i class="fa fa-pie-chart"></i>Pie</option>
-											<option value="Bar"><i class="fa fa-bar-chart"></i>Bar</option>
-										</select>
-										<!-- END SELECT CHART TYPE -->
-									</div>
-								</nav>
-								<!-- END TOOLBAR -->
-								<div class="pt-1 mb-1">
-									<p>Totals for a <span id="report_period"></span> day period from <span id="report_from"></span> to the <span id="report_to"></span>, a total of <span id="report_not_metered"></span> of supply water was not metered. The waste water total for this period was <span id="report_waste"></span></p>
-								</div>
-								<!-- BEGIN PIE -->
-								<div class="pt-1 mb-1" id="reporting_pie"></div>
-								<!-- END PIE -->
-								<!-- BEGIN PIE -->
-								<div class="pt-1 mb-1" id="reporting_bar"></div>
-								<!-- END PIE -->
-								<!-- BEGIN GAUGE -->
-								<div class="pt-1 mb-1" id="reporting_gauge"></div>
-								<!-- END GAUGE -->
-
-								<!-- BEGIN TABLE -->
-								<div class="pt-1 mb-1">
-									<table class="table">
-										<thead class="table-dark">
-											<tr>
-												<th scope="col"></th>
-												<th scope="col">Meter</th>
-												<th scope="col">Supply</th>
-												<th scope="col">Consumers</th>
-												<th scope="col">Wastewater</th>
-												<th scope="col">
-													<div class="form-check form-switch px-1">
-														<input type="checkbox" class="form-check-input" id="toggle_value_percentage">
-													</div>
-												</th>
-											</tr>
-										</thead>
-										<tbody>
-											{% for meter in meter_list_supply %}
-											<tr>
-												<td>
-													<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
-														{{ meter.Name|make_list|first }}
-													</div>
-												</td>
-												<td>{{ meter.Name }}</td>
-												<td><span id="report_table_value_{{ meter.id }}"></span></td>
-												<td></td>
-												<td></td>
-												<td></td>
-											</tr>
-											{% endfor %}
-
-											{% for meter in meter_list_consumer %}
-											<tr>
-												<td>
-													<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
-														{{ meter.Name|make_list|first }}
-													</div>
-												</td>
-												<td>{{ meter.Name }}</td>
-												<td></td>
-												<td><span id="report_table_value_{{ meter.id }}"></span></td>
-												<td></td>
-												<td></td>
-											</tr>
-											{% endfor %}
-											
-											{% for meter in meter_list_waste %}
-											<tr>
-												<td>
-													<div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
-														{{ meter.Name|make_list|first }}
-													</div>
-												</td>
-												<td>{{ meter.Name }}</td>
-												<td></td>
-												<td></td>
-												<td><span id="report_table_value_{{ meter.id }}"></span></td>
-												<td></td>
-											</tr>
-											{% endfor %}
-											<tr>
-												<td></td>
-												<td>TOTALS</td>
-												<td><span id="report_supply_total_value"></span></td>
-												<td><span id="report_consumer_total_value"></span></td>
-												<td><span id="report_waste_total_value"></span></td>
-												<td></td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-								<!-- END TABLE -->
-							</div>
-							<!-- END TAB-PANE -->
+						<div class="tab-content">							
+							{% include 'app_water/includes/widgets/widget_water_analysis.html' %}
+							{% include 'app_water/includes/widgets/widget_water_reports.html' %}
 						</div>
 						<!-- END tab-content -->						
 					</div>
@@ -1411,17 +45,43 @@
 		</div>
 	</div>
 	<!-- END -->
-
-
 </div>
 <!-- END #content -->
+{% include 'app_water/includes/widgets/widget_water_modal_help.html' %}
 {% endblock content %}
-
-
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 
+
+
 <script>
+	
+	/////////////////////////// PDF GENERATOR ///////////////////////////
+	// Get all buttons with the class 'pdf'
+	var buttons = document.querySelectorAll('.pdf');
+
+	// Add an event listener to each button
+	buttons.forEach(function(button) {
+		button.addEventListener('click', function() {
+			var targetId = this.getAttribute('data-target'); // Get the id from the data-target attribute
+			var element = document.getElementById(targetId); // Get the element using the id
+
+			// Create a new style element
+			var style = document.createElement('style');
+			// Add a CSS rule to change the color of all text to black and set opacity to 100%
+			style.innerHTML = '* { color: #000 !important; }';
+			// Append the style element to the head of the document
+			document.head.appendChild(style);
+
+			html2pdf().from(element).save().then(function() {
+				// Remove the style element after the PDF is generated
+				document.head.removeChild(style);
+			});
+		});
+	});
+	/////////////////////////// PDF GENERATOR ///////////////////////////
+
+	/////////////////////////// API ///////////////////////////
 	// -- GET OVERALL STATUS 
 	var markersData = []
 	var newMarker = {}
@@ -1437,52 +97,13 @@
 			success: function(data) {
 				
 				$.each(data['Data'], function(i, meter) {
-					// CREATE MAP MARKERS
-					if (meter.Meter_Status == 1) {icon = '/static/assets/img/map/error_marker.png'} else {icon = '/static/assets/img/map/ok_marker.png'}					
-					newMarker = {
-						location: {
-							lat: meter.Lat, 
-							lng: meter.Lng
-						},
-						tooltip: {
-							text: meter.Name,
-						},
-						iconSrc: icon,
-					}
-					markersData.push(newMarker)					
-
-					// SET STATUS 
-					//console.log(meter.Name + ': ' + parseInt(Math.abs(new Date()-new Date(meter.Last_Updated)) / (1000 * 60)))
-					if (parseInt(Math.abs(new Date()-new Date(meter.Last_Updated)) / (1000 * 60)) > 2) {
-						$('#Meter_Status_' + meter.id).addClass('bg-danger');
-						$('#Meter_Status_' + meter.id).attr('title', 'Last time data updated was too long.');
-						$("#hidden_Meter_Status_" + meter.id).val('1');
-					} else {
-						$('#Meter_Status_' + meter.id).removeClass('bg-danger');
-						$("#hidden_Meter_Status_" + meter.id).val('0');
-					}
-
 					// SET VALUES
 					set_text(meter.id, meter.Pulse_Unit_Measurement, meter.Pulse_Unit_Value, meter.readings);
-
-					// SET MAP MARKERS
-					set_map_markers(meter);
-
-					// SET STATUS MARKERS
-					set_status_markers(meter);	
-
-				});
-				$("#siteMap").dxMap({
-					//zoom: 5,
-					markers: markersData
 				});
 			}
 		});
 	};
-
-	function getPercentage(act, max) {
-		return (act / max) * 100;
-	}
+	/////////////////////////// API ///////////////////////////
 
 	function set_text(id, Pulse_Unit_Measurement, Pulse_Unit_Value, readings) {
 		// LOOP THROUGH READINGS
@@ -1515,23 +136,11 @@
 			record_number += 1
 		});
 
-		//$("#value_main_" + id).text((value_hourly_ave/record_number).toFixed(3));
-
-		//$("#total_valuel_" + id).text(value_24h_ave.toFixed(3));
-		//$("#total_bar_" + id).attr('style', 'width: ' + getPercentage(value_24h_ave, 4).toFixed(0) + '%');
-		//$("#total_info_" + id).text('@ ' + getPercentage(value_24h_ave, 4).toFixed(0) + '% of max DA.');
-
 		$("#hourly_ave_value_" + id).text((value_hourly_ave/record_number).toFixed(3));
-		$("#hourly_ave_bar_" + id).attr('style', 'width: ' + getPercentage(value_hourly_ave/record_number, 4000).toFixed(0) + '%');
-		$("#hourly_ave_info_" + id).text('@ ' + getPercentage(value_hourly_ave/record_number, 4000).toFixed(0) + '% of max HA.');
 
 		$("#max_flow_value_" + id).text(value_max_flow.toFixed(3));
-		$("#max_flow_bar_" + id).attr('style', 'width: ' + getPercentage(value_max_flow, 4).toFixed(0) + '%');
-		$("#max_flow_info_" + id).text('@ ' + getPercentage(value_max_flow, 4).toFixed(0) + '% of max FR.');
 
 		$("#min_flow_value_" + id).text(value_min_flow.toFixed(3));
-		$("#min_flow_bar_" + id).attr('style', 'width: ' + getPercentage(value_min_flow, 4).toFixed(0) + '%');
-		$("#min_flow_info_" + id).text('@ ' + getPercentage(value_min_flow, 4).toFixed(0) + '% of min FR.');
 	}
 
 	function create_log_datatable(id) {
@@ -1786,12 +395,6 @@
 		});		
 	}
 
-	
-
-	function getPercentage(act, max) {
-		return (act / max) * 100;
-	}
-
 	// CREATE TOOL BARS
 	function create_tool_bars() {
 		// CREATE  TOOL BARS
@@ -1799,137 +402,9 @@
 			items: [
 
 			],
-		});
-		// CREATE MAP TOOL BARS
-		var toolbar = $('#map_toolbar').dxToolbar({
-			items: [
-			{
-					location: 'before',
-					widget: 'dxButton',
-					locateInMenu: 'auto',
-					options: {
-						icon: 'refresh',
-						onClick() {
-							DevExpress.ui.notify('Refresh button has been clicked!');
-						},
-					},
-				}, {
-					location: 'after',
-					widget: 'dxButton',
-					locateInMenu: 'auto',
-					options: {
-						icon: 'plus',
-						onClick() {
-							DevExpress.ui.notify('Add button has been clicked!');
-						},
-					},
-				}, {
-					locateInMenu: 'always',
-					widget: 'dxButton',
-					options: {
-						text: 'Save',
-						onClick() {
-							DevExpress.ui.notify('Save option has been clicked!');
-						},
-					},
-				}, {
-					locateInMenu: 'always',
-					widget: 'dxButton',
-					options: {
-						text: 'Print',
-						onClick() {
-							DevExpress.ui.notify('Print option has been clicked!');
-						},
-					},
-				}, {
-					locateInMenu: 'always',
-					widget: 'dxButton',
-					options: {
-						text: 'Settings',
-						onClick() {
-							DevExpress.ui.notify('Settings option has been clicked!');
-						},
-					},
-				},
-			],
-		});
-		// CREATE SCHEMATIC TOOL BARS
-		var toolbar = $('#schematics_toolbar').dxToolbar({
-			items: [
-			{
-					location: 'before',
-					widget: 'dxButton',
-					locateInMenu: 'auto',
-					options: {
-						icon: 'refresh',
-						onClick() {
-							DevExpress.ui.notify('Refresh button has been clicked!');
-						},
-					},
-				}, {
-					location: 'after',
-					widget: 'dxButton',
-					locateInMenu: 'auto',
-					options: {
-						icon: 'plus',
-						onClick() {
-							DevExpress.ui.notify('Add button has been clicked!');
-						},
-					},
-				}, {
-					locateInMenu: 'always',
-					widget: 'dxButton',
-					options: {
-						text: 'Save',
-						onClick() {
-							DevExpress.ui.notify('Save option has been clicked!');
-						},
-					},
-				}, {
-					locateInMenu: 'always',
-					widget: 'dxButton',
-					options: {
-						text: 'Print',
-						onClick() {
-							DevExpress.ui.notify('Print option has been clicked!');
-						},
-					},
-				}, {
-					locateInMenu: 'always',
-					widget: 'dxButton',
-					options: {
-						text: 'Settings',
-						onClick() {
-							DevExpress.ui.notify('Settings option has been clicked!');
-						},
-					},
-				},
-			],
-		});
+		});	
 				
 	}
-
-	// CREATE MAPS
-	var renderMaps = function () {
-		var siteMap = $('#siteMap').dxMap({
-			center: [51.88328620951812, -8.511571884155275],
-			zoom: 16.5,
-			height: 560,
-			width: '100%',
-			provider: 'bing',
-			controls: true,
-			apiKey: {
-			// Specify your API keys for each map provider:
-			// bing: "YOUR_BING_MAPS_API_KEY",
-			},
-			type: 'hybrid',
-    		markers: markersData,
-			mapOnClick: function (e) {
-				var point = e.target;
-			},
-		}).dxMap('instance');
-
-	};
 	
 	// GET DATA
 	function reviver_1(key, value) {
@@ -1963,12 +438,12 @@
 			$("#meter_chart_polar_" + meter.id).hide();
 			$("#meter_chart_line_" + meter.id).hide();
 			// CREATE LOG TABLE
-			create_log_datatable(meter.id);			
+			//create_log_datatable(meter.id);			
 			// CREATE METER TOOL BAR
 			create_meter_tool_bars(meter);
 		});
 		// CREATE MAP
-		renderMaps();
+		//renderMaps();
 		// CREATE TOOLBARS
 		create_tool_bars();
 	}
@@ -2030,9 +505,9 @@
 				'Last 24 Hours': [moment().subtract(24, 'hours'), moment()],
 				'Yesterday': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
 				'Last 7 Days': [moment().subtract(6, 'days').startOf('day'), moment()],
-				'This Month So Far': [moment().startOf('month'), moment().endOf('month')],
+				'Month So Far': [moment().startOf('month'), moment().endOf('month')],
 				'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-				'This Year So Far': [moment().startOf('year'), moment().endOf('year')],
+				'Year So Far': [moment().startOf('year'), moment().endOf('year')],
 				'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')]
 			},
 			opens: 'right',
@@ -2053,65 +528,66 @@
 			}
 		}, function(start, end, label) {
 			$('#daterange_' + meter.id + ' span').html(start.format('DD-MM-YYYY HH:00') + ' - ' + end.format('DD-MM-YYYY HH:00'));
-			change_chart_data(meter.id, new Date(start.format()), new Date(end.format()));
+
+			//change_chart_data(meter.id, new Date(start.format()), new Date(end.format()));
+
+			change_data(meter.id, meter, new Date(start.format()), new Date(end.format()), 'H');
 		});
 	}
 
 	// CHANGE CHART DATA
-	function change_chart_data(id, start, end) {
+	//function change_chart_data(id, start, end) {
 
-		$.each(meter_list_data, function(i, meter) {
-			if (meter.id == id) {
+	//	$.each(meter_list_data, function(i, meter) {
+	//		if (meter.id == id) {
 
-				// READINGS
-				var readings = meter.readings.filter((item) => item.Data_DateTime.getTime() >= start.getTime() && item.Data_DateTime.getTime() <= end.getTime());
+	//			// READINGS
+	//			var readings = meter.readings.filter((item) => item.Data_DateTime.getTime() >= start.getTime() && item.Data_DateTime.getTime() <= end.getTime());
 
-				// ###########################################			
-				if (meter.baseline.length != 0) {
-					var days = [
-						JSON.parse(meter.baseline['Day_0']),
-						JSON.parse(meter.baseline['Day_1']),
-						JSON.parse(meter.baseline['Day_2']),
-						JSON.parse(meter.baseline['Day_3']),
-						JSON.parse(meter.baseline['Day_4']),
-						JSON.parse(meter.baseline['Day_5']),
-						JSON.parse(meter.baseline['Day_6']),
-					]
-					$.each(readings, function(i, reading) {
-						readings[i]['Baseline'] = days[reading.Data_DateTime.getDay()][reading.Data_DateTime.getHours()][0];
-					});
-				}
-				console.log(readings)
-				// ###########################################
+	//			// ###########################################			
+	//			if (meter.baseline.length != 0) {
+	//				var days = [
+	//					JSON.parse(meter.baseline['Day_0']),
+	//					JSON.parse(meter.baseline['Day_1']),
+	//					JSON.parse(meter.baseline['Day_2']),
+	//					JSON.parse(meter.baseline['Day_3']),
+	//					JSON.parse(meter.baseline['Day_4']),
+	//					JSON.parse(meter.baseline['Day_5']),
+	//					JSON.parse(meter.baseline['Day_6']),
+	//				]
+	//				$.each(readings, function(i, reading) {
+	//					readings[i]['Baseline'] = days[reading.Data_DateTime.getDay()][reading.Data_DateTime.getHours()][0];
+	//				});
+	//			}
+	//			console.log(readings)
+	//			// ###########################################
 
-				// Set totals
-				var pulseSum = 0;
-				$.each(readings, function(i, reading) {
-					pulseSum += reading.Pulses
-				});
-				var waterSum = pulseSum * meter.Pulse_Unit_Value
-				$("#value_main_" + meter.id).text(waterSum.toFixed(3));
-				$("#total_valuel_" + meter.id).text(waterSum.toFixed(3));
-				$("#total_bar_" + meter.id).attr('style', 'width: ' + getPercentage(waterSum, 4).toFixed(0) + '%');
-				$("#total_info_" + meter.id).text('@ ' + getPercentage(waterSum, 4).toFixed(0) + '% of max DA.');
+	//			// Set totals
+	//			var pulseSum = 0;
+	//			$.each(readings, function(i, reading) {
+	//				pulseSum += reading.Pulses
+	//			});
+	//			var waterSum = pulseSum * meter.Pulse_Unit_Value
 
-				// SET BAR CHART DATA
-				$("#meter_chart_bar_" + meter.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value, 'Baseline': element.Baseline*meter.Pulse_Unit_Value};}));
-				$("#meter_chart_bar_" + meter.id).dxChart('instance').refresh();
+	//			$("#total_valuel_" + meter.id).text(waterSum.toFixed(3));
+
+	//			// SET BAR CHART DATA
+	//			$("#meter_chart_bar_" + meter.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value, 'Baseline': element.Baseline*meter.Pulse_Unit_Value};}));
+	//			$("#meter_chart_bar_" + meter.id).dxChart('instance').refresh();
 							
-				// SET POLAR CHART DATA
-				$("#meter_chart_polar_" + meter.id).dxPolarChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value, 'Baseline': element.Baseline*meter.Pulse_Unit_Value};}));
-				$("#meter_chart_polar_" + meter.id).dxPolarChart('instance').refresh();
+	//			// SET POLAR CHART DATA
+	//			$("#meter_chart_polar_" + meter.id).dxPolarChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value, 'Baseline': element.Baseline*meter.Pulse_Unit_Value};}));
+	//			$("#meter_chart_polar_" + meter.id).dxPolarChart('instance').refresh();
 
-				// SET BAR CHART DATA
-				$("#meter_chart_line_" + meter.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value, 'Baseline': element.Baseline*meter.Pulse_Unit_Value};}));
-				$("#meter_chart_line_" + meter.id).dxChart('instance').refresh();
+	//			// SET LINE CHART DATA
+	//			$("#meter_chart_line_" + meter.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value, 'Baseline': element.Baseline*meter.Pulse_Unit_Value};}));
+	//			$("#meter_chart_line_" + meter.id).dxChart('instance').refresh();
 
-				// SET VALUES
-				set_text(meter.id, meter.Pulse_Unit_Measurement, meter.Pulse_Unit_Value, readings);
-			}			
-		});		
-	}
+	//			// SET VALUES
+	//			set_text(meter.id, meter.Pulse_Unit_Measurement, meter.Pulse_Unit_Value, readings);
+	//		}			
+	//	});		
+	//}
 
 	// SET UP PAGE, CREATE ALL CONTROLS
 	function data_setup() {
@@ -2147,8 +623,6 @@
 			var waterSum = pulseSum * meter.Pulse_Unit_Value
 			$("#value_main_" + meter.id).text(waterSum.toFixed(3));
 			$("#total_valuel_" + meter.id).text(waterSum.toFixed(3));
-			$("#total_bar_" + meter.id).attr('style', 'width: ' + getPercentage(waterSum, 4).toFixed(0) + '%');
-			$("#total_info_" + meter.id).text('@ ' + getPercentage(waterSum, 4).toFixed(0) + '% of max DA.');			
 
 			// SET BAR CHART DATA
 			$("#meter_chart_bar_" + meter.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value, 'Baseline': element.Baseline*meter.Pulse_Unit_Value};}));
@@ -2161,100 +635,102 @@
 			// SET LINE CHART DATA
 			$("#meter_chart_line_" + meter.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value, 'Baseline': element.Pulses*meter.Pulse_Unit_Value};}));
 			$("#meter_chart_line_" + meter.id).dxChart('instance').refresh();
-			
-			// SET LOG VALUES
-			$("#log2_" + meter.id).dxDataGrid("option", "dataSource", readings.map(function(element) {return {'ID': element.id, 'Data_DateTime': element.Data_DateTime, 'Pulses': element.Pulses, 'Water': (element.Pulses*meter.Pulse_Unit_Value).toFixed(3)};}));
-			$("#log2_" + meter.id).dxDataGrid('instance').refresh();
-
-			// SET CHART DATA
-			//$("#data_analysis_chart").dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value};}));
-			//$("#data_analysis_chart").dxChart('instance').refresh();
 
 			// SET VALUES
 			set_text(meter.id, meter.Pulse_Unit_Measurement, meter.Pulse_Unit_Value, readings)
 
-			// SET MAP MARKERS
-			set_map_markers(meter);
-
-			// SET STATUS MARKERS
-			set_status_markers(meter);			
-
 			// CREATE FAKE DATA
 			//fake_data(meter.id);
 		});
-		// PUSH MAP MARKERS
-		$("#siteMap").dxMap({
-			//zoom: 5,
-			markers: markersData
+	}
+
+	//////////////////////////////////////////////////////////////////////////////
+	// CHANGE DATA API
+	/////////////////////////////////////////////////////////////////////////////
+	function change_data(id, data, start, end, resolution) {
+		// AJAX
+		$.ajax({
+			type: 'GET',
+			url: '../water/readings/get_by_id_and_dates/?meter_id=' + id + '&start_datetime=' + start.toISOString() + '&end_datetime=' + end.toISOString() + '&resolution=' + resolution,
+			headers: {
+				"Authorization": "Basic YWRtaW46d2lsbDE5Nzc=",
+				'Accept' : 'application/json'
+			},
+			success: function(data) {
+				var data_current = data[data.length-1];
+				if (data != '') {
+
+					console.log(btoa("admin" + ":" + "will1977"));
+
+					$.each(JSON.parse(data, reviver_1).Data, function(i, meter) {
+
+						///////////////////////////////////////////////////
+						if (meter.id == id) {
+
+							// READINGS
+							var readings = meter.readings.filter((item) => item.Data_DateTime.getTime() >= start.getTime() && item.Data_DateTime.getTime() <= end.getTime());
+
+							// ###########################################			
+							if (meter.baseline.length != 0) {
+								var days = [
+									JSON.parse(meter.baseline['Day_0']),
+									JSON.parse(meter.baseline['Day_1']),
+									JSON.parse(meter.baseline['Day_2']),
+									JSON.parse(meter.baseline['Day_3']),
+									JSON.parse(meter.baseline['Day_4']),
+									JSON.parse(meter.baseline['Day_5']),
+									JSON.parse(meter.baseline['Day_6']),
+								]
+								$.each(readings, function(i, reading) {
+									readings[i]['Baseline'] = days[reading.Data_DateTime.getDay()][reading.Data_DateTime.getHours()][0];
+								});
+							}
+							console.log(readings)
+							// ###########################################
+
+							// Set totals
+							var pulseSum = 0;
+							$.each(readings, function(i, reading) {
+								pulseSum += reading.Pulses
+							});
+							var waterSum = pulseSum * meter.Pulse_Unit_Value
+
+							$("#total_valuel_" + meter.id).text(waterSum.toFixed(3));
+
+							// SET BAR CHART DATA
+							$("#meter_chart_bar_" + meter.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value, 'Baseline': element.Baseline*meter.Pulse_Unit_Value};}));
+							$("#meter_chart_bar_" + meter.id).dxChart('instance').refresh();
+										
+							// SET POLAR CHART DATA
+							$("#meter_chart_polar_" + meter.id).dxPolarChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value, 'Baseline': element.Baseline*meter.Pulse_Unit_Value};}));
+							$("#meter_chart_polar_" + meter.id).dxPolarChart('instance').refresh();
+
+							// SET LINE CHART DATA
+							$("#meter_chart_line_" + meter.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value, 'Baseline': element.Baseline*meter.Pulse_Unit_Value};}));
+							$("#meter_chart_line_" + meter.id).dxChart('instance').refresh();
+
+							// SET VALUES
+							set_text(meter.id, meter.Pulse_Unit_Measurement, meter.Pulse_Unit_Value, readings);
+						}			
+					});
+					///////////////////////////////////////////////////
+										
+				}	
+			}
 		});
+		//////////////////////////////////////////////////////////////////////////////
+		// CHANGE DATA API
+		/////////////////////////////////////////////////////////////////////////////
 	}
 
-	// SET MAP MARKERS
-	function set_map_markers(meter) {
-		if (meter.Meter_Status == 1) {icon = '/static/assets/img/map/error_marker.png'} else {icon = '/static/assets/img/map/ok_marker.png'}					
-		newMarker = {
-			location: {
-				lat: meter.Lat, 
-				lng: meter.Lng
-			},
-			tooltip: {
-				text: meter.Name,
-			},
-			iconSrc: icon,
-		}
-		markersData.push(newMarker)			
-	}
 
-	// SET STATUS MARKERS
-	function set_status_markers(meter) {
-		//console.log(meter.Name + ': ' + parseInt(Math.abs(new Date()-new Date(meter.Last_Updated)) / (1000 * 60)))
-		if (parseInt(Math.abs(new Date()-new Date(meter.Last_Updated)) / (1000 * 60)) > 2) {
-			$('#Meter_Status_' + meter.id).addClass('bg-danger');
-			$('#Meter_Status_' + meter.id).attr('title', 'Last time data updated was too long.');
-			$("#hidden_Meter_Status_" + meter.id).val('1');
-		} else {
-			$('#Meter_Status_' + meter.id).removeClass('bg-danger');
-			$("#hidden_Meter_Status_" + meter.id).val('0');
-		}
-	}
 
-	// CREATE FAKE DATA
-	function fake_data(id) {
-		var start = new Date("06/05/2022");
-		var end = new Date("07/05/2022");
-		var loop = new Date(start);
 
-		while (loop <= end) {
-			data = {
-				"Meter": id,
-				"Data_DateTime": loop,
-				"Pulses": Math.floor((Math.random() * 10) + 1),
-				"Battery_Level": 100,
-				"Battery_Voltage": 3.2
-            }
 
-			$.ajax({
-				type: 'POST',
-				url: '../water/readings/data/',
-				headers: {
-					"Authorization": "Basic " + btoa("admin" + ":" + "will1977"),
-					"X-CSRFTOKEN": "{{ csrf_token }}",
-				},
-				dataType: 'json',
-				contentType: "application/json",
-				data: JSON.stringify(data),
-				success: function (data) {
-					//console.log(data);
-				},
-				async: false
-			});
 
-			var newDate = loop.setTime(loop.getTime() + 1*60*60*1000);
-			loop = new Date(newDate);
 
-			break
-		}
-	}
+
+
 
 
 
@@ -2397,9 +873,9 @@
 				'Last 24 Hours': [moment().subtract(24, 'hours'), moment()],
 				'Yesterday': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
 				'Last 7 Days': [moment().subtract(6, 'days').startOf('day'), moment()],
-				'This Month So Far': [moment().startOf('month'), moment().endOf('month')],
+				'Month So Far': [moment().startOf('month'), moment().endOf('month')],
 				'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-				'This Year So Far': [moment().startOf('year'), moment().endOf('year')],
+				'Year So Far': [moment().startOf('year'), moment().endOf('year')],
 				'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')]
 			},
 			opens: 'right',
@@ -2612,9 +1088,9 @@
 				'Last 24 Hours': [moment().subtract(24, 'hours'), moment()],
 				'Yesterday': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
 				'Last 7 Days': [moment().subtract(6, 'days').startOf('day'), moment()],
-				'This Month So Far': [moment().startOf('month'), moment().endOf('month')],
+				'Month So Far': [moment().startOf('month'), moment().endOf('month')],
 				'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-				'This Year So Far': [moment().startOf('year'), moment().endOf('year')],
+				'Year So Far': [moment().startOf('year'), moment().endOf('year')],
 				'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')]
 			},
 			opens: 'right',
