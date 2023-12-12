@@ -50,7 +50,7 @@ class GetWaterDataByIdAndDates_ViewSet(viewsets.ModelViewSet):
             meters['Data'] = json.loads(Meter_List.objects.filter(id = meter_id, Status = 0).order_by('Category').to_dataframe().to_json(orient="table"))['data']
             for meter in meters['Data']:
                 meter.update(get_meter_readings_by_id_resolution_date(meter['id'], resolution, start_datetime, end_datetime))
-                meter.update(get_average_readings_by_id_resolution_date(meter['id'], resolution, start_datetime, end_datetime))
+                meter.update(get_average_readings_by_id(meter['id']))
         except Exception as e:
             print('{!r}; Get Meters failed - '.format(e))
             Response({})
@@ -64,7 +64,7 @@ def get_meter_readings_by_id_resolution_date(meter_id, resolution, start_datetim
         return {'readings': []}
     return readings
 
-def get_average_readings_by_id_resolution_date(meter_id, resolution, start_datetime, end_datetime):    
+def get_average_readings_by_id(meter_id):    
     try:
         # Print a header indicating which meter is being processed
         print('####### ' + str(meter_id) + ' #########')
@@ -275,7 +275,7 @@ def get_meters():
         for meter in meters['Data']:
             meter.update(get_readings(meter['id']))
             #meter.update(get_report(meter['id']))
-            meter.update(get_averages(meter['id']))
+            #meter.update(get_averages(meter['id']))
     except Exception as e:
         print('{!r}; Get Meters failed - '.format(e))
     return json.dumps(meters)
