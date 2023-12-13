@@ -22,7 +22,7 @@
 					</div>
 					<div class="col-xl-6">
 						<!-- BEGIN NAV-TABS -->
-						<ul id="tabs" class="nav nav-tabs nav-tabs">
+						<ul id="tabs" class="nav nav-tabs nav-tabs" id="right_tab">
 							<li class="nav-item me-3"><a href="#reporting" class="nav-link active" data-bs-toggle="tab">Reporting</a></li>
 							<li class="nav-item me-3"><a href="#data_analysis" class="nav-link" data-bs-toggle="tab">Data Analysis</a></li>						
 						</ul>
@@ -109,7 +109,6 @@
 	}
 
 	var meter_list_data = JSON.parse('{{meter_list_data|escapejs}}', reviver_1).Data;
-	console.log(meter_list_data);	
 	//////////////////////////////////////////////////////////////////////////////
 
 
@@ -364,7 +363,6 @@
 
 		// SET CHART SELECTION
 		$('#select_chart_type_' + meter.id).change({}, function() {
-			//console.log(this.value);
 			if (this.value === 'Bar') {
 				$("#meter_chart_bar_" + meter.id).show();
 				$("#meter_chart_polar_" + meter.id).hide();
@@ -425,10 +423,33 @@
 			}
 		}, function(start, end, label) {
 			$('#daterange_' + meter.id + ' span').html(start.format('DD-MM-YYYY HH:00') + ' - ' + end.format('DD-MM-YYYY HH:00'));
+			change_data(meter.id, meter, new Date(start.format()), new Date(end.format()), $('#select_chart_resolution_' + meter.id).val());
+		});
 
-			//change_chart_data(meter.id, new Date(start.format()), new Date(end.format()));
-
-			change_data(meter.id, meter, new Date(start.format()), new Date(end.format()), 'H');
+		// CHANGE RESOLUTION
+		$('#select_chart_resolution_' + meter.id).change({}, function() {
+			var resolution = 'H';
+			var error_message = '';
+			var start = new Date($('#daterange_' + meter.id).data('daterangepicker').startDate.format());
+			var end = new Date($('#daterange_' + meter.id).data('daterangepicker').endDate.format());
+			var diffDays = (end - start) / (1000 * 60 * 60 * 24);
+			if (this.value === 'H') {
+				resolution = 'H';
+			} else if (this.value === 'D') {
+				resolution = 'D';
+				if (diffDays <= 1) {
+					error_message = 'The date range must be greater than 1 day to view daily data.';
+				}
+			} else if (this.value === 'W') {
+				resolution = 'W';
+			} else if (this.value === 'M') {
+				resolution = 'M';
+			}
+			if (error_message != '') {
+				alert(error_message);
+			} else {
+				change_data(meter.id, meter, start, end, resolution);
+			}
 		});
 	}
 	// SET UP PAGE, CREATE ALL CONTROLS
@@ -458,7 +479,6 @@
 			success: function(data) {
 				var data_current = data[data.length-1];
 				if (data != '') {
-					//console.log(btoa("admin" + ":" + "will1977"));
 					$.each(JSON.parse(data, reviver_1).Data, function(i, meter) {
 						if (meter.id == id) {
 							// READINGS
@@ -477,7 +497,6 @@
 									readings[i]['Baseline'] = days[reading.Data_DateTime.getDay()][reading.Data_DateTime.getHours()][0];
 								});
 							}
-							console.log(readings)
 							// Set totals
 							var pulseSum = 0;
 							$.each(readings, function(i, reading) {
@@ -518,7 +537,6 @@
 			}
 			// LOOP DA LOOP
 			$.each(readings, function(i, reading) {
-				//console.log(reading);
 				// SET MAX FLOW
 				if (reading.Pulses*Pulse_Unit_Value*pulse_volume_factor > value_max_flow) {
 					value_max_flow = reading.Pulses*Pulse_Unit_Value*pulse_volume_factor;
@@ -576,20 +594,17 @@
 	// DATA ANALYSIS
 	//////////////////////////////////////////////////////////////////////////	
 	var renderDataAnalysis = function () {
-		// GET DATA
-		var data_analysis_data = JSON.parse('{{data_analysis_data|escapejs}}', reviver_1);
 		// HIDE CHART
 		$("#data_analysis_chart").hide();
 		// DA REFRESH CHART ON TAB CLICK
-		$('#da_tab_click').click({}, function() {
+		$('#right_tab').click({}, function() {
 			$("#data_analysis_chart").dxChart('instance').refresh();
+			console.log('tap');
 		});
 		// DA REFRESH CHART
 		$('#refresh_da').click({}, function() {
 			$("#data_analysis_chart").dxChart('instance').refresh();
 		});
-		// SERIES BUILDER
-		var da_series = [];
 		// DA CHART SETUP
 		var chart = $('#data_analysis_chart').dxChart({
 			palette: 'red',
@@ -660,7 +675,6 @@
 						da_series.push({type: 'line', name: data.name, color: data.color, valueField: this.id.substr(this.id.lastIndexOf("_") + 1), argumentField: "Data_DateTime", argumentType: "datetime"});
 					};					
 				});
-				//console.log(da_series);
 				// REFRESH DA CHART
 				$("#data_analysis_chart").show();
 				$("#data_analysis_chart").dxChart("option", "series", da_series);
@@ -670,25 +684,42 @@
 		// CHANGE DA CHART DATA
 		function change_da_data(start, end) {	
 			// AJAX
+			var resolution = 'H';
 			$.ajax({
 				type: 'GET',
-				url: '../water/data_analysis/get_by_dates/?meter_id=' + start.toISOString() + '&end_datetime=' + end.toISOString(),
+				url: '../water/readings/analysis/?start_datetime=' + start.toISOString() + '&end_datetime=' + end.toISOString() + '&resolution=' + resolution,
 				headers: {
 					"Authorization": "Basic YWRtaW46d2lsbDE5Nzc=",
 					'Accept' : 'application/json'
 				},
-				success: function(data) {
-					if (data != '') {
-						
+				success: function(analysis) {
+					if (analysis != '') {
+						analysis_data = JSON.parse(analysis, reviver_1);
+						// SET BAR CHART DATA
+						$("#data_analysis_chart").dxChart("option", "dataSource", analysis_data);
+
+						// CHECK IF CHECKED
+						var da_series = [];
+						// TOGGLE SHOW CHART
+						$.each(meter_list_data, function(i, meter) {
+							$('#show_da_chart_' + meter.id).click({}, function() {
+								// RESET SERIES
+								var da_series = [];
+								$(`[id^="show_da_chart_"]`).each(function () {
+									var data = JSON.parse(this.value);
+									if ($(this).is(':checked')) {						
+										da_series.push({type: 'line', name: data.name, color: data.color, valueField: this.id.substr(this.id.lastIndexOf("_") + 1), argumentField: "Data_DateTime", argumentType: "datetime"});
+									};					
+								});
+								// REFRESH DA CHART
+								$("#data_analysis_chart").show();
+								$("#data_analysis_chart").dxChart("option", "series", da_series);
+								$("#data_analysis_chart").dxChart('instance').refresh();
+							});
+						});
 					}	
 				}
-			});		
-			// SET DATA
-			analysis_data = data_analysis_data.filter((item) => item.Data_DateTime.getTime() >= start.getTime() && item.Data_DateTime.getTime() <= end.getTime())
-			// SET BAR CHART DATA
-			$("#data_analysis_chart").dxChart("option", "dataSource", analysis_data);
-			$("#data_analysis_chart").dxChart("option", "series", da_series);
-			$("#data_analysis_chart").dxChart('instance').refresh();
+			});				
 		};
 		// SETUP DA DATEPICKER
 		$('#daterange_da span').html(moment().subtract(24, 'hours').format('DD-MM-YYYY HH:00') + ' - ' + moment().format('DD-MM-YYYY HH:00'));
@@ -737,6 +768,9 @@
 		// CALL DA FUNCTION
 		change_da_data(new Date(moment().subtract(24, 'hours').format()), new Date(moment().format()));
 	};
+	//////////////////////////////////////////////////////////////////////////
+	// DATA ANALYSIS
+	//////////////////////////////////////////////////////////////////////////
 
 
 
@@ -777,129 +811,127 @@
 	});
 	// CHANGE REPORTING DATA
 	function change_reporting_data(start, end) {
-		
-
 
 		// AJAX
+		var resolution = 'H';
+		var report_data = [];
 		$.ajax({
-			type: 'GET',
-			url: '../water/reports/get_by_dates/?start_datetime=' + start.toISOString() + '&end_datetime=' + end.toISOString(),
+			type: 'GET',				
+			url: '../water/readings/reports/?start_datetime=' + start.toISOString() + '&end_datetime=' + end.toISOString() + '&resolution=' + resolution,
 			headers: {
 				"Authorization": "Basic YWRtaW46d2lsbDE5Nzc=",
 				'Accept' : 'application/json'
 			},
-			success: function(data) {
-				if (data != '') {
-					
+			success: function(reports) {
+				if (reports != '') {
+					report_data = JSON.parse(reports, reviver_1).Data;
+					// GET REPORT DATA BY DATE RANGE		
+					var data = [];	
+					var chart_data = [];
+					var supply_total = 0;
+					var consumer_total = 0;
+					var waste_total = 0;
+					$.each(report_data, function(i, meter) {
+						// GET READINGS DATA			
+						var readings = meter.readings.filter((item) => item.Data_DateTime.getTime() >= start.getTime() && item.Data_DateTime.getTime() <= end.getTime());
+						// COUNT PULSES
+						var pulseSum = 0;
+						$.each(readings, function(i, reading) {
+							pulseSum += reading.Pulses
+						});
+						// SET WATER VALUE
+						var waterSum = pulseSum * meter.Pulse_Unit_Value
+						// SET VARIABLES AND PUSH TO ARRAY
+						if (meter.Category == 'Supply') {
+							var supply = waterSum.toFixed(3);
+							supply_total += parseFloat(waterSum);
+						} else if (meter.Category == 'Waste') {
+							var waste = waterSum.toFixed(3);
+							waste_total += parseFloat(waterSum);
+						} else if (meter.Category == 'Consumer') {
+							var consumer = waterSum.toFixed(3);
+							consumer_total += parseFloat(waterSum);
+							// CREATE CHART DATA
+							chart_data.push({
+								ID: meter.id, 
+								Meter: meter.Name, 
+								Water: waterSum.toFixed(3),
+								Supply: supply,
+								Waste: waste,
+								Consumer: consumer, 
+								Type: meter.Category,
+							});
+						}
+						// PUSH
+						data.push({
+							ID: meter.id, 
+							Meter: meter.Name, 
+							Water: waterSum.toFixed(3),
+							Supply: supply,
+							Waste: waste,
+							Consumer: consumer, 
+							Type: meter.Category,
+						});
+
+
+					});
+					// PUSH NOT METERED VALUE TO ARRAY
+					var not_metered = supply_total-consumer_total;
+					chart_data.push({
+						ID: 0, 
+						Meter: 'Not Metered', 
+						Water: not_metered.toFixed(3),
+						Supply: null,
+						Waste: null,
+						Consumer: null, 
+						Type: 'Not Metered',
+					})
+					// SET PREFIX
+					var prefix = ' m³';
+					if ($("#toggle_value_percentage").is(':checked')) {
+						prefix = ' %';
+					} else {
+						prefix = ' m³';
+					}
+					// GET TOGGLE STATUS
+					if ($("#toggle_value_percentage").is(':checked')) {
+						chart_data = chart_data.map(function(element) {return {'ID': element.ID, 'Meter': element.Meter, 'Water': ((element.Water/supply_total)*100).toFixed(1), 'Supply': element.Supply, 'Waste': element.Waste, 'Consumer': ((element.Consumer/supply_total)*100).toFixed(1), 'Type': element.Type};})
+						data = data.map(function(element) {return {'ID': element.ID, 'Meter': element.Meter, 'Water': ((element.Water/supply_total)*100).toFixed(1), 'Supply': element.Supply, 'Waste': element.Waste, 'Consumer': ((element.Consumer/supply_total)*100).toFixed(1), 'Type': element.Type};})
+					}
+					// SET TABLE TEXT
+					$.each(data, function(i, meter) {
+						$("#report_table_value_" + meter.ID).text(meter.Water + ' ' + prefix);
+					});
+					// PIE CHART DATA
+					$("#reporting_pie").dxPieChart("option", "dataSource", chart_data);
+					$("#reporting_pie").dxPieChart('instance').refresh();
+					// BAR CHART DATA
+					$("#reporting_bar").dxChart("option", "dataSource", chart_data);
+					$("#reporting_bar").dxChart('instance').refresh();
+					// TEXT
+					$("#report_period").text(((new Date(end).getTime() - new Date(start).getTime()) / (1000 * 3600 * 24)).toFixed(0));
+					$("#report_from").text(new Date(start).toDateString());
+					$("#report_to").text(new Date(end).toDateString());
+					if ($("#toggle_value_percentage").is(':checked')) {
+						$("#report_not_metered").text(((not_metered/supply_total)*100).toFixed(1) + ' %');
+						$("#report_waste").text(((waste_total/supply_total)*100).toFixed(1) + ' %');
+					} else {
+						$("#report_not_metered").text(not_metered.toFixed(3) + ' m³');
+						$("#report_waste").text(waste_total.toFixed(3) + ' m³');
+					}
+					// SET TOTALS TEXT
+					if ($("#toggle_value_percentage").is(':checked')) {
+						$("#report_supply_total_value").text(((supply_total/supply_total)*100).toFixed(1) + ' %');
+						$("#report_waste_total_value").text(((waste_total/supply_total)*100).toFixed(1) + ' %');
+						$("#report_consumer_total_value").text(((consumer_total/supply_total)*100).toFixed(1) + ' %');
+					} else {
+						$("#report_supply_total_value").text(supply_total.toFixed(3) + ' m³');
+						$("#report_waste_total_value").text(waste_total.toFixed(3) + ' m³');
+						$("#report_consumer_total_value").text(consumer_total.toFixed(3) + ' m³');
+					}
 				}	
 			}
-		});
-
-
-
-
-		// GET REPORT DATA BY DATE RANGE		
-		var data = [];	
-		var chart_data = [];
-		var supply_total = 0;
-		var consumer_total = 0;
-		var waste_total = 0;
-		$.each(meter_list_data, function(i, meter) {
-			// GET READINGS DATA
-			var readings = meter.readings.filter((item) => item.Data_DateTime.getTime() >= start.getTime() && item.Data_DateTime.getTime() <= end.getTime());
-			// COUNT PULSES
-			var pulseSum = 0;
-			$.each(readings, function(i, reading) {
-				pulseSum += reading.Pulses
-			});
-			// SET WATER VALUE
-			var waterSum = pulseSum * meter.Pulse_Unit_Value
-			// SET VARIABLES AND PUSH TO ARRAY
-			if (meter.Category == 'Supply') {
-				var supply = waterSum.toFixed(3);
-				supply_total += parseFloat(waterSum);
-			} else if (meter.Category == 'Waste') {
-				var waste = waterSum.toFixed(3);
-				waste_total += parseFloat(waterSum);
-			} else if (meter.Category == 'Consumer') {
-				var consumer = waterSum.toFixed(3);
-				consumer_total += parseFloat(waterSum);
-				// CREATE CHART DATA
-				chart_data.push({
-					ID: meter.id, 
-					Meter: meter.Name, 
-					Water: waterSum.toFixed(3),
-					Supply: supply,
-					Waste: waste,
-					Consumer: consumer, 
-					Type: meter.Category,
-				});
-			}
-			// PUSH
-			data.push({
-				ID: meter.id, 
-				Meter: meter.Name, 
-				Water: waterSum.toFixed(3),
-				Supply: supply,
-				Waste: waste,
-				Consumer: consumer, 
-				Type: meter.Category,
-			});
-		});
-		// PUSH NOT METERED VALUE TO ARRAY
-		var not_metered = supply_total-consumer_total;
-		chart_data.push({
-			ID: 0, 
-			Meter: 'Not Metered', 
-			Water: not_metered.toFixed(3),
-			Supply: null,
-			Waste: null,
-			Consumer: null, 
-			Type: 'Not Metered',
-		})
-		// SET PREFIX
-		var prefix = ' m³';
-		if ($("#toggle_value_percentage").is(':checked')) {
-			prefix = ' %';
-		} else {
-			prefix = ' m³';
-		}
-		// GET TOGGLE STATUS
-		if ($("#toggle_value_percentage").is(':checked')) {
-			chart_data = chart_data.map(function(element) {return {'ID': element.ID, 'Meter': element.Meter, 'Water': ((element.Water/supply_total)*100).toFixed(1), 'Supply': element.Supply, 'Waste': element.Waste, 'Consumer': ((element.Consumer/supply_total)*100).toFixed(1), 'Type': element.Type};})
-			data = data.map(function(element) {return {'ID': element.ID, 'Meter': element.Meter, 'Water': ((element.Water/supply_total)*100).toFixed(1), 'Supply': element.Supply, 'Waste': element.Waste, 'Consumer': ((element.Consumer/supply_total)*100).toFixed(1), 'Type': element.Type};})
-		}
-		// SET TABLE TEXT
-		$.each(data, function(i, meter) {
-			$("#report_table_value_" + meter.ID).text(meter.Water + ' ' + prefix);
-		});
-		// PIE CHART DATA
-		$("#reporting_pie").dxPieChart("option", "dataSource", chart_data);
-		$("#reporting_pie").dxPieChart('instance').refresh();
-		// BAR CHART DATA
-		$("#reporting_bar").dxChart("option", "dataSource", chart_data);
-		$("#reporting_bar").dxChart('instance').refresh();
-		// TEXT
-		$("#report_period").text(((new Date(end).getTime() - new Date(start).getTime()) / (1000 * 3600 * 24)).toFixed(0));
-		$("#report_from").text(new Date(start).toDateString());
-		$("#report_to").text(new Date(end).toDateString());
-		if ($("#toggle_value_percentage").is(':checked')) {
-			$("#report_not_metered").text(((not_metered/supply_total)*100).toFixed(1) + ' %');
-			$("#report_waste").text(((waste_total/supply_total)*100).toFixed(1) + ' %');
-		} else {
-			$("#report_not_metered").text(not_metered.toFixed(3) + ' m³');
-			$("#report_waste").text(waste_total.toFixed(3) + ' m³');
-		}
-		// SET TOTALS TEXT
-		if ($("#toggle_value_percentage").is(':checked')) {
-			$("#report_supply_total_value").text(((supply_total/supply_total)*100).toFixed(1) + ' %');
-			$("#report_waste_total_value").text(((waste_total/supply_total)*100).toFixed(1) + ' %');
-			$("#report_consumer_total_value").text(((consumer_total/supply_total)*100).toFixed(1) + ' %');
-		} else {
-			$("#report_supply_total_value").text(supply_total.toFixed(3) + ' m³');
-			$("#report_waste_total_value").text(waste_total.toFixed(3) + ' m³');
-			$("#report_consumer_total_value").text(consumer_total.toFixed(3) + ' m³');
-		}		
+		});					
 	}
 
 	var renderReport = function () {
@@ -915,7 +947,6 @@
 		});
 		// SET CHART SELECTION
 		$('#select_chart_type_reporting').change({}, function() {
-			//console.log(this.value);
 			if (this.value === 'Bar') {
 				$("#reporting_bar").show();
 				$("#reporting_pie").hide();

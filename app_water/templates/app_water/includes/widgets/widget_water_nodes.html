@@ -1,7 +1,9 @@
 <!-- BEGIN SUPPLY -->
 <div class="text-white small mb-2"><b>SUPPLY</b></div>
-<div class="list-group mb-3">							
-{% for meter in meter_list_supply %}
+<div class="list-group mb-3">
+
+{% for meter in meter_list %}
+    {% if meter.Category|lower == 'supply' %}    
 
     <!-- BEGIN METER -->
     <div class="list-group-item d-flex align-items-center">
@@ -57,9 +59,10 @@
                         <!-- BEGIN SELECT CHART RESOLUTION -->
                         <div class="px-1">
                             <select id="select_chart_resolution_{{ meter.id }}" class="form-select btn-outline-theme form-select-sm" style="width: 100px;">
-                                <option value="Hour">Hour</option>
-                                <option value="Day">Day</option>
-                                <option value="Month">Month</option>
+                                <option value="H">HOUR</option>
+                                <option value="D">DAY</option>
+                                <option value="W">WEEK</option>
+                                <option value="M">MONTH</option>
                             </select>
                         </div>
                         <!-- END SELECT CHART RESOLUTION -->
@@ -67,9 +70,9 @@
                         <!-- BEGIN SELECT CHART TYPE -->
                         <div class="px-1">
                             <select id="select_chart_type_{{ meter.id }}" class="form-select btn-outline-theme form-select-sm" style="width: 100px;">
-                                <option value="Bar"><i class="fa fa-bar-chart"></i>Bar</option>
-                                <option value="Line"><i class="fa fa-line-chart"></i>Line</option>
-                                <option value="Polar"><i class="fa fa-pie-chart"></i>Polar</option>
+                                <option value="Bar"><i class="fa fa-bar-chart"></i>BAR</option>
+                                <option value="Line"><i class="fa fa-line-chart"></i>LINE</option>
+                                <option value="Polar"><i class="fa fa-pie-chart"></i>POLAR</option>
                             </select>
                         </div>												
                         <!-- END SELECT CHART TYPE -->
@@ -269,6 +272,7 @@
         
     </div>
     <!-- END METER DETAILS -->
+    {% endif %}	
 {% endfor %}
 </div>
 <!-- END SUPPLY -->
@@ -278,7 +282,8 @@
 <!-- BEGIN consumer -->
 <div class="text-white small mb-2"><b>CONSUMERS</b></div>
 <div class="list-group mb-3">							
-{% for meter in meter_list_consumer %}
+{% for meter in meter_list %}
+    {% if meter.Category|lower == 'consumer' %}
 
     <!-- BEGIN METER -->
     <div class="list-group-item d-flex align-items-center">
@@ -334,9 +339,10 @@
                         <!-- BEGIN SELECT CHART RESOLUTION -->
                         <div class="px-1">
                             <select id="select_chart_resolution_{{ meter.id }}" class="form-select btn-outline-theme form-select-sm" style="width: 100px;">
-                                <option value="Hour">Hour</option>
-                                <option value="Day">Day</option>
-                                <option value="Month">Month</option>
+                                <option  value="H">HOUR</option>
+                                <option value="D">DAY</option>
+                                <option value="W">WEEK</option>
+                                <option value="M">MONTH</option>
                             </select>
                         </div>
                         <!-- END SELECT CHART RESOLUTION -->
@@ -344,9 +350,9 @@
                         <!-- BEGIN SELECT CHART TYPE -->
                         <div class="px-1">
                             <select id="select_chart_type_{{ meter.id }}" class="form-select btn-outline-theme form-select-sm" style="width: 100px;">
-                                <option value="Bar"><i class="fa fa-bar-chart"></i>Bar</option>
-                                <option value="Line"><i class="fa fa-line-chart"></i>Line</option>
-                                <option value="Polar"><i class="fa fa-pie-chart"></i>Polar</option>
+                                <option value="Bar"><i class="fa fa-bar-chart"></i>BAR</option>
+                                <option value="Line"><i class="fa fa-line-chart"></i>LINE</option>
+                                <option value="Polar"><i class="fa fa-pie-chart"></i>POLAR</option>
                             </select>
                         </div>												
                         <!-- END SELECT CHART TYPE -->			
@@ -546,6 +552,7 @@
         
     </div>
     <!-- END METER DETAILS -->
+    {% endif %}	
 {% endfor %}
 </div>
 <!-- END consumer -->
@@ -557,7 +564,8 @@
 <!-- BEGIN waste -->
 <div class="text-white small mb-2"><b>WASTEWATER</b></div>
 <div class="list-group mb-3">							
-{% for meter in meter_list_waste %}
+{% for meter in meter_list %}
+    {% if meter.Category|lower == 'waste' %}
     
     <!-- BEGIN METER -->
     <div class="list-group-item d-flex align-items-center">
@@ -613,9 +621,10 @@
                         <!-- BEGIN SELECT CHART RESOLUTION -->
                         <div class="px-1">
                             <select id="select_chart_resolution_{{ meter.id }}" class="form-select btn-outline-theme form-select-sm" style="width: 100px;">
-                                <option value="Hour">Hour</option>
-                                <option value="Day">Day</option>
-                                <option value="Month">Month</option>
+                                <option  value="H">HOUR</option>
+                                <option value="D">DAY</option>
+                                <option value="W">WEEK</option>
+                                <option value="M">MONTH</option>
                             </select>
                         </div>
                         <!-- END SELECT CHART RESOLUTION -->
@@ -623,9 +632,9 @@
                         <!-- BEGIN SELECT CHART TYPE -->
                         <div class="px-1">
                             <select id="select_chart_type_{{ meter.id }}" class="form-select btn-outline-theme form-select-sm" style="width: 100px;">
-                                <option value="Bar"><i class="fa fa-bar-chart"></i>Bar</option>
-                                <option value="Line"><i class="fa fa-line-chart"></i>Line</option>
-                                <option value="Polar"><i class="fa fa-pie-chart"></i>Polar</option>
+                                <option value="Bar"><i class="fa fa-bar-chart"></i>BAR</option>
+                                <option value="Line"><i class="fa fa-line-chart"></i>LINE</option>
+                                <option value="Polar"><i class="fa fa-pie-chart"></i>POLAR</option>
                             </select>
                         </div>												
                         <!-- END SELECT CHART TYPE -->		
@@ -825,6 +834,7 @@
         
     </div>
     <!-- END METER DETAILS -->
+    {% endif %}	
 {% endfor %}
 </div>
 <!-- END waste -->	

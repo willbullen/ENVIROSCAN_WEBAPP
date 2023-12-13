@@ -8,6 +8,8 @@ routerMeters.register(r'list', views.Meter_List_ViewSet)
 routerReadings = routers.DefaultRouter()
 routerReadings.register(r'data', views.Readings_ViewSet)
 routerReadings.register(r'get_by_id_and_dates', views.GetWaterDataByIdAndDates_ViewSet, basename="get_by_id_and_dates")
+routerReadings.register(r'reports', views.Reports_ViewSet, basename="reports")
+routerReadings.register(r'analysis', views.Analysis_ViewSet, basename="analysis")
 
 routerMeterReadings = routers.DefaultRouter()
 routerMeterReadings.register(r'readings', views.Meter_Readings_ViewSet)

@@ -68,7 +68,8 @@
                 </tr>
             </thead>
             <tbody>
-                {% for meter in meter_list_supply %}
+                {% for meter in meter_list %}
+                    {% if meter.Category|lower == 'supply' %}
                 <tr>
                     <td>
                         <div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
@@ -81,9 +82,11 @@
                     <td></td>
                     <td></td>
                 </tr>
+                    {% endif %}
                 {% endfor %}
 
-                {% for meter in meter_list_consumer %}
+                {% for meter in meter_list %}
+                    {% if meter.Category|lower == 'consumer' %}
                 <tr>
                     <td>
                         <div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
@@ -96,9 +99,11 @@
                     <td></td>
                     <td></td>
                 </tr>
+                    {% endif %}
                 {% endfor %}
                 
-                {% for meter in meter_list_waste %}
+                {% for meter in meter_list %}
+                    {% if meter.Category|lower == 'waste' %}
                 <tr>
                     <td>
                         <div id="Status_{{ meter.id }}" class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1">
@@ -111,6 +116,7 @@
                     <td><span id="report_table_value_{{ meter.id }}"></span></td>
                     <td></td>
                 </tr>
+                    {% endif %}
                 {% endfor %}
                 <tr>
                     <td></td>
