@@ -37,9 +37,9 @@ class Analysis_ViewSet(viewsets.ModelViewSet):
 
         analysis_data = {}
         try:
-            df = pd.DataFrame(Water_Meter.objects.filter(Data_DateTime__gte = start_datetime, Data_DateTime__lte = end_datetime).values('id', 'Data_DateTime', 'Pulses', 'Meter', 'Meter__Pulse_Unit_Value').order_by('-id'))
+            df = pd.DataFrame(Water_Meter.objects.filter(Data_DateTime__gte = start_datetime, Data_DateTime__lte = end_datetime, Meter__Status = 0).values('id', 'Meter__Name', 'Data_DateTime', 'Pulses', 'Meter', 'Meter__Pulse_Unit_Value').order_by('-id'))
             df["Water"] = df["Pulses"] * df["Meter__Pulse_Unit_Value"]
-            df = df.pivot_table(values='Water', index='Data_DateTime', columns='Meter', aggfunc='first').sort_index(ascending=True).resample(resolution).sum().fillna(method='backfill')
+            df = df.pivot_table(values='Water', index='Data_DateTime', columns='Meter__Name', aggfunc='first').sort_index(ascending=True).resample(resolution).sum().fillna(method='backfill')
             analysis_data = json.loads(df.to_json(orient="table"))['data']
         except Exception as e:
             print('{!r}; Get data analysis data failed - '.format(e))

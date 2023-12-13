@@ -58,14 +58,12 @@
 	
 	/////////////////////////// PDF GENERATOR ///////////////////////////
 	// Get all buttons with the class 'pdf'
-	var buttons = document.querySelectorAll('.pdf');
-
+	var buttons_pdf = document.querySelectorAll('.pdf');
 	// Add an event listener to each button
-	buttons.forEach(function(button) {
+	buttons_pdf.forEach(function(button) {
 		button.addEventListener('click', function() {
 			var targetId = this.getAttribute('data-target'); // Get the id from the data-target attribute
 			var element = document.getElementById(targetId); // Get the element using the id
-
 			// Create a new style element
 			var style = document.createElement('style');
 			// Add a CSS rule to change the color of all text to black and set opacity to 100%
@@ -81,16 +79,39 @@
 	});
 	/////////////////////////// PDF GENERATOR ///////////////////////////
 
-
+	/////////////////////////// CSV GENERATOR ///////////////////////////
+	// Get all buttons with the class 'csv'
+	var buttons_csv = document.querySelectorAll('.csv');
+	// Add an event listener to each button
+	buttons_csv.forEach(function(button) {
+		button.addEventListener('click', function() {
+			var targetId = this.getAttribute('data-target'); // Get the id from the data-target attribute
+			var chart = $("#" + targetId).dxChart("instance"); // Get the chart instance using the id
+			// Get the data from the chart
+			var data = chart.option("dataSource");
+			// Get the column names
+			var columnNames = Object.keys(data[0]);
+			// Convert the column names to CSV format
+			var csv = columnNames.join(',') + '\n';
+			// Convert the data to CSV format
+			csv += data.map(function(row) {
+				return Object.values(row).map(function(value) {
+					// Limit the output to 2 decimal places if the value is a number
+					return typeof value === 'number' ? value.toFixed(2) : '"' + value + '"';
+				}).join(',');
+			}).join('\n');
+			// Create a Blob object from the CSV data
+			var blob = new Blob([csv], { type: 'text/csv' });
+			// Create a download link and click it
+			var link = document.createElement('a');
+			link.href = URL.createObjectURL(blob);
+			link.download = 'data.csv';
+			link.click();
+		});
+	});
+	/////////////////////////// CSV GENERATOR ///////////////////////////
 	
-
-	
-	
-	
-
-	
-	//////////////////////////////////////////////////////////////////////////////
-	// GET DATA
+	/////////////////////////// GET METER LIST ///////////////////////////
 	function reviver_1(key, value) {
 		if (key === 'Data_DateTime' || key === 'Start_Date') {
 			return new Date(value);
@@ -109,11 +130,9 @@
 	}
 
 	var meter_list_data = JSON.parse('{{meter_list_data|escapejs}}', reviver_1).Data;
-	//////////////////////////////////////////////////////////////////////////////
+	/////////////////////////// GET METER LIST ///////////////////////////
 
-
-	//////////////////////////////////////////////////////////////////////////////
-	// SET UP PAGE, CREATE ALL CONTROLS
+	/////////////////////////// CREATE CONTROLS ///////////////////////////
 	function page_setup() {
 		// CREATE
 		$.each(meter_list_data, function(i, meter) {
@@ -127,11 +146,7 @@
 			create_meter_tool_bars(meter);
 		});
 	}
-	//////////////////////////////////////////////////////////////////////////////
-
-
-	//////////////////////////////////////////////////////////////////////////////
-	// SET UP PAGE, CREATE ALL CONTROLS
+	// CREATE CHARTS BY ID
 	function create_charts(id) {		
 		// CREATE POLAR CHART
 		var polar = $('#meter_chart_polar_' + id).dxPolarChart({
@@ -427,24 +442,31 @@
 		});
 
 		// CHANGE RESOLUTION
-		$('#select_chart_resolution_' + meter.id).change({}, function() {
-			var resolution = 'H';
-			var error_message = '';
+		$('#select_chart_resolution_' + meter.id).change(function() {
+			var resolution = $(this).val();
 			var start = new Date($('#daterange_' + meter.id).data('daterangepicker').startDate.format());
 			var end = new Date($('#daterange_' + meter.id).data('daterangepicker').endDate.format());
-			var diffDays = (end - start) / (1000 * 60 * 60 * 24);
-			if (this.value === 'H') {
-				resolution = 'H';
-			} else if (this.value === 'D') {
-				resolution = 'D';
-				if (diffDays <= 1) {
-					error_message = 'The date range must be greater than 1 day to view daily data.';
+			var diffTime = end - start;
+			var diffDays = diffTime / (1000 * 60 * 60 * 24);
+			var diffWeeks = diffTime / (1000 * 60 * 60 * 24 * 7);
+			var diffMonths = diffTime / (1000 * 60 * 60 * 24 * 30);
+			var error_message = '';
+
+			var conditions = {
+				'D': { diff: diffDays, period: 'day', min: 1 },
+				'W': { diff: diffWeeks, period: 'week', min: 1 },
+				'M': { diff: diffMonths, period: 'month', min: 1 }
+			};
+
+			if (conditions[resolution]) {
+				if (conditions[resolution].diff <= conditions[resolution].min) {
+					error_message = `The date range must be greater than ${conditions[resolution].min} ${conditions[resolution].period} to view ${resolution} data.`;
+					resolution = 'H';
 				}
-			} else if (this.value === 'W') {
-				resolution = 'W';
-			} else if (this.value === 'M') {
-				resolution = 'M';
 			}
+
+			$(this).val(resolution);
+
 			if (error_message != '') {
 				alert(error_message);
 			} else {
@@ -452,21 +474,17 @@
 			}
 		});
 	}
-	// SET UP PAGE, CREATE ALL CONTROLS
-	//////////////////////////////////////////////////////////////////////////////
+	/////////////////////////// CREATE CONTROLS ///////////////////////////
 
-	//////////////////////////////////////////////////////////////////////////////
-	// SET UP DATA
+	///////////////////////////// SET UP DATA ///////////////////////////// 
 	function data_setup() {
 		$.each(meter_list_data, function(i, meter) {
 			change_data(meter.id, meter, new Date(moment().subtract(24, 'hours').format()), new Date(moment().format()), 'H');
 		});
 	}
-	// SET UP DATA
-	//////////////////////////////////////////////////////////////////////////////
+	///////////////////////////// SET UP DATA /////////////////////////////
 
-	//////////////////////////////////////////////////////////////////////////////
-	// CHANGE DATA API
+	///////////////////////////// DATA API ////////////////////////////////
 	function change_data(id, data, start, end, resolution) {
 		// AJAX
 		$.ajax({
@@ -477,12 +495,12 @@
 				'Accept' : 'application/json'
 			},
 			success: function(data) {
-				var data_current = data[data.length-1];
 				if (data != '') {
 					$.each(JSON.parse(data, reviver_1).Data, function(i, meter) {
 						if (meter.id == id) {
 							// READINGS
-							var readings = meter.readings.filter((item) => item.Data_DateTime.getTime() >= start.getTime() && item.Data_DateTime.getTime() <= end.getTime());
+							var readings = meter.readings;
+							//var readings = meter.readings.filter((item) => item.Data_DateTime.getTime() >= start.getTime() && item.Data_DateTime.getTime() <= end.getTime());
 							if (meter.baseline.length != 0) {
 								var days = [
 									JSON.parse(meter.baseline['Day_0']),
@@ -559,8 +577,7 @@
 
 			$("#min_flow_value_" + id).text(value_min_flow.toFixed(3));
 		}
-		// CHANGE DATA API
-		/////////////////////////////////////////////////////////////////////////////
+		///////////////////////////// DATA API ////////////////////////////////
 	}
 
 
@@ -672,7 +689,7 @@
 				$(`[id^="show_da_chart_"]`).each(function () {
 					var data = JSON.parse(this.value);
 					if ($(this).is(':checked')) {						
-						da_series.push({type: 'line', name: data.name, color: data.color, valueField: this.id.substr(this.id.lastIndexOf("_") + 1), argumentField: "Data_DateTime", argumentType: "datetime"});
+						da_series.push({type: 'line', name: data.name, color: data.color, valueField: data.name, argumentField: "Data_DateTime", argumentType: "datetime"});
 					};					
 				});
 				// REFRESH DA CHART
@@ -681,10 +698,41 @@
 				$("#data_analysis_chart").dxChart('instance').refresh();
 			});
 		});
+		// CHANGE RESOLUTION
+		$('#select_chart_resolution_analysis').change(function() {
+			var resolution = $(this).val();
+			var start = new Date($('#daterange_da').data('daterangepicker').startDate.format());
+			var end = new Date($('#daterange_da').data('daterangepicker').endDate.format());
+			var diffTime = end - start;
+			var diffDays = diffTime / (1000 * 60 * 60 * 24);
+			var diffWeeks = diffTime / (1000 * 60 * 60 * 24 * 7);
+			var diffMonths = diffTime / (1000 * 60 * 60 * 24 * 30);
+			var error_message = '';
+
+			var conditions = {
+				'D': { diff: diffDays, period: 'day', min: 1 },
+				'W': { diff: diffWeeks, period: 'week', min: 1 },
+				'M': { diff: diffMonths, period: 'month', min: 1 }
+			};
+
+			if (conditions[resolution]) {
+				if (conditions[resolution].diff <= conditions[resolution].min) {
+					error_message = `The date range must be greater than ${conditions[resolution].min} ${conditions[resolution].period} to view ${resolution} data.`;
+					resolution = 'H';
+				}
+			}
+
+			$(this).val(resolution);
+
+			if (error_message != '') {
+				alert(error_message);
+			} else {
+				change_da_data(start, end, resolution);
+			}
+		});
 		// CHANGE DA CHART DATA
-		function change_da_data(start, end) {	
+		function change_da_data(start, end, resolution) {	
 			// AJAX
-			var resolution = 'H';
 			$.ajax({
 				type: 'GET',
 				url: '../water/readings/analysis/?start_datetime=' + start.toISOString() + '&end_datetime=' + end.toISOString() + '&resolution=' + resolution,
@@ -696,6 +744,7 @@
 					if (analysis != '') {
 						analysis_data = JSON.parse(analysis, reviver_1);
 						// SET BAR CHART DATA
+						console.log(analysis_data);
 						$("#data_analysis_chart").dxChart("option", "dataSource", analysis_data);
 
 						// CHECK IF CHECKED
@@ -708,7 +757,7 @@
 								$(`[id^="show_da_chart_"]`).each(function () {
 									var data = JSON.parse(this.value);
 									if ($(this).is(':checked')) {						
-										da_series.push({type: 'line', name: data.name, color: data.color, valueField: this.id.substr(this.id.lastIndexOf("_") + 1), argumentField: "Data_DateTime", argumentType: "datetime"});
+										da_series.push({type: 'line', name: data.name, color: data.color, valueField: data.name, argumentField: "Data_DateTime", argumentType: "datetime"});
 									};					
 								});
 								// REFRESH DA CHART
@@ -763,10 +812,10 @@
 			}
 		}, function(start, end, label) {
 			$('#daterange_da span').html(start.format('DD-MM-YYYY HH:00') + ' - ' + end.format('DD-MM-YYYY HH:00'));
-			change_da_data(new Date(start.format()), new Date(end.format()));
+			change_da_data(new Date(start.format()), new Date(end.format()), $('#select_chart_resolution_analysis').val());
 		});
 		// CALL DA FUNCTION
-		change_da_data(new Date(moment().subtract(24, 'hours').format()), new Date(moment().format()));
+		change_da_data(new Date(moment().subtract(24, 'hours').format()), new Date(moment().format()), $('#select_chart_resolution_analysis').val());
 	};
 	//////////////////////////////////////////////////////////////////////////
 	// DATA ANALYSIS

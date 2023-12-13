@@ -19,6 +19,17 @@
             </div>
             <!-- END DATE PICKER -->
 
+            <!-- BEGIN SELECT CHART RESOLUTION -->
+            <div class="px-1">
+                <select id="select_chart_resolution_analysis" class="form-select btn-outline-theme form-select-sm" style="width: 100px;">
+                    <option value="H">HOUR</option>
+                    <option value="D">DAY</option>
+                    <option value="W">WEEK</option>
+                    <option value="M">MONTH</option>
+                </select>
+            </div>
+            <!-- END SELECT CHART RESOLUTION -->
+
             <!-- BEGIN PRINT PDF -->
             <div class="opacity-10 px-1">
                 <button data-target="data_analysis" class="btn btn-outline-theme btn-sm pdf">
@@ -26,6 +37,14 @@
                 </button>
             </div>
             <!-- END PRINT PDF -->
+
+            <!-- BEGIN PRINT CSV -->
+            <div class="opacity-10 px-1">
+                <button data-target="data_analysis_chart" class="btn btn-outline-theme btn-sm csv">
+                    CSV
+                </button>
+            </div>
+            <!-- END PRINT CSV -->
             
         </div>
     </nav>
