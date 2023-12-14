@@ -1,7 +1,13 @@
 <!-- BEGIN SUPPLY -->
-<div class="text-white small mb-2"><b>SUPPLY</b></div>
-<div class="list-group mb-3">
 
+<div class="d-flex align-items-center justify-content-between">        
+    <div class="text-white small mb-2"><b>SUPPLY</b></div>
+    <div class="fw-bold" title="Total m³ for the past 24 hours.">
+        <a href="#modalHelp" data-bs-toggle="modal"><i class="fa fa-info-circle me-1"></i></a>
+    </div>
+</div>
+
+<div class="list-group mb-3">
 {% for meter in meter_list %}
     {% if meter.Category|lower == 'supply' %}    
 
@@ -17,7 +23,7 @@
         </div>
 
         <div class="opacity-10 px-3">
-            <div class="fw-bold"><span id="value_main_{{ meter.id }}">0</span> m³</div>
+            <div class="fw-bold" title="Total m³ for the past 24 hours."><span id="value_main_{{ meter.id }}">0</span> m³</div>
         </div>
 
     </div>
@@ -100,59 +106,71 @@
                 <div class="row">
                     <div class="col-9">												
                         <!-- BEGIN CHART -->
-                        <div class="pt-1 flex-1">
+                        <div class="pt-1 flex-1" id="chart_content_{{ meter.id }}">
                             <div id="meter_chart_bar_{{ meter.id }}" class="pt-1 flex-1"></div>
                             <div id="meter_chart_polar_{{ meter.id }}" class="pt-1 flex-1"></div>
                             <div id="meter_chart_line_{{ meter.id }}" class="pt-1 flex-1"></div>
+                            <div id="datatable_{{ meter.id }}"></div>
                         </div>
                         <!-- END CHART -->
                     </div>
                     <div class="col-3">
-                        <hr>
+                        <hr style="margin-top: 10px; margin-bottom: 10px;">
                         <!-- BEGIN DAILY AVE -->
-                        <div class="w-150px h-98px pt-1 ps-3">
+                        <div class="w-150px h-910px pt-1 ps-3" title="Total m³ for the selected time period.">
                             <div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
                                 TOTAL (m³)
                             </div>
                             <div class="mb-2 fs-5 text-truncate">
-                                <h4 class="mb-0"><span id="total_valuel_{{ meter.id }}">0</span></h4>
+                                <h5 class="mb-0"><span id="total_valuel_{{ meter.id }}">0</span></h5>
                             </div>
                         </div>
                         <!-- END DAILY AVE -->
-                        <hr>
+                        <hr style="margin-top: 10px; margin-bottom: 10px;">
                         <!-- BEGIN HOURLY AVE -->
-                        <div class="w-150px h-98px pt-1 ps-3">
+                        <div class="w-150px h-910px pt-1 ps-3" title="Total hourly ave in m³/h for the selected time period.">
                             <div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
                                 HOURLY AVE (m³/h)
                             </div>
                             <div class="mb-2 fs-5 text-truncate">
-                                <h4 class="mb-0"><span id="hourly_ave_value_{{ meter.id }}">0</span> </h4>
+                                <h5 class="mb-0"><span id="hourly_ave_value_{{ meter.id }}">0</span> </h5>
                             </div>
                         </div>
                         <!-- END HOURLY AVE -->
-                        <hr>
+                        <hr style="margin-top: 10px; margin-bottom: 10px;">
                         <!-- BEGIN MAX FLOW -->
-                        <div class="w-150px h-98px pt-1 ps-3">
+                        <div class="w-150px h-910px pt-1 ps-3" title="Maximum flow rate in m³/h for the selected time period.">
                             <div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
                                 MAX FLOW (m³/h)
                             </div>
                             <div class="mb-2 fs-5 text-truncate">
-                                <h4 class="mb-0"><span id="max_flow_value_{{ meter.id }}">0</span> </h4>
+                                <h5 class="mb-0"><span id="max_flow_value_{{ meter.id }}">0</span> </h5>
                             </div>
                         </div>
                         <!-- END MAX FLOW -->
-                        <hr>
+                        <hr style="margin-top: 10px; margin-bottom: 10px;">
                         <!-- BEGIN MIN FLOW -->
-                        <div class="w-150px h-98px pt-1 ps-3">
+                        <div class="w-150px h-910px pt-1 ps-3" title="Minimum flow rate in m³/h for the selected time period.">
                             <div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
                                 MIN FLOW (m³/h)
                             </div>
                             <div class="mb-2 fs-5 text-truncate">
-                                <h4 class="mb-0"><span id="min_flow_value_{{ meter.id }}">0</span> </h4>
+                                <h5 class="mb-0"><span id="min_flow_value_{{ meter.id }}">0</span> </h5>
                             </div>
                         </div>
                         <!-- END MIN FLOW -->
-                        <hr>
+                        <hr style="margin-top: 10px; margin-bottom: 10px;">
+                        <!-- BEGIN KEY -->
+                        <div class="d-flex ps-3 pt-2 align-items-center" title="This is the total reading for the selected resolution (Hour, Day, Week or Month).">
+                            <div class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+                            <div class="flex-fill fs-10px px-2">THE READING TOTAL.</div>	
+                        </div>
+                        <div class="d-flex ps-3 mb-2 pt-2 align-items-center" title="This is the expected reading for the selected resolution (Hour, Day, Week or Month) based on historical data.">
+                            <div class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-red text-white rounded-2 ms-n1"></div>
+                            <div class="flex-fill fs-10px px-2">THE EXPECTED VALUE.</div>	
+                        </div>
+                        <!-- END KEY -->
+                        <hr style="margin-top: 15px; margin-bottom: 10px;">
                     </div>
                 </div>
                 <!-- END row -->
@@ -305,7 +323,7 @@
         </div>
 
         <div class="opacity-10 px-3">
-            <div class="fw-bold"><span id="value_main_{{ meter.id }}">0</span> m³</div>
+            <div class="fw-bold" title="Total m³ for the past 24 hours."><span id="value_main_{{ meter.id }}">0</span> m³</div>
         </div>
         
     </div>
@@ -367,7 +385,7 @@
                         
                         <!-- BEGIN PRINT PDF -->
                         <div class="opacity-10 px-1">
-                            <button data-target="home_{{ meter.id }}" class="btn btn-outline-theme btn-sm pdf">
+                            <button data-target="meter_chart_bar_{{ meter.id }}" class="btn btn-outline-theme btn-sm pdf">
                                 PDF
                             </button>
                         </div>
@@ -396,51 +414,62 @@
                         <!-- END CHART -->
                     </div>
                     <div class="col-3">
-                        <hr>
+                        <hr style="margin-top: 10px; margin-bottom: 10px;">
                         <!-- BEGIN DAILY AVE -->
-                        <div class="w-150px h-98px pt-1 ps-3">
+                        <div class="w-150px h-910px pt-1 ps-3" title="Total m³ for the selected time period.">
                             <div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
                                 TOTAL (m³)
                             </div>
                             <div class="mb-2 fs-5 text-truncate">
-                                <h4 class="mb-0"><span id="total_valuel_{{ meter.id }}">0</span></h4>
+                                <h5 class="mb-0"><span id="total_valuel_{{ meter.id }}">0</span></h5>
                             </div>
                         </div>
                         <!-- END DAILY AVE -->
-                        <hr>
+                        <hr style="margin-top: 10px; margin-bottom: 10px;">
                         <!-- BEGIN HOURLY AVE -->
-                        <div class="w-150px h-98px pt-1 ps-3">
+                        <div class="w-150px h-910px pt-1 ps-3" title="Total hourly ave in m³/h for the selected time period.">
                             <div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
                                 HOURLY AVE (m³/h)
                             </div>
                             <div class="mb-2 fs-5 text-truncate">
-                                <h4 class="mb-0"><span id="hourly_ave_value_{{ meter.id }}">0</span> </h4>
+                                <h5 class="mb-0"><span id="hourly_ave_value_{{ meter.id }}">0</span> </h5>
                             </div>
                         </div>
                         <!-- END HOURLY AVE -->
-                        <hr>
+                        <hr style="margin-top: 10px; margin-bottom: 10px;">
                         <!-- BEGIN MAX FLOW -->
-                        <div class="w-150px h-98px pt-1 ps-3">
+                        <div class="w-150px h-910px pt-1 ps-3" title="Maximum flow rate in m³/h for the selected time period.">
                             <div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
                                 MAX FLOW (m³/h)
                             </div>
                             <div class="mb-2 fs-5 text-truncate">
-                                <h4 class="mb-0"><span id="max_flow_value_{{ meter.id }}">0</span> </h4>
+                                <h5 class="mb-0"><span id="max_flow_value_{{ meter.id }}">0</span> </h5>
                             </div>
                         </div>
                         <!-- END MAX FLOW -->
-                        <hr>
+                        <hr style="margin-top: 10px; margin-bottom: 10px;">
                         <!-- BEGIN MIN FLOW -->
-                        <div class="w-150px h-98px pt-1 ps-3">
+                        <div class="w-150px h-910px pt-1 ps-3" title="Minimum flow rate in m³/h for the selected time period.">
                             <div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
                                 MIN FLOW (m³/h)
                             </div>
                             <div class="mb-2 fs-5 text-truncate">
-                                <h4 class="mb-0"><span id="min_flow_value_{{ meter.id }}">0</span> </h4>
+                                <h5 class="mb-0"><span id="min_flow_value_{{ meter.id }}">0</span> </h5>
                             </div>
                         </div>
                         <!-- END MIN FLOW -->
-                        <hr>
+                        <hr style="margin-top: 10px; margin-bottom: 10px;">
+                        <!-- BEGIN KEY -->
+                        <div class="d-flex ps-3 pt-2 align-items-center" title="This is the total reading for the selected resolution (Hour, Day, Week or Month).">
+                            <div class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+                            <div class="flex-fill fs-10px px-2">THE READING TOTAL.</div>	
+                        </div>
+                        <div class="d-flex ps-3 mb-2 pt-2 align-items-center" title="This is the expected reading for the selected resolution (Hour, Day, Week or Month) based on historical data.">
+                            <div class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-red text-white rounded-2 ms-n1"></div>
+                            <div class="flex-fill fs-10px px-2">THE EXPECTED VALUE.</div>	
+                        </div>
+                        <!-- END KEY -->
+                        <hr style="margin-top: 15px; margin-bottom: 10px;">
                     </div>
                 </div>
                 <!-- END row -->
@@ -595,7 +624,7 @@
         </div>
 
         <div class="opacity-10 px-3">
-            <div class="fw-bold"><span id="value_main_{{ meter.id }}">0</span> m³</div>
+            <div class="fw-bold" title="Total m³ for the past 24 hours."><span id="value_main_{{ meter.id }}">0</span> m³</div>
         </div>
         
     </div>
@@ -657,7 +686,7 @@
                         
                         <!-- BEGIN PRINT PDF -->
                         <div class="opacity-10 px-1">
-                            <button data-target="home_{{ meter.id }}" class="btn btn-outline-theme btn-sm pdf">
+                            <button data-target="meter_chart_bar_{{ meter.id }}" class="btn btn-outline-theme btn-sm pdf">
                                 PDF
                             </button>
                         </div>
@@ -686,51 +715,62 @@
                         <!-- END CHART -->
                     </div>
                     <div class="col-3">
-                        <hr>
+                        <hr style="margin-top: 10px; margin-bottom: 10px;">
                         <!-- BEGIN DAILY AVE -->
-                        <div class="w-150px h-98px pt-1 ps-3">
+                        <div class="w-150px h-910px pt-1 ps-3" title="Total m³ for the selected time period.">
                             <div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
                                 TOTAL (m³)
                             </div>
                             <div class="mb-2 fs-5 text-truncate">
-                                <h4 class="mb-0"><span id="total_valuel_{{ meter.id }}">0</span></h4>
+                                <h5 class="mb-0"><span id="total_valuel_{{ meter.id }}">0</span></h5>
                             </div>
                         </div>
                         <!-- END DAILY AVE -->
-                        <hr>
+                        <hr style="margin-top: 10px; margin-bottom: 10px;">
                         <!-- BEGIN HOURLY AVE -->
-                        <div class="w-150px h-98px pt-1 ps-3">
+                        <div class="w-150px h-910px pt-1 ps-3" title="Total hourly ave in m³/h for the selected time period.">
                             <div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
                                 HOURLY AVE (m³/h)
                             </div>
                             <div class="mb-2 fs-5 text-truncate">
-                                <h4 class="mb-0"><span id="hourly_ave_value_{{ meter.id }}">0</span> </h4>
+                                <h5 class="mb-0"><span id="hourly_ave_value_{{ meter.id }}">0</span> </h5>
                             </div>
                         </div>
                         <!-- END HOURLY AVE -->
-                        <hr>
+                        <hr style="margin-top: 10px; margin-bottom: 10px;">
                         <!-- BEGIN MAX FLOW -->
-                        <div class="w-150px h-98px pt-1 ps-3">
+                        <div class="w-150px h-910px pt-1 ps-3" title="Maximum flow rate in m³/h for the selected time period.">
                             <div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
                                 MAX FLOW (m³/h)
                             </div>
                             <div class="mb-2 fs-5 text-truncate">
-                                <h4 class="mb-0"><span id="max_flow_value_{{ meter.id }}">0</span> </h4>
+                                <h5 class="mb-0"><span id="max_flow_value_{{ meter.id }}">0</span> </h5>
                             </div>
                         </div>
                         <!-- END MAX FLOW -->
-                        <hr>
+                        <hr style="margin-top: 10px; margin-bottom: 10px;">
                         <!-- BEGIN MIN FLOW -->
-                        <div class="w-150px h-98px pt-1 ps-3">
+                        <div class="w-150px h-910px pt-1 ps-3" title="Minimum flow rate in m³/h for the selected time period.">
                             <div class="d-flex fw-bold small text-white text-opacity-50 mb-1">
                                 MIN FLOW (m³/h)
                             </div>
                             <div class="mb-2 fs-5 text-truncate">
-                                <h4 class="mb-0"><span id="min_flow_value_{{ meter.id }}">0</span> </h4>
+                                <h5 class="mb-0"><span id="min_flow_value_{{ meter.id }}">0</span> </h5>
                             </div>
                         </div>
                         <!-- END MIN FLOW -->
-                        <hr>
+                        <hr style="margin-top: 10px; margin-bottom: 10px;">
+                        <!-- BEGIN KEY -->
+                        <div class="d-flex ps-3 pt-2 align-items-center" title="This is the total reading for the selected resolution (Hour, Day, Week or Month).">
+                            <div class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-cyan-blue text-white rounded-2 ms-n1"></div>
+                            <div class="flex-fill fs-10px px-2">THE READING TOTAL.</div>	
+                        </div>
+                        <div class="d-flex ps-3 mb-2 pt-2 align-items-center" title="This is the expected reading for the selected resolution (Hour, Day, Week or Month) based on historical data.">
+                            <div class="w-20px h-20px d-flex align-items-center justify-content-center bg-gradient-red text-white rounded-2 ms-n1"></div>
+                            <div class="flex-fill fs-10px px-2">THE EXPECTED VALUE.</div>	
+                        </div>
+                        <!-- END KEY -->
+                        <hr style="margin-top: 15px; margin-bottom: 10px;">
                     </div>
                 </div>
                 <!-- END row -->

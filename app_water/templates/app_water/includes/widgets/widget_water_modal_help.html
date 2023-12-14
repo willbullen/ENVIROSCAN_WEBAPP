@@ -3,13 +3,11 @@
 <div class="modal fade" id="modalHelp">
 	<div class="modal-dialog modal-xl">
 		<div class="modal-content">
-
 			<div class="modal-header">
-				<h6 class="modal-title">HELP - CUH Water</h6>
+				<h4 class="modal-title">HELP - CUH Water </h4>								
 				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 			</div>
 			<div class="modal-body">
-
 				<!-- BEGIN row -->
 				<div class="row justify-content-center">
 					<!-- BEGIN col-10 -->
@@ -17,30 +15,40 @@
 						<!-- BEGIN row -->
 						<div class="row">
 							<!-- BEGIN col-9 -->
-							<div class="col-xl-9">
-
+							<div class="col-xl-9" id="help_content">
 								<!-- BEGIN #Overview -->
 								<div id="overview" class="mb-5">
 									<h4>Overview</h4>
-									<p>Use border utilities to quickly style the border and border-radius of an element.
-										Great for images, buttons, or any other element. Please read the <a
-											href="https://getbootstrap.com/docs/5.3/utilities/Overview/"
-											target="_blank">official documentation</a> for the full list of options.</p>
+									<p>
+										The system consists of a single page with 2 main sections listed below. The Meter Section consists of a List of meters divided into 3 section - Supply, Consumer and Wastewater. The supply contains meters that supply water to all the consumers. The consumer list consists of meters from all the consumers in various locations. And the wastewater section consists of meters that measure the wastewater from the consumers. 
+									</p>
+									<p>
+										The Reporting and Data Analysis section consists of 2 subsections - Reporting and Analysis. The Reporting section gives you an overview 
+										of the data collected from the meters. The Analysis section gives you a detailed analysis of the data collected from 
+										the meters. The data collected from the meters is stored in a database and is displayed in the form of graphs and 
+										charts. The data is also displayed in the form of tables. 
+									</p>
+									<p>
+										The data can be filtered and sorted according to the requirements. The data can also be exported in the form 
+										of a CSV file. The data can be exported via an integrated API.
+									</p>
 									<div class="card">
 										<div class="card-body">
-
 											<div class="row">
 												<img src="{% static 'app_water/img/help/overview.png' %}" class="pt-1 mb-1" alt="Overview" />
 											</div>
-
 											<hr>
-
 											<div class="row">
-												<div class="d-flex align-items-center mb-1">
-													<p>1. Main Area</p>
+												<div class="d-flex align-items-center mb-0">
+													1. Logged in User's email address and information tab that will open help.
+												</div>
+												<div class="d-flex align-items-center mb-0">
+													2. Meter section.
+												</div>
+												<div class="d-flex align-items-center mb-0">
+													3. Reporting and Data Analysis section.
 												</div>
 											</div>
-
 										</div>
 										<div class="card-arrow">
 											<div class="card-arrow-top-left"></div>
@@ -52,27 +60,41 @@
 								</div>
 								<!-- END #Overview -->
 
-								<!-- BEGIN #nodes -->
-								<div id="nodes" class="mb-5">
-									<h4>Nodes</h4>
-									<p>Add classes to an element to easily round its corners. <a
-											href="https://getbootstrap.com/docs/5.3/utilities/borders/#border-radius"
-											target="_blank">official documentation</a> for the full list of options.</p>
+								<!-- BEGIN #meters -->
+								<div id="meters" class="mb-5">
+									<h4>Meters</h4>
+									<p>
+										The meters section consists of a list of meters divided into 3 sections - Supply, Consumer and Wastewater. 
+										The supply section consists of meters that supply water to all the consumers. The consumer section consists 
+										of meters from all the consumers in various locations. And the wastewater section consists of meters that 
+										measure the wastewater from the consumers.
+									</p>
+									<p>
+										The supply section consists of a list of meters and totals for the past 24 hours. The same applies for the 
+										consumer and wastewater sections. The totals are displayed in cubic meters and do not change with alterations to 
+										the period and resolution selections. The totals are updated every 15 minutes.
+									</p>
+									<p>
+										To view the data for a meter, click on the meter heading. This will open a slider with the meter data and chart. 
+										Hover over the totals to get a description of the data displayed.
+									</p>
 									<div class="card">
 										<div class="card-body">
-
 											<div class="row">
 												<img src="{% static 'app_water/img/help/nodes.png' %}" class="pt-1 mb-1" alt="Nodes" />
 											</div>
-
 											<hr>
-
 											<div class="row">
-												<div class="d-flex align-items-center mb-1">
-													<p>1. Supply</p>
+												<div class="d-flex align-items-center mb-0">
+													1. Supply section with list of meters that supply water to the consumers.
+												</div>
+												<div class="d-flex align-items-center mb-0">
+													2. Consumer section with list of meters from all the consumers.
+												</div>
+												<div class="d-flex align-items-center mb-0">
+													3. Wastewater section with list of meters that measure the wastewater from the consumers.
 												</div>
 											</div>
-
 										</div>
 										<div class="card-arrow">
 											<div class="card-arrow-top-left"></div>
@@ -82,29 +104,77 @@
 										</div>
 									</div>
 								</div>
-								<!-- END #nodes -->
+								<!-- END #meters -->
 
-								<!-- BEGIN #node -->
-								<div id="node" class="mb-5">
-									<h4>Node</h4>
-									<p>Add classes to an element to easily round its corners. <a
-											href="https://getbootstrap.com/docs/5.3/utilities/borders/#border-radius"
-											target="_blank">official documentation</a> for the full list of options.</p>
+								<!-- BEGIN #meter -->
+								<div id="meter" class="mb-5">
+									<h4>Meter</h4>
+									<p>
+										The meter section consists of a slider with the meter data and chart. The slider is divided into 2 tabs - 
+										Meter Data and Meter Information. The Meter Data tab consists of a chart displaying the data for the selected 
+										period. The Meter Information tab consists of information about the meter.
+									</p>
+									<p>
+										The chart will automatically display the data for the past 24 hours. The chart can be filtered by selecting the 
+										period dropdown and resolution dropdown. The period dropdown consists of a list of per determined 
+										periods and a custom section based on a calendar and time picker. The resolution dropdown consists of four 
+										periods - hour, day, week and month. 
+									</p>
+									<p>
+										The chart can be exported as a PDF or CSV file by clicking on the PDF or CSV button. The chart can be switched 
+										between a line chart, radar chart and bar chart by clicking on the chart type dropdown. The chart can be reset 
+										by clicking on the reset button. 
+									</p>
+									<p>
+										The chart consists of totals for the selected resolution and a predicted curve based on historical data calculated 
+										by a machine learning algorithm. The predicted curve is displayed in a red line. The totals section displays the totals, averages, 
+										minimums and maximums in cubic meters for the selected resolution. Hover over the totals to get a description of the data displayed.
+									</p>
+									<p></p>
+									<p></p>
 									<div class="card">
 										<div class="card-body">
-
 											<div class="row">
 												<img src="{% static 'app_water/img/help/node.png' %}" class="pt-1 mb-1" alt="Node" />
 											</div>
-
 											<hr>
-
 											<div class="row">
-												<div class="d-flex align-items-center mb-1">
-													<p>1. List of components.</p>
+												<div class="row">
+													<div class="d-flex align-items-center mb-0">
+														1. Linked meter heading, opens slider.
+													</div>
+													<div class="d-flex align-items-center mb-0">
+														2. The accumulated total of meter over 24 hour period.
+													</div>
+													<div class="d-flex align-items-center mb-0">
+														3. Tabs for meter data and meter information.
+													</div>
+													<div class="d-flex align-items-center mb-0">
+														4. Date selector, select the time period for the chart below.
+													</div>
+													<div class="d-flex align-items-center mb-0">
+														5. Resolution dropdown, select the resolution of the chart below.
+													</div>
+													<div class="d-flex align-items-center mb-0">
+														6. Chart type dropdown, select the type of chart to display.
+													</div>
+													<div class="d-flex align-items-center mb-0">
+														7. PDF button, export the chart as a PDF.
+													</div>
+													<div class="d-flex align-items-center mb-0">
+														8. CVS button, export the chart as a CVS file.
+													</div>
+													<div class="d-flex align-items-center mb-0">
+														9. Totals for the selected time period.
+													</div>
+													<div class="d-flex align-items-center mb-0">
+														10. Chart displaying the data for the selected time period.
+													</div>
+													<div class="d-flex align-items-center mb-0">
+														11. Key for the chart.
+													</div>
 												</div>
 											</div>
-
 										</div>
 										<div class="card-arrow">
 											<div class="card-arrow-top-left"></div>
@@ -114,29 +184,56 @@
 										</div>
 									</div>
 								</div>
-								<!-- END #node -->
+								<!-- END #meter -->
 
 								<!-- BEGIN #reporting -->
-								<div id="node" class="mb-5">
+								<div id="report" class="mb-5">
 									<h4>Reporting</h4>
-									<p>Add classes to an element to easily round its corners. <a
-											href="https://getbootstrap.com/docs/5.3/utilities/borders/#border-radius"
-											target="_blank">official documentation</a> for the full list of options.</p>
+									<p>
+										The reporting section consists of a chart displaying the data for the selected time period. The chart can be 
+										filtered by selecting the time period dropdown and chart type dropdown. The time period dropdown consists of a 
+										list of per determined time periods and a custom section based on a calendar and time picker. The chart type 
+										dropdown consists of two chart types - pie chart and bar chart. There is a report description that details the 
+										data displayed in the chart and its relation to Supply, Consumer and Wastewater. The chart can be exported as 
+										a PDF file by clicking on the PDF button.
+									</p>
+									<p>
+										The chart and data can be toggled between volume and percentage by clicking on the toggle button. The table 
+										displays the totals for the three sections - Supply, Consumer and Wastewater. The pie chart displays the relationship 
+										between the metered consumer total and the supply to indicate the total of unmetered consumers. 
+									</p>
 									<div class="card">
 										<div class="card-body">
-
 											<div class="row">
 												<img src="{% static 'app_water/img/help/reporting.png' %}" class="pt-1 mb-1" alt="Reporting" />
 											</div>
-
 											<hr>
-
 											<div class="row">
-												<div class="d-flex align-items-center mb-1">
-													<p>1. List of components.</p>
+												<div class="d-flex align-items-center mb-0">
+													1. Tab selection for Reporting and Analysis sections.
+												</div>
+												<div class="d-flex align-items-center mb-0">
+													2. Date selector, select the time period for report below.
+												</div>
+												<div class="d-flex align-items-center mb-0">
+													3. Chart type dropdown, select the type of chart to display.
+												</div>
+												<div class="d-flex align-items-center mb-0">
+													4. PDF button, export the chart as a PDF.
+												</div>
+												<div class="d-flex align-items-center mb-0">
+													5. Chart displaying the data for the selected time period.
+												</div>
+												<div class="d-flex align-items-center mb-0">
+													6. Description of the report.
+												</div>
+												<div class="d-flex align-items-center mb-0">
+													7. Toggle button to switch between volume and percentage.
+												</div>
+												<div class="d-flex align-items-center mb-0">
+													8. Table displaying the report data for the selected time period.
 												</div>
 											</div>
-
 										</div>
 										<div class="card-arrow">
 											<div class="card-arrow-top-left"></div>
@@ -149,26 +246,52 @@
 								<!-- END #reporting -->
 
 								<!-- BEGIN #analysis -->
-								<div id="node" class="mb-5">
+								<div id="analysis" class="mb-5">
 									<h4>Analysis</h4>
-									<p>Add classes to an element to easily round its corners. <a
-											href="https://getbootstrap.com/docs/5.3/utilities/borders/#border-radius"
-											target="_blank">official documentation</a> for the full list of options.</p>
+									<p>
+										The analysis section consists of a chart displaying the data for the selected time period. The chart can be 
+										filtered by selecting the time period dropdown and resolution dropdown. The time period dropdown consists of a 
+										list of per determined time periods and a custom section based on a calendar and time picker. The resolution 
+										dropdown consists of four time periods - hour, day, week and month. The chart can be exported as a PDF or CSV 
+										file by clicking on the PDF or CSV button. The chart only displays as a line chart so that all data can be represented 
+										at once. The chart can be reset by clicking on the reset button.
+									</p>
+									<p>
+										You can toggle the meter data on and off by clicking on the toggle button. The key displays the colour coding for each 
+										meter.
+									</p>
 									<div class="card">
 										<div class="card-body">
-
 											<div class="row">
 												<img src="{% static 'app_water/img/help/analysis.png' %}" class="pt-1 mb-1" alt="Analysis" />
 											</div>
-
 											<hr>
-
 											<div class="row">
-												<div class="d-flex align-items-center mb-1">
-													<p>1. List of components.</p>
+												<div class="d-flex align-items-center mb-0">
+													1. Tab selection for Reporting and Analysis sections.
+												</div>
+												<div class="d-flex align-items-center mb-0">
+													2. Date selector, select the time period for the chart below.
+												</div>
+												<div class="d-flex align-items-center mb-0">
+													3. Resolution dropdown, select the resolution of the chart below.
+												</div>
+												<div class="d-flex align-items-center mb-0">
+													4. PDF button, export the chart as a PDF.
+												</div>
+												<div class="d-flex align-items-center mb-0">
+													5. CSV button, export the chart as a CSV file.
+												</div>
+												<div class="d-flex align-items-center mb-0">
+													6. Chart displaying the data for the selected time period.
+												</div>
+												<div class="d-flex align-items-center mb-0">
+													7. Toggle button to show or hide meter data.
+												</div>
+												<div class="d-flex align-items-center mb-0">
+													8. Key for the chart.
 												</div>
 											</div>
-
 										</div>
 										<div class="card-arrow">
 											<div class="card-arrow-top-left"></div>
@@ -179,21 +302,34 @@
 									</div>
 								</div>
 								<!-- END #analysis -->
-
 							</div>
 							<!-- END col-9-->
 
 							<!-- BEGIN col-3 -->
 							<div class="col-xl-3">
-								<!-- BEGIN #sidebar-bootstrap -->
+								<!-- BEGIN #sidebar-bootstrap -->								
 								<nav id="sidebar-bootstrap" class="navbar navbar-sticky">
-									<nav class="nav">
-										<a class="nav-link" href="#overview" data-toggle="scroll-to">Overview</a>
-										<a class="nav-link" href="#nodes" data-toggle="scroll-to">Nodes</a>
-										<a class="nav-link" href="#node" data-toggle="scroll-to">Node</a>
-										<a class="nav-link" href="#reporting" data-toggle="scroll-to">Reporting</a>
-										<a class="nav-link" href="#analysis" data-toggle="scroll-to">Analysis</a>
-									</nav>
+
+									<ul class="nav">
+										<li class="nav-item">
+											<a class="nav-link" data-toggle="pill" href="#overview">Overview</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link" data-toggle="pill" href="#meters">Meters</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link" data-toggle="pill" href="#meter">Meter</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link" data-toggle="pill" href="#report">Reporting</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link" data-toggle="pill" href="#analysis">Analysis</a>
+										</li>
+									</ul>
+									<div class="d-flex ps-4 pt-2 align-items-center">
+										<button class="btn btn-outline-theme btn-sm pdf" onclick="printModal('modalHelp')">PRINT</button>
+									</div>
 								</nav>
 								<!-- END #sidebar-bootstrap -->
 							</div>

@@ -52,10 +52,22 @@
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 
-
-
 <script>
-	
+	/////////////////////////// PRINT MODAL ///////////////////////////
+	function printModal(modalId) {
+        // Get the modal using the id
+        var modal = document.getElementById(modalId);
+        // Open a new window or tab
+        var printWindow = window.open('', '_blank');
+        // Write the HTML of the modal to the new window or tab
+        printWindow.document.write('<html><head><title>Print</title></head><body>');
+        printWindow.document.write(modal.innerHTML);
+        printWindow.document.write('</body></html>');
+        // Call the print function
+        printWindow.print();
+    }
+	/////////////////////////// PRINT MODAL ///////////////////////////
+
 	/////////////////////////// PDF GENERATOR ///////////////////////////
 	// Get all buttons with the class 'pdf'
 	var buttons_pdf = document.querySelectorAll('.pdf');
@@ -203,8 +215,8 @@
 					picarroData.Data = pointInfo.points[0].point.data;
 
 					print("", picarroData.Data.Data_DateTime);
-					print("Consumption: ", picarroData.Data.Water.toFixed(3));
-					print("Baseline: ", picarroData.Data.Baseline.toFixed(3));
+					print("Consumption: ", picarroData.Data.Water.toFixed(2));
+					print("Baseline: ", picarroData.Data.Baseline.toFixed(2));
 				},
 			},
 			legend: {
@@ -486,6 +498,9 @@
 
 	///////////////////////////// DATA API ////////////////////////////////
 	function change_data(id, data, start, end, resolution) {
+		// CALCULATE DATE DIFFERENCE
+		var diffTime = end - start;
+		var diffDays = diffTime / (1000 * 60 * 60 * 24);
 		// AJAX
 		$.ajax({
 			type: 'GET',
@@ -521,9 +536,12 @@
 								pulseSum += reading.Pulses
 							});
 							var waterSum = pulseSum * meter.Pulse_Unit_Value
-							// SET MAIN VALUE
-							$("#value_main_" + meter.id).text(waterSum.toFixed(3));
-							$("#total_valuel_" + meter.id).text(waterSum.toFixed(3));
+							// SET MAIN VALUE, ONLY DISPLAY WHEN 24HRS
+							if (diffDays == 1){
+								$("#value_main_" + meter.id).text(waterSum.toFixed(2));
+							}							
+							// SET TOTAL VALUE
+							$("#total_valuel_" + meter.id).text(waterSum.toFixed(2));
 							// SET BAR CHART DATA
 							$("#meter_chart_bar_" + meter.id).dxChart("option", "dataSource", readings.map(function(element) {return {'Data_DateTime': element.Data_DateTime, 'Water': element.Pulses*meter.Pulse_Unit_Value, 'Baseline': element.Baseline*meter.Pulse_Unit_Value};}));
 							$("#meter_chart_bar_" + meter.id).dxChart('instance').refresh();										
@@ -571,11 +589,11 @@
 				record_number += 1
 			});
 
-			$("#hourly_ave_value_" + id).text((value_hourly_ave/record_number).toFixed(3));
+			$("#hourly_ave_value_" + id).text((value_hourly_ave/record_number).toFixed(2));
 
-			$("#max_flow_value_" + id).text(value_max_flow.toFixed(3));
+			$("#max_flow_value_" + id).text(value_max_flow.toFixed(2));
 
-			$("#min_flow_value_" + id).text(value_min_flow.toFixed(3));
+			$("#min_flow_value_" + id).text(value_min_flow.toFixed(2));
 		}
 		///////////////////////////// DATA API ////////////////////////////////
 	}
@@ -744,7 +762,6 @@
 					if (analysis != '') {
 						analysis_data = JSON.parse(analysis, reviver_1);
 						// SET BAR CHART DATA
-						console.log(analysis_data);
 						$("#data_analysis_chart").dxChart("option", "dataSource", analysis_data);
 
 						// CHECK IF CHECKED
@@ -892,19 +909,19 @@
 						var waterSum = pulseSum * meter.Pulse_Unit_Value
 						// SET VARIABLES AND PUSH TO ARRAY
 						if (meter.Category == 'Supply') {
-							var supply = waterSum.toFixed(3);
+							var supply = waterSum.toFixed(2);
 							supply_total += parseFloat(waterSum);
 						} else if (meter.Category == 'Waste') {
-							var waste = waterSum.toFixed(3);
+							var waste = waterSum.toFixed(2);
 							waste_total += parseFloat(waterSum);
 						} else if (meter.Category == 'Consumer') {
-							var consumer = waterSum.toFixed(3);
+							var consumer = waterSum.toFixed(2);
 							consumer_total += parseFloat(waterSum);
 							// CREATE CHART DATA
 							chart_data.push({
 								ID: meter.id, 
 								Meter: meter.Name, 
-								Water: waterSum.toFixed(3),
+								Water: waterSum.toFixed(2),
 								Supply: supply,
 								Waste: waste,
 								Consumer: consumer, 
@@ -915,7 +932,7 @@
 						data.push({
 							ID: meter.id, 
 							Meter: meter.Name, 
-							Water: waterSum.toFixed(3),
+							Water: waterSum.toFixed(2),
 							Supply: supply,
 							Waste: waste,
 							Consumer: consumer, 
@@ -929,7 +946,7 @@
 					chart_data.push({
 						ID: 0, 
 						Meter: 'Not Metered', 
-						Water: not_metered.toFixed(3),
+						Water: not_metered.toFixed(2),
 						Supply: null,
 						Waste: null,
 						Consumer: null, 
@@ -965,8 +982,8 @@
 						$("#report_not_metered").text(((not_metered/supply_total)*100).toFixed(1) + ' %');
 						$("#report_waste").text(((waste_total/supply_total)*100).toFixed(1) + ' %');
 					} else {
-						$("#report_not_metered").text(not_metered.toFixed(3) + ' m³');
-						$("#report_waste").text(waste_total.toFixed(3) + ' m³');
+						$("#report_not_metered").text(not_metered.toFixed(2) + ' m³');
+						$("#report_waste").text(waste_total.toFixed(2) + ' m³');
 					}
 					// SET TOTALS TEXT
 					if ($("#toggle_value_percentage").is(':checked')) {
@@ -974,9 +991,9 @@
 						$("#report_waste_total_value").text(((waste_total/supply_total)*100).toFixed(1) + ' %');
 						$("#report_consumer_total_value").text(((consumer_total/supply_total)*100).toFixed(1) + ' %');
 					} else {
-						$("#report_supply_total_value").text(supply_total.toFixed(3) + ' m³');
-						$("#report_waste_total_value").text(waste_total.toFixed(3) + ' m³');
-						$("#report_consumer_total_value").text(consumer_total.toFixed(3) + ' m³');
+						$("#report_supply_total_value").text(supply_total.toFixed(2) + ' m³');
+						$("#report_waste_total_value").text(waste_total.toFixed(2) + ' m³');
+						$("#report_consumer_total_value").text(consumer_total.toFixed(2) + ' m³');
 					}
 				}	
 			}
