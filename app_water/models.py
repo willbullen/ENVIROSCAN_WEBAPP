@@ -1,6 +1,7 @@
 
 from django.db import models
 from django_pandas.managers import DataFrameManager
+from authentication.models import *
 
 class Meter_Category(models.Model):
 	Category_Name = models.CharField(max_length=50)
@@ -46,6 +47,7 @@ class Meter_Type(models.Model):
 
 class Meter_List(models.Model):
     Name = models.CharField(max_length=50)
+    Organization = models.ForeignKey(Organization, on_delete=models.CASCADE, blank=True, null=True)
     Description = models.CharField(max_length=200, blank=True, null=True)
     Data_Table = models.CharField(max_length=50, blank=True, null=True)
     Start_Index = models.FloatField()

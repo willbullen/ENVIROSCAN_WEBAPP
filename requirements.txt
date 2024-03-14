@@ -71,3 +71,6 @@ tensorflow==2.12.0
 
 # ---- PROPHET ---- #
 prophet==1.1.4
+
+# ---- REPRT LABS ---- #
+reportlab==4.0.8

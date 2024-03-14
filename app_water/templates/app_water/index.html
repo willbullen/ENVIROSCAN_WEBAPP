@@ -7,7 +7,7 @@
 	<div class="d-flex fw-bold small">
 		<span class="flex-grow-1">
 			<h1 class="page-header">
-				<i class="bi bi-water"></i> CUH Water
+				<i class="bi bi-water"></i> {{ user.profile.organization }} Water
 			</h1>
 		</span>
 	</div>
@@ -142,6 +142,8 @@
 	}
 
 	var meter_list_data = JSON.parse('{{meter_list_data|escapejs}}', reviver_1).Data;
+	var org = '{{user.profile.organization.id|escapejs}}';
+	console.log(org);
 	/////////////////////////// GET METER LIST ///////////////////////////
 
 	/////////////////////////// CREATE CONTROLS ///////////////////////////
@@ -511,6 +513,7 @@
 			},
 			success: function(data) {
 				if (data != '') {
+					console.log(JSON.parse(data, reviver_1).Data);
 					$.each(JSON.parse(data, reviver_1).Data, function(i, meter) {
 						if (meter.id == id) {
 							// READINGS
@@ -883,7 +886,7 @@
 		var report_data = [];
 		$.ajax({
 			type: 'GET',				
-			url: '../water/readings/reports/?start_datetime=' + start.toISOString() + '&end_datetime=' + end.toISOString() + '&resolution=' + resolution,
+			url: '../water/readings/reports/?start_datetime=' + start.toISOString() + '&end_datetime=' + end.toISOString() + '&resolution=' + resolution + '&org=' + org,
 			headers: {
 				"Authorization": "Basic YWRtaW46d2lsbDE5Nzc=",
 				'Accept' : 'application/json'
