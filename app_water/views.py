@@ -32,30 +32,30 @@ from .serializers import (
 from django.utils import timezone
 
 #from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
-from reportlab.lib.styles import getSampleStyleSheet
+#from reportlab.lib.pagesizes import letter
+#from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
+#from reportlab.lib.styles import getSampleStyleSheet
 import os
 
-def generate_pdf_save():
-    # Create the directory if it doesn't exist
-    directory = 'app_water/static/app_water/reports'
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+#def generate_pdf_save():
+#    # Create the directory if it doesn't exist
+#    directory = 'app_water/static/app_water/reports'
+#    if not os.path.exists(directory):
+#        os.makedirs(directory)
 
-    # Create a new PDF document
-    doc = SimpleDocTemplate(os.path.join(directory, "hello_world.pdf"), pagesize=letter)
+#    # Create a new PDF document
+#    doc = SimpleDocTemplate(os.path.join(directory, "hello_world.pdf"), pagesize=letter)
 
-    # Create a list to hold the PDF elements
-    elements = []
+#    # Create a list to hold the PDF elements
+#    elements = []
 
-    # Add the text "Hello World"
-    styles = getSampleStyleSheet()
-    text = Paragraph("Hello World", styles["BodyText"])
-    elements.append(text)
+#    # Add the text "Hello World"
+#    styles = getSampleStyleSheet()
+#    text = Paragraph("Hello World", styles["BodyText"])
+#    elements.append(text)
 
-    # Build the PDF
-    doc.build(elements)
+#    # Build the PDF
+#    doc.build(elements)
 
 
 ########################################################################################
@@ -69,7 +69,7 @@ class Reports_ViewSet(viewsets.ModelViewSet):
 
         print(organization)
 
-        generate_pdf_save()
+        #generate_pdf_save()
 
         reports = {}
         try:
