@@ -31,7 +31,7 @@ from .serializers import (
 
 from django.utils import timezone
 
-from reportlab.pdfgen import canvas
+#from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 from reportlab.lib.styles import getSampleStyleSheet
